@@ -1,0 +1,31 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "common"
+  namespace: "ztp-policy-common"
+spec:
+  bindingRules:
+    common: "true"
+  remediationAction: inform
+  sourceFiles:
+    - fileName: metallb/ns.yaml
+      policyName: "install-operators"
+    - fileName: metallb/operatorGroup.yaml
+      policyName: "install-operators"
+    - fileName: metallb/subscription.yaml
+      policyName: "install-operators"
+    - fileName: metallb/instance.yaml
+      policyName: "install-operators"
+    - fileName: nmstate/subscription.yaml
+      policyName: "install-operators"
+    - fileName: nmstate/ns.yaml
+      policyName: "install-operators"
+    - fileName: nmstate/operatorGroup.yaml
+      policyName: "install-operators"
+    - fileName: nmstate/instance.yaml
+      policyName: "install-operators"
+    - fileName: RoutingViaHost.yaml
+      policyName: "config-network"
+    - fileName: ReduceMonitoringFootprint.yaml
+      policyName: "config-policy"

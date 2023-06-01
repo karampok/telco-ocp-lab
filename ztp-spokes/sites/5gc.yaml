@@ -1,0 +1,299 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: SiteConfig
+metadata:
+  name: "5gc"
+  namespace: "5gc"
+spec:
+  baseDomain: "eric.vlab"
+  pullSecretRef:
+    name: "assisted-deployment-pull-secret"
+  clusterImageSetNameRef: "img4.12.13-x86-64-appsub"
+  sshPublicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeiSA3IDCWxow/r7m4tTwDnOmj3+KeIaUWxQI2KAwabM8wrJkwJR1+KHsKT+HDMW1yXXWYlXOAxOzGGzoBSLmH4P64npxHGIRkAAk+SP5YKXpgv3K/Ivqx/5qmZpIzpxyhgZUOZwvyyBtgJm3BZhb/IKrILllN/FtbLLZ8Ie/uERs33ReVvtZWyYVcVm5/CCb5ZojQlIzgNXJ0xKAQJd9zIce1MzWCK1/OgO3W4Q8c/LiOpNhNjbMGtAvasEwVsH4hCIggCJcKxQSceM8kkcY9HfjoW7zT/jzXY3PEW9lVSvh7WGHWZ748JeAwNC1GEPENpJ9pcH8pR3Vlx3VxjqBn cardno:000605977679"
+  clusters:
+    - clusterName: "5gc"
+      extraManifestPath: extra-manifest/
+      networkType: "OVNKubernetes"
+      clusterLabels:
+        common: true
+        sites: "n65"
+      clusterNetwork:
+        - cidr: 10.128.0.0/14
+          hostPrefix: 23
+      apiVIP: 10.10.10.125
+      ingressVIP: 10.10.10.126
+        #      machineNetwork:
+        # - cidr: 10.10.10.0/24
+      serviceNetwork:
+        - 172.30.0.0/16
+      additionalNTPSources:
+        - pool.ntp.org
+      nodes:
+        - hostName: 5gc-m0
+          role: "master"
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111110
+          bmcCredentialsName:
+            name: "5gc-m0-secret"
+          bootMACAddress: "de:ad:be:ff:11:60"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          cpuset: "0,1,7,8"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:60
+              - name: ens4
+                macAddress: de:ad:be:ff:11:61
+            config:
+              interfaces:
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: 100
+                      primary: ens3
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.116
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 11.11.11.116
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: 5gc-m1
+          role: master
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111111
+          bmcCredentialsName:
+            name: "5gc-m1-secret"
+          bootMACAddress: "de:ad:be:ff:11:70"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:70
+              - name: ens4
+                macAddress: de:ad:be:ff:11:71
+            config:
+              interfaces:
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: '140'
+                    ports:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.117
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 11.11.11.117
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: 5gc-m2
+          role: master
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111112
+          bmcCredentialsName:
+            name: "5gc-m2-secret"
+          bootMACAddress: "de:ad:be:ff:11:80"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          cpuset: "0,1,7,8"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:80
+              - name: ens4
+                macAddress: de:ad:be:ff:11:81
+            config:
+              interfaces:
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: '140'
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.118
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 11.11.11.118
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: 5gc-w0
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:90"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          cpuset: "0,1,7,8"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:90
+              - name: ens4
+                macAddress: de:ad:be:ff:11:91
+            config:
+              interfaces:
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: '140'
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 11.11.11.119
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254

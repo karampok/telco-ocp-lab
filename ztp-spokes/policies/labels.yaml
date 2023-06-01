@@ -1,0 +1,18 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "label-ht-worker"
+  namespace: "ztp-policy-site"
+spec:
+  bindingRules:
+    sites: "n65"
+  remediationAction: inform
+  sourceFiles:
+    - fileName: labelHTNode.yaml
+      policyName: "label-nodes"
+      metadata:
+        name: "5gc-w0"
+        labels:
+          node-role.kubernetes.io/ht100g: ""
+          type: "prod"
