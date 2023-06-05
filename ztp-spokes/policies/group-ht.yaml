@@ -8,6 +8,7 @@ spec:
   bindingRules:
     htworker: ""
   remediationAction: inform
+  mcp: "worker"
   sourceFiles:
     - fileName: PerformanceProfile.yaml
       policyName: "config-ht-nodes"
