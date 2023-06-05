@@ -1,0 +1,41 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "common"
+  namespace: "ztp-policy-common"
+spec:
+  bindingRules:
+    common: "true"
+  remediationAction: inform
+  configDaemonNodeSelector:
+    node-role.kubernetes.io/ht100g: ""
+  sourceFiles:
+    - fileName: PerformanceProfile.yaml
+      policyName: "config-ht-nodes"
+      metadata:
+        name: performance-sno
+        annotations:
+          kubeletconfig.experimental: |
+            {"allowedUnsafeSysctls":["net.core.somaxconn","kernel.msg*"],"systemReserved":{"memory": "300Mi"},"kubeReserved":{"memory": "768Mi"}}
+      spec:
+        additionalKernelArgs:
+          - "nohz_full=4-15"
+        cpu:
+          isolated: "4-15"
+          reserved: "0-3"
+        hugepages:
+          defaultHugepagesSize: 1G
+          pages:
+            - size: 1G
+              count: 4
+        numa:
+          topologyPolicy: single-numa-node
+        workloadHints:
+          realTime: false
+          highPowerConsumption: false
+          perPodPowerManagement: false
+        realTimeKernel:
+          enabled: false
+    # https://github.com/openshift-kni/cnf-features-deploy/blob/efe8c5ddcad32b5d0b8c58f51d391aafc96fe77d/ztp/gitops-subscriptions/argocd/example/policygentemplates/group-du-sno-ranGen.yaml#L124-L140
+    # https://github.com/openshift-kni/cnf-features-deploy/blob/efe8c5ddcad32b5d0b8c58f51d391aafc96fe77d/ztp/gitops-subscriptions/argocd/example/policygentemplates/group-du-sno-ranGen.yaml#L196-L221

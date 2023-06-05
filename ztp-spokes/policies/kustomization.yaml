@@ -4,7 +4,7 @@ kind: Kustomization
 generators:
   - common.yaml
   - labels.yaml
-# - group/ht.yaml
+  - group-ht.yaml
 # - group/standard.yaml
 # - site/mic.yaml
 resources:
