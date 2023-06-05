@@ -1,0 +1,29 @@
+#!/bin/bash
+
+DEST_CLUSTER=${1}
+
+if [[ -z ${DEST_CLUSTER} ]];then
+  echo "Give me a clustername"
+  exit 1
+fi
+
+
+watch -n 5 "
+  echo '=====> BMH:'; \
+  oc get bmh -n ${DEST_CLUSTER}; \
+  echo; echo '=====> Agents:'; \
+  oc get agent -n ${DEST_CLUSTER}; \
+  echo; echo '=====> AgentClusterInstall Messages:'; \
+  oc get agentclusterinstall -n ${DEST_CLUSTER} ${DEST_CLUSTER} -o jsonpath={.status.conditions} | jq "." | grep message; \
+  echo; echo '=====> ManagedCluster'; \
+  oc get managedcluster ${DEST_CLUSTER}; \
+  echo; echo '=====> clusterdeployment'; \
+  oc get clusterdeployment -n ${DEST_CLUSTER} ${DEST_CLUSTER}; \
+  echo; echo '=====> Agent State'; \
+  oc -n ${DEST_CLUSTER} get agents --no-headers -o name
+"
+
+
+  #for agent in $(oc -n ${DEST_CLUSTER} get agents | grep ${DEST_CLUSTER} | awk '{print $1}'); do oc -n ${DEST_CLUSTER} describe agent ${agent} | grep "State Info" | sed "s/    //g"; done
+#  oc get bmh,agent,agentclusterinstall,clusterdeployment -A
+#  NMStateConfig
