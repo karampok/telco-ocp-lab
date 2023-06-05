@@ -2,14 +2,14 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ztp-policy-common
+  name: ztp-common
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ztp-policy-group
+  name: ztp-group
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: ztp-policy-site
+  name: ztp-site

@@ -17,7 +17,7 @@ spec:
       clusterLabels:
         common: true
         htworker: ""
-        sites: "n65"
+        sites: "n95"
       clusterNetwork:
         - cidr: 10.128.0.0/14
           hostPrefix: 23

@@ -3,10 +3,10 @@ apiVersion: ran.openshift.io/v1
 kind: PolicyGenTemplate
 metadata:
   name: "label-ht-worker"
-  namespace: "ztp-policy-site"
+  namespace: "ztp-site"
 spec:
   bindingRules:
-    sites: "n65"
+    sites: "n95"
   remediationAction: inform
   sourceFiles:
     - fileName: labelHTNode.yaml

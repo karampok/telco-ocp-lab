@@ -3,7 +3,7 @@ apiVersion: ran.openshift.io/v1
 kind: PolicyGenTemplate
 metadata:
   name: "htworker"
-  namespace: "ztp-policy-group"
+  namespace: "ztp-group"
 spec:
   bindingRules:
     htworker: ""
@@ -11,7 +11,7 @@ spec:
   mcp: "worker"
   sourceFiles:
     - fileName: PerformanceProfile.yaml
-      policyName: "config-ht-nodes"
+      policyName: "config-nodes"
       metadata:
         name: performance-ht100gb
         annotations:
