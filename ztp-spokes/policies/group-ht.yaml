@@ -8,7 +8,7 @@ spec:
   bindingRules:
     htworker: ""
   remediationAction: inform
-  mcp: "worker"
+  mcp: "ht100gb"
   sourceFiles:
     - fileName: PerformanceProfile.yaml
       policyName: "config-nodes"
@@ -28,8 +28,6 @@ spec:
           pages:
             - size: 1G
               count: 4
-        nodeSelector:
-          node-role.kubernetes.io/ht100gb: ""
         numa:
           topologyPolicy: single-numa-node
         workloadHints:
