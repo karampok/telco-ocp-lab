@@ -16,6 +16,7 @@ spec:
       networkType: "OVNKubernetes"
       clusterLabels:
         common: true
+        htworker: ""
         sites: "n65"
       clusterNetwork:
         - cidr: 10.128.0.0/14

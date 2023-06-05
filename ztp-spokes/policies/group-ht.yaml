@@ -2,12 +2,12 @@
 apiVersion: ran.openshift.io/v1
 kind: PolicyGenTemplate
 metadata:
-  name: "common"
-  namespace: "ztp-policy-common"
+  name: "htworker"
+  namespace: "ztp-policy-group"
 spec:
+  bindingRules:
+    htworker: ""
   remediationAction: inform
-  configDaemonNodeSelector:
-    node-role.kubernetes.io/ht100g: ""
   sourceFiles:
     - fileName: PerformanceProfile.yaml
       policyName: "config-ht-nodes"
@@ -27,6 +27,8 @@ spec:
           pages:
             - size: 1G
               count: 4
+        nodeSelector:
+          node-role.kubernetes.io/ht100gb: ""
         numa:
           topologyPolicy: single-numa-node
         workloadHints:
