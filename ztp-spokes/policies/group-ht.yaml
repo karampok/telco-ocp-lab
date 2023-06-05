@@ -5,8 +5,6 @@ metadata:
   name: "common"
   namespace: "ztp-policy-common"
 spec:
-  bindingRules:
-    common: "true"
   remediationAction: inform
   configDaemonNodeSelector:
     node-role.kubernetes.io/ht100g: ""
