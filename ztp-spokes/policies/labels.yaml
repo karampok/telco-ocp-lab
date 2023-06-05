@@ -14,5 +14,5 @@ spec:
       metadata:
         name: "5gc-w0"
         labels:
-          node-role.kubernetes.io/ht100g: ""
+          node-role.kubernetes.io/ht100gb: ""
           type: "prod"
