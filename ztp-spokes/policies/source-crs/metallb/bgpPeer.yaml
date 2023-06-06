@@ -7,13 +7,16 @@ metadata:
   annotations:
     ran.openshift.io/ztp-deploy-wave: "2"
 spec:
+  keepaliveTime: 0s
   peerAddress: 11.11.11.254
   peerASN: 8002
   myASN: 7003
   holdTime: "180s"
   bfdProfile: bfd-profile
+  peerPort: 179
   nodeSelectors:
     - matchExpressions:
-      - key: kubernetes.io/hostname
-        operator: In
-        values: [5gc-m2]
+        - key: kubernetes.io/hostname
+          operator: In
+          values: [5gc-m2]
+  passwordSecret: {}
