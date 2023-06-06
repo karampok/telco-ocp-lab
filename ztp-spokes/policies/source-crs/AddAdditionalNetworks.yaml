@@ -5,7 +5,7 @@ kind: Network
 metadata:
   name: cluster
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "1"
+    ran.openshift.io/ztp-deploy-wave: "2"
 spec:
   additionalNetworks:
     #    - name: mh-macvlan

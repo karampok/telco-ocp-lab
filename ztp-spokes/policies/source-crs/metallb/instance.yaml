@@ -4,3 +4,5 @@ kind: MetalLB
 metadata:
   name: metallb
   namespace: metallb-system
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "3"
