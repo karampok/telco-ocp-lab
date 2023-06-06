@@ -2,7 +2,7 @@
 apiVersion: ran.openshift.io/v1
 kind: PolicyGenTemplate
 metadata:
-  name: "metallb"
+  name: "networks"
   namespace: "ztp-group"
 spec:
   bindingRules:
@@ -19,3 +19,5 @@ spec:
       policyName: "config-metallb"
     - fileName: metallb/bgpAdvertisement.yaml
       policyName: "config-metallb"
+    - fileName: raw/addGreenStaticRoutes.yaml
+      policyName: "config-static-routes"
