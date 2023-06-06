@@ -5,6 +5,7 @@ generators:
   - common.yaml
   - labels.yaml
   - group-ht.yaml
+  - group-n95.yaml
 # - group/standard.yaml
 # - site/mic.yaml
 resources:
