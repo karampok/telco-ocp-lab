@@ -9,7 +9,7 @@ spec:
     sites: "n95"
   remediationAction: inform
   sourceFiles:
-    - fileName: labelHTNode.yaml
+    - fileName: LabelHTNode.yaml
       policyName: "label-nodes"
       metadata:
         name: "5gc-w0"
