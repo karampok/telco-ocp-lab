@@ -5,7 +5,7 @@ metadata:
   name: greenpeers
   namespace: metallb-system
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "3"
+    ran.openshift.io/ztp-deploy-wave: "2"
 spec:
   peerAddress: 11.11.11.254
   peerASN: 8002
