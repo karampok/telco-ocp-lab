@@ -31,7 +31,7 @@ spec:
         name: performance-ht100gb
         annotations:
           kubeletconfig.experimental: |
-            {"allowedUnsafeSysctls":["net.core.somaxconn","kernel.msg*"],"systemReserved":{"memory": "300Mi"},"kubeReserved":{"memory": "768Mi"}}
+            {"systemReserved": {"memory": "6Gi"}, "topologyManagerScope": "pod"}`
       spec:
         additionalKernelArgs:
           - "nohz_full=4-15"
