@@ -10,6 +10,21 @@ spec:
   remediationAction: inform
   mcp: "ht100gb"
   sourceFiles:
+    - fileName: MachineConfigPool.yaml
+      policyName: "config-nodes"
+      metadata:
+        name: ht100gb
+        labels:
+          machineconfiguration.openshift.io/role: ht100gb
+      spec:
+        machineConfigSelector:
+          matchExpressions:
+            - key: machineconfiguration.openshift.io/role
+              operator: In
+              values: [worker, ht100gb]
+        nodeSelector:
+          matchLabels:
+            node-role.kubernetes.io/ht100gb: ""
     - fileName: PerformanceProfile.yaml
       policyName: "config-nodes"
       metadata:
