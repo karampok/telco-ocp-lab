@@ -1,5 +1,5 @@
 ---
-apiVersion: metallb.io/v1beta1
+apiVersion: metallb.io/v1beta2
 kind: BGPPeer
 metadata:
   name: greenpeers
@@ -11,7 +11,7 @@ spec:
   peerAddress: 11.11.11.254
   peerASN: 8002
   myASN: 7003
-  holdTime: "180s"
+  holdTime: 3m0s
   bfdProfile: bfd-profile
   peerPort: 179
   nodeSelectors:
