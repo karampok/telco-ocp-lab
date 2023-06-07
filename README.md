@@ -1,4 +1,4 @@
-# Agent-based  on virtual infrastructure
+# Agent-based/ZTP  on virtual infrastructure
 
 POC on OCP v4.12.z with complex network setup
 
@@ -6,9 +6,9 @@ POC on OCP v4.12.z with complex network setup
 
 ![net-diagram](net-diagram.png)
 
-## Experiment
+## Experiments
 
-- Dual stack / Single stack 
+- Dual stack / Single stack
 - W/o proxy for the connected installation
 - RoutingViaHost // local gateway (instead of default shared gateway)
 - MTU 9000k
@@ -21,7 +21,9 @@ POC on OCP v4.12.z with complex network setup
 - API/VIPs both IPv4/IPv6
 - MultiNodes 3x master, 1x+ workers
 
-## Tutorial
+## DEMO
 
-Given the virtual environment in place, manually run commands inside the [install-5gc.sh](install-5gc.sh) 
-bash script
+- Deploy SNO using Agent-Based with LVMO for storage and gitops
+- Prepare SNO to be a HUB cluster (== install ACM/ZTP/add git repo, this in gitops branch)
+- Spoke deployment should start (note: apply secrets to unblock)
+- https://asciinema.org/a/590120
