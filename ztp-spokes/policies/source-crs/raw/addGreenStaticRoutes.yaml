@@ -11,6 +11,11 @@ spec:
   desiredState:
     routes:
       config:
+        - destination: 201.100.100.0/24
+          metric: 0
+          next-hop-address: 11.11.11.254
+          next-hop-interface: bond0.11
+          table-id: 254
         - destination: 203.100.100.0/24
           metric: 0
           next-hop-address: 11.11.11.254
