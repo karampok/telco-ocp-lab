@@ -2,17 +2,20 @@
 apiVersion: ran.openshift.io/v1alpha1
 kind: ClusterGroupUpgrade
 metadata:
-  name: 5gc-x1
+  name: 5gc-x
   namespace: ztp-install
 spec:
   clusters:
     - 5gc
   enable: true
   managedPolicies:
-    - common-config-policy
-    - label-ht-worker-label-nodes
     - common-config-network
+    - common-config-policy
     - common-install-operators
+    - label-ht-worker-label-nodes
+    - htworker-config-nodes
+    - networks-config-metallb
+    - networks-config-static-routes
   remediationStrategy:
     maxConcurrency: 1
     timeout: 240
