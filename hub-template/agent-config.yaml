@@ -1,0 +1,56 @@
+---
+# https://github.com/openshift/installer/blob/master/pkg/types/agent/agent_config_type.go#L17
+apiVersion: v1alpha1
+metadata:
+  name: hub
+additionalNTPSources:
+  - pool.ntp.org
+hosts:
+  - hostname: hub-node
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/vda"
+    interfaces:
+      - name: ens3
+        macAddress: de:ad:be:ff:11:60
+    networkConfig:
+      interfaces:
+        - name: ens3
+          type: ethernet
+          state: up
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.10.20.225
+                prefix-length: 24
+            dhcp: false
+          ipv6:
+            address:
+              - ip: 2600:50:50:50::225
+                prefix-length: 64
+            enabled: true
+      dns-resolver:
+        config:
+          server:
+            - 10.10.20.10
+      routes:
+        config:
+          - destination: ::/0
+            next-hop-address: 2600:50:50:50::254
+            next-hop-interface: ens3
+            metric: 200
+            table-id: 254
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.10.20.254
+            next-hop-interface: ens3
+            table-id: 254
+          - destination: 10.10.10.0/24
+            next-hop-address: 10.10.20.1
+            next-hop-interface: ens3
+            metric: 100
+            table-id: 254
+          - destination: 10.10.10.0/24
+            next-hop-address: 10.10.20.2
+            next-hop-interface: ens3
+            metric: 200
+            table-id: 254
