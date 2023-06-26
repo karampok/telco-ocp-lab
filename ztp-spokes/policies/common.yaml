@@ -9,6 +9,8 @@ spec:
     common: "true"
   remediationAction: inform
   sourceFiles:
+    - fileName: "MastersSchedulable.yaml"
+      policyName: "config-cluster"
     - fileName: metallb/ns.yaml
       policyName: "install-operators"
     - fileName: metallb/operatorGroup.yaml
