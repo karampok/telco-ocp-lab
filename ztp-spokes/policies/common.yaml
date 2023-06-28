@@ -39,3 +39,7 @@ spec:
             type: Raw
     - fileName: ReduceMonitoringFootprint.yaml
       policyName: "config-policy"
+    - fileName: ClusterVersion.yaml
+      policyName: "cluster-version"
+      spec:
+        channel: stable-4.13

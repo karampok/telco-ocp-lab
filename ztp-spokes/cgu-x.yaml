@@ -2,7 +2,7 @@
 apiVersion: ran.openshift.io/v1alpha1
 kind: ClusterGroupUpgrade
 metadata:
-  name: 5gc-x1
+  name: 5gc-x2
   namespace: ztp-install
 spec:
   clusters:
