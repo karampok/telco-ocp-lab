@@ -260,7 +260,7 @@ spec:
                     port:
                       - ens3
                       - ens4
-                  copy-mac-from: ens3
+                  mac-address: de:ad:be:ff:11:90
                 - name: bond0.10
                   type: vlan
                   state: up
