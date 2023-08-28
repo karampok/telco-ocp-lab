@@ -231,70 +231,70 @@ spec:
                     next-hop-address: 10.10.10.1
                     next-hop-interface: bond0.10
                     table-id: 254
-# - hostName: 5gc-w0
-#   role: worker
-#   bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111113
-#   bmcCredentialsName:
-#     name: "5gc-w0-secret"
-#   bootMACAddress: "de:ad:be:ff:11:90"
-#   bootMode: "UEFI"
-#   rootDeviceHints:
-#     deviceName: "/dev/vda"
-#   cpuset: "0,1,7,8"
-#   nodeNetwork:
-#     interfaces:
-#       - name: ens3
-#         macAddress: de:ad:be:ff:11:90
-#       - name: ens4
-#         macAddress: de:ad:be:ff:11:91
-#     config:
-#       interfaces:
-#         - name: bond0
-#           type: bond
-#           state: up
-#           mtu: 9000
-#           link-aggregation:
-#             mode: active-backup
-#             options:
-#               miimon: '140'
-#             port:
-#               - ens3
-#               - ens4
-#         - name: bond0.10
-#           type: vlan
-#           state: up
-#           vlan:
-#             base-iface: bond0
-#             id: 10
-#           ipv4:
-#             enabled: true
-#             address:
-#               - ip: 10.10.10.119
-#                 prefix-length: 24
-#             dhcp: false
-#           ipv6:
-#             enabled: false
-#         - name: bond0.11
-#           type: vlan
-#           state: up
-#           vlan:
-#             base-iface: bond0
-#             id: 11
-#           ipv4:
-#             enabled: true
-#             address:
-#               - ip: 11.11.11.119
-#                 prefix-length: 24
-#             dhcp: false
-#           ipv6:
-#             enabled: false
-#       dns-resolver:
-#         config:
-#           server:
-#             - 10.10.20.10
-#       routes:
-#         config:
-#           - destination: 0.0.0.0/0
-#             next-hop-address: 10.10.10.1
-#             next-hop-interface: bond0.10
-#             table-id: 254
+        - hostName: 5gc-w0
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:90"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          cpuset: "0,1,2,3"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:90
+              - name: ens4
+                macAddress: de:ad:be:ff:11:91
+            config:
+              interfaces:
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: '140'
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 11.11.11.119
+                        prefix-length: 24
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
