@@ -34,8 +34,6 @@ spec:
           kubeletconfig.experimental: |
             {"systemReserved": {"memory": "6Gi"}, "topologyManagerScope": "pod"}`
       spec:
-        additionalKernelArgs:
-          - "nohz_full=4-15"
         cpu:
           isolated: "4-23"
           reserved: "0-3"
