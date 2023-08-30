@@ -16,6 +16,7 @@ spec:
         name: ht100gb
         labels:
           machineconfiguration.openshift.io/role: ht100gb
+          pools.operator.machineconfiguration.openshift.io/ht100gb: ""
       spec:
         machineConfigSelector:
           matchExpressions:
