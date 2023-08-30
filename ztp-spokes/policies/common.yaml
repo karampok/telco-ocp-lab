@@ -39,15 +39,15 @@ spec:
             type: Raw
     - fileName: ReduceMonitoringFootprint.yaml
       policyName: "config-policy"
-    # - fileName: ClusterVersion.yaml
-    #   policyName: "platform-upgrade"
-    #   metadata:
-    #     name: version
-    #   spec:
-    #     channel: "fast-4.12"
-    #     desiredUpdate:
-    #       version: 4.12.21
-    #   status:
-    #     history:
-    #       - version: 4.12.21
-    #         state: "Completed"
+    - fileName: ClusterVersion.yaml
+      policyName: "platform-upgrade"
+      metadata:
+        name: version
+      spec:
+        channel: "stable-4.12"
+        desiredUpdate:
+          version: 4.12.29
+      status:
+        history:
+          - version: 4.12.29
+            state: "Completed"
