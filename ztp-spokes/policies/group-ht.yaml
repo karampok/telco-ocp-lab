@@ -36,12 +36,12 @@ spec:
         additionalKernelArgs:
           - "nohz_full=4-15"
         cpu:
-          isolated: "4-15"
+          isolated: "4-23"
           reserved: "0-3"
         hugepages:
           defaultHugepagesSize: 1G
           pages:
-            - size: 1G
+            - size: 2G
               count: 4
         numa:
           topologyPolicy: single-numa-node
