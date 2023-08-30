@@ -32,7 +32,7 @@ spec:
         name: performance-ht100gb
         annotations:
           kubeletconfig.experimental: |
-            {"systemReserved": {"memory": "6Gi"}, "topologyManagerScope": "pod"}`
+            {"systemReserved": {"memory": "6Gi"}, "topologyManagerScope": "pod"}
       spec:
         cpu:
           isolated: "4-23"
