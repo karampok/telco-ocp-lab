@@ -11,6 +11,22 @@ spec:
   sourceFiles:
     - fileName: "MastersSchedulable.yaml"
       policyName: "config-cluster"
+    # install and configure SR-IOV operator
+    - fileName: SriovSubscriptionNS.yaml
+      policyName: "sriov-operator-policy"
+    - fileName: SriovSubscriptionOperGroup.yaml
+      policyName: "sriov-operator-policy"
+    - fileName: SriovSubscription.yaml
+      policyName: "sriov-operator-policy"
+      spec:
+        channel: "4.14"
+        source: redhat-operators-disconnected
+        installPlanApproval: "Automatic"
+    - fileName: SriovOperatorConfig.yaml
+      policyName: "sriov-operator-policy-config"
+      spec:
+        configDaemonNodeSelector:
+          node-role.kubernetes.io/ht100gb: ""
     - fileName: metallb/ns.yaml
       policyName: "install-operators"
     - fileName: metallb/operatorGroup.yaml
@@ -19,6 +35,7 @@ spec:
       policyName: "install-operators"
     - fileName: metallb/instance.yaml
       policyName: "install-operators"
+    # install NMState operator
     - fileName: nmstate/subscription.yaml
       policyName: "install-operators"
     - fileName: nmstate/ns.yaml
