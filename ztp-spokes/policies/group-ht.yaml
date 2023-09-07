@@ -25,7 +25,7 @@ spec:
         resourceName: sriovleftdpdk
         nodeSelector:
           node-role.kubernetes.io/ht100gb: ""
-        mtu: 1492  # maybe bug in ixgbe driver
+        # mtu: 1492  # maybe bug in ixgbe driver
         numVfs: 4
         nicSelector:
           pfNames: ['enp41s0']
