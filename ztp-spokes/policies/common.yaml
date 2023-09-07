@@ -20,6 +20,8 @@ spec:
       policyName: "install-operators"
     - fileName: SriovSubscription.yaml
       policyName: "install-operators"
+    - fileName: SriovSupportedNicCM.yaml
+      policyName: "install-operators"
     - fileName: SriovOperatorConfig.yaml
       policyName: "config-operators"
       spec:

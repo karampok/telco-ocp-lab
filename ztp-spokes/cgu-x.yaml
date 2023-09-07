@@ -2,7 +2,7 @@
 apiVersion: ran.openshift.io/v1alpha1
 kind: ClusterGroupUpgrade
 metadata:
-  name: 5gc-x2
+  name: 5gc-x1
   namespace: ztp-install
 spec:
   clusters:
@@ -17,7 +17,7 @@ spec:
     - common-platform-upgrade
     - label-ht-worker-label-nodes
     - htworker-config-nodes
-    - htworker-config-sriov-nnp
+    - htworker-config-sriov
     - networks-config-metallb
     - networks-config-static-routes
   remediationStrategy:
