@@ -11,6 +11,8 @@ spec:
   sourceFiles:
     - fileName: "MastersSchedulable.yaml"
       policyName: "config-cluster"
+    - fileName: ReduceMonitoringFootprint.yaml
+      policyName: "config-policy"
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
       policyName: "install-operators"
@@ -51,8 +53,6 @@ spec:
             namespace: default
             rawCNIConfig: '{ "cniVersion": "0.3.1", "name": "macvlan", "plugins": [ {"type": "macvlan","master": "bond0.11", "mtu": 1500, "mode": "bridge", "ipam": { "type": "whereabouts", "range": "2520:41:0:2106::/64","gateway": "2520:41:0:2106::1" } }, {"type":"tuning","sysctl":{"net.ipv6.conf.IFNAME.accept_ra":"0"}} ]}'
             type: Raw
-    - fileName: ReduceMonitoringFootprint.yaml
-      policyName: "config-policy"
     - fileName: ClusterVersion.yaml
       policyName: "platform-upgrade"
       metadata:

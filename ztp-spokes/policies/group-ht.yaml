@@ -10,8 +10,23 @@ spec:
   remediationAction: inform
   mcp: "ht100gb"
   sourceFiles:
+    # configure SR-IOV Network Node Policy
+    - fileName: SriovNetworkNodePolicy.yaml
+      policyName: config-sriov-nnp
+      metadata:
+        name: sriovleftdpdk
+      spec:
+        resourceName: "sriovleftdpdk"
+        nodeSelector:
+          node-role.kubernetes.io/ht100gb: ""
+        mtu: 9000
+        numVfs: 4
+        nicSelector:
+          pfNames: ['enp41s0']
+        deviceType: netdevice
+    # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
-      policyName: "config-nodes"
+      policyName: config-nodes
       metadata:
         name: ht100gb
         labels:
@@ -27,7 +42,7 @@ spec:
           matchLabels:
             node-role.kubernetes.io/ht100gb: ""
     - fileName: PerformanceProfile.yaml
-      policyName: "config-nodes"
+      policyName: config-nodes
       metadata:
         name: performance-ht100gb
         annotations:
@@ -50,5 +65,3 @@ spec:
           perPodPowerManagement: false
         realTimeKernel:
           enabled: false
-    # https://github.com/openshift-kni/cnf-features-deploy/blob/efe8c5ddcad32b5d0b8c58f51d391aafc96fe77d/ztp/gitops-subscriptions/argocd/example/policygentemplates/group-du-sno-ranGen.yaml#L124-L140
-    # https://github.com/openshift-kni/cnf-features-deploy/blob/efe8c5ddcad32b5d0b8c58f51d391aafc96fe77d/ztp/gitops-subscriptions/argocd/example/policygentemplates/group-du-sno-ranGen.yaml#L196-L221
