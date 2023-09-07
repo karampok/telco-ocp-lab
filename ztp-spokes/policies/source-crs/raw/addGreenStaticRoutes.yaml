@@ -4,7 +4,7 @@ kind: NodeNetworkConfigurationPolicy
 metadata:
   name: green-back-traffic
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "2"
+    ran.openshift.io/ztp-deploy-wave: "10"
 spec:
   nodeSelector:
     node-role.kubernetes.io/worker: ''
