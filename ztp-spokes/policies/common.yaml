@@ -13,17 +13,13 @@ spec:
       policyName: "config-cluster"
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
-      policyName: "sriov-operator-policy"
+      policyName: "install-operators"
     - fileName: SriovSubscriptionOperGroup.yaml
-      policyName: "sriov-operator-policy"
+      policyName: "install-operators"
     - fileName: SriovSubscription.yaml
-      policyName: "sriov-operator-policy"
-      spec:
-        channel: "4.14"
-        source: redhat-operators-disconnected
-        installPlanApproval: "Automatic"
+      policyName: "install-operators"
     - fileName: SriovOperatorConfig.yaml
-      policyName: "sriov-operator-policy-config"
+      policyName: "config-sriov-operator"
       spec:
         configDaemonNodeSelector:
           node-role.kubernetes.io/ht100gb: ""
@@ -34,37 +30,38 @@ spec:
     - fileName: metallb/subscription.yaml
       policyName: "install-operators"
     - fileName: metallb/instance.yaml
-      policyName: "install-operators"
+      policyName: "config-operators"
     # install NMState operator
-    - fileName: nmstate/subscription.yaml
-      policyName: "install-operators"
-    - fileName: nmstate/ns.yaml
-      policyName: "install-operators"
-    - fileName: nmstate/operatorGroup.yaml
-      policyName: "install-operators"
-    - fileName: nmstate/instance.yaml
-      policyName: "install-operators"
-    - fileName: RoutingViaHost.yaml
-      policyName: "config-network"
-    - fileName: AddAdditionalNetworks.yaml
-      policyName: "config-network"
-      spec:
-        additionalNetworks:
-          - name: mh-macvlan
-            namespace: default
-            rawCNIConfig: '{ "cniVersion": "0.3.1", "name": "macvlan", "plugins": [ {"type": "macvlan","master": "bond0.11", "mtu": 1500, "mode": "bridge", "ipam": { "type": "whereabouts", "range": "2520:41:0:2106::/64","gateway": "2520:41:0:2106::1" } }, {"type":"tuning","sysctl":{"net.ipv6.conf.IFNAME.accept_ra":"0"}} ]}'
-            type: Raw
-    - fileName: ReduceMonitoringFootprint.yaml
-      policyName: "config-policy"
-    - fileName: ClusterVersion.yaml
-      policyName: "platform-upgrade"
-      metadata:
-        name: version
-      spec:
-        channel: "stable-4.12"
-        desiredUpdate:
-          version: 4.12.29
-      status:
-        history:
-          - version: 4.12.29
-            state: "Completed"
+    # - fileName: nmstate/subscription.yaml
+    #   policyName: "install-operators"
+    # - fileName: nmstate/ns.yaml
+    #   policyName: "install-operators"
+    # - fileName: nmstate/operatorGroup.yaml
+    #   policyName: "install-operators"
+    # - fileName: nmstate/instance.yaml
+    #   policyName: "config-operators"
+    # # other networking config
+    # - fileName: RoutingViaHost.yaml
+    #   policyName: "config-network"
+    # - fileName: AddAdditionalNetworks.yaml
+    #   policyName: "config-network"
+    #   spec:
+    #     additionalNetworks:
+    #       - name: mh-macvlan
+    #         namespace: default
+    #         rawCNIConfig: '{ "cniVersion": "0.3.1", "name": "macvlan", "plugins": [ {"type": "macvlan","master": "bond0.11", "mtu": 1500, "mode": "bridge", "ipam": { "type": "whereabouts", "range": "2520:41:0:2106::/64","gateway": "2520:41:0:2106::1" } }, {"type":"tuning","sysctl":{"net.ipv6.conf.IFNAME.accept_ra":"0"}} ]}'
+    #         type: Raw
+    # - fileName: ReduceMonitoringFootprint.yaml
+    #   policyName: "config-policy"
+    # - fileName: ClusterVersion.yaml
+    #   policyName: "platform-upgrade"
+    #   metadata:
+    #     name: version
+    #   spec:
+    #     channel: "stable-4.12"
+    #     desiredUpdate:
+    #       version: 4.12.29
+    #   status:
+    #     history:
+    #       - version: 4.12.29
+    #         state: "Completed"
