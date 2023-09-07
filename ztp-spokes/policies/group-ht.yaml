@@ -10,13 +10,19 @@ spec:
   remediationAction: inform
   mcp: "ht100gb"
   sourceFiles:
-    # configure SR-IOV Network Node Policy
+    # configure SR-IOV
+    - fileName: SriovNetwork.yaml
+      policyName: config-sriov
+      metadata:
+        name: "sriov-nw-du-fh"
+      spec:
+        resourceName: sriovleftdpdk
     - fileName: SriovNetworkNodePolicy.yaml
-      policyName: config-sriov-nnp
+      policyName: config-sriov
       metadata:
         name: sriovleftdpdk
       spec:
-        resourceName: "sriovleftdpdk"
+        resourceName: sriovleftdpdk
         nodeSelector:
           node-role.kubernetes.io/ht100gb: ""
         mtu: 9000
