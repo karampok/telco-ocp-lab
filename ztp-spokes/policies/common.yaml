@@ -23,14 +23,14 @@ spec:
       spec:
         configDaemonNodeSelector:
           node-role.kubernetes.io/ht100gb: ""
-    - fileName: metallb/ns.yaml
-      policyName: "install-operators"
-    - fileName: metallb/operatorGroup.yaml
-      policyName: "install-operators"
-    - fileName: metallb/subscription.yaml
-      policyName: "install-operators"
-    - fileName: metallb/instance.yaml
-      policyName: "config-operators"
+    # - fileName: metallb/ns.yaml
+    #   policyName: "install-operators"
+    # - fileName: metallb/operatorGroup.yaml
+    #   policyName: "install-operators"
+    # - fileName: metallb/subscription.yaml
+    #   policyName: "install-operators"
+    # - fileName: metallb/instance.yaml
+    #   policyName: "config-operators"
     # install NMState operator
     # - fileName: nmstate/subscription.yaml
     #   policyName: "install-operators"
