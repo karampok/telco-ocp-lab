@@ -14,7 +14,6 @@ spec:
     - fileName: SriovNetwork.yaml
       policyName: config-sriov
       metadata:
-        namespace: default
         name: "leftnet"
       spec:
         resourceName: sriovleftdpdk
@@ -51,7 +50,7 @@ spec:
     - fileName: PerformanceProfile.yaml
       policyName: config-nodes
       metadata:
-        name: performance-ht100gb
+        name: ht100gb
         annotations:
           kubeletconfig.experimental: |
             {"systemReserved": {"memory": "6Gi"}, "topologyManagerScope": "pod"}
