@@ -10,7 +10,7 @@ metadata:
 spec:
   displayName: Openshift Metallb Operator
   icon:
-    base64data: ""
+    base64data: "
     mediatype: ""
   #image: quay.io/openshift-kni/performance-addon-operator-index:4.9-snapshot
   image: $imageUrl

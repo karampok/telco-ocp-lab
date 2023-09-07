@@ -19,7 +19,7 @@ spec:
     - fileName: SriovSubscription.yaml
       policyName: "install-operators"
     - fileName: SriovOperatorConfig.yaml
-      policyName: "config-sriov-operator"
+      policyName: "config-operators"
       spec:
         configDaemonNodeSelector:
           node-role.kubernetes.io/ht100gb: ""
