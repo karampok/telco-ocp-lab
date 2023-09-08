@@ -9,17 +9,18 @@ spec:
     - 5gc
   enable: true
   managedPolicies:
-    - common-config-cluster
-    - common-config-network
-    - common-install-operators
-    - common-config-operators
-    - common-config-policy
-    - common-platform-upgrade
-    - label-ht-worker-label-nodes
-    - htworker-config-nodes
-    - htworker-config-sriov
-    - networks-config-metallb
-    - networks-config-static-routes
+    # - common-config-cluster
+    # - common-config-network
+    # - common-install-operators
+    # - common-config-operators
+    # - common-config-policy
+    # - common-platform-upgrade
+    # - label-ht-worker-label-nodes
+    # - htworker-config-nodes
+    - htworker-config-sriov-sn
+    - htworker-config-sriov-snnp
+    # - networks-config-metallb
+    # - networks-config-static-routes
   remediationStrategy:
     maxConcurrency: 1
     timeout: 240

@@ -12,11 +12,17 @@ spec:
   sourceFiles:
     # configure SR-IOV
     - fileName: SriovNetwork.yaml
-      policyName: config-sriov
+      policyName: config-sriov-sn
       metadata:
         name: "leftnet"
       spec:
         resourceName: sriovleftdpdk
+    - fileName: SriovNetwork.yaml
+      policyName: config-sriov-sn
+      metadata:
+        name: "rightnet"
+      spec:
+        resourceName: sriovrightdpdk
     - fileName: SriovNetworkNodePolicy.yaml
       policyName: config-sriov-snnp
       metadata:
@@ -28,6 +34,18 @@ spec:
         numVfs: 4
         nicSelector:
           pfNames: ['enp41s0']
+        deviceType: netdevice
+    - fileName: SriovNetworkNodePolicy.yaml
+      policyName: config-sriov-snnp
+      metadata:
+        name: sriovrightdpdk
+      spec:
+        resourceName: sriovrightdpdk
+        nodeSelector:
+          node-role.kubernetes.io/ht100gb: ""
+        numVfs: 4
+        nicSelector:
+          pfNames: ['enp42s0']
         deviceType: netdevice
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
