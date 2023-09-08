@@ -1,0 +1,84 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+      {"name": "leftnet",
+       "namespace": "openshift-sriov-network-operator"
+      },
+      {
+       "name": "leftnet",
+       "namespace": "openshift-sriov-network-operator"
+      }]'
+    cpu-load-balancing.crio.io: "disable"
+    cpu-quota.crio.io: "disable"
+    irq-load-balancing.crio.io: "disable"
+  labels:
+    app: dpdk
+  name: dpdk
+  namespace: default
+spec:
+  runtimeClassName: performance-ht100gb
+  tolerations:
+    - key: "sriov"
+      operator: "Exists"
+      effect: "NoSchedule"
+  containers:
+    - command: ["bash", "-c"]
+      args: ["start-testpmd.sh noexec"]
+      env:
+        - name: CHANNELS
+          value: "2"
+        - name: LEFT_MAC
+          value: 10:00:00:00:00:12
+        - name: RIGHT_MAC
+          value: 10:00:00:00:00:12
+        - name: ARGS
+          value: --cmdline-file=/opt/my-args.txt
+      image: quay.io/karampok/dpdk:latest
+      imagePullPolicy: Always
+      name: io
+      resources:
+        limits:
+          cpu: "4"
+          hugepages-1Gi: 1Gi
+          memory: 1Gi
+        requests:
+          cpu: "4"
+          hugepages-1Gi: 1Gi
+          memory: 1Gi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - IPC_LOCK
+            - SYS_RESOURCE
+            - NET_RAW
+            - NET_ADMIN
+        runAsUser: 0
+      volumeMounts:
+        - mountPath: /mnt/huge
+          name: hugepages
+        - name: args-file
+          mountPath: /opt/my-args.txt
+          subPath: txt
+  terminationGracePeriodSeconds: 5
+  volumes:
+    - emptyDir:
+        medium: HugePages
+      name: hugepages
+    - name: args-file
+      configMap:
+        name: testpmd-args
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: testpmd-args
+  namespace: default
+data:
+  txt: |
+    set promisc all off

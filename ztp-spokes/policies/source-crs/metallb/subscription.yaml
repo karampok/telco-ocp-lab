@@ -4,6 +4,8 @@ kind: Subscription
 metadata:
   name: metallb-operator-sub
   namespace: metallb-system
+  labels:
+    operators.coreos.com/metallb-operator.metallb-system: ""
   annotations:
     ran.openshift.io/ztp-deploy-wave: "2"
 spec:

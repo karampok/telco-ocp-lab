@@ -5,7 +5,7 @@ metadata:
   name: greenpeers
   namespace: metallb-system
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "2"
+    ran.openshift.io/ztp-deploy-wave: "10"
 spec:
   keepaliveTime: 0s
   peerAddress: 11.11.11.254
@@ -18,5 +18,5 @@ spec:
     - matchExpressions:
         - key: kubernetes.io/hostname
           operator: In
-          values: [5gc-m2]
+          values: [5gc-m0, 5gc-m1,5gc-m2]
   passwordSecret: {}
