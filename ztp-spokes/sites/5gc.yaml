@@ -12,7 +12,9 @@ spec:
   sshPublicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeiSA3IDCWxow/r7m4tTwDnOmj3+KeIaUWxQI2KAwabM8wrJkwJR1+KHsKT+HDMW1yXXWYlXOAxOzGGzoBSLmH4P64npxHGIRkAAk+SP5YKXpgv3K/Ivqx/5qmZpIzpxyhgZUOZwvyyBtgJm3BZhb/IKrILllN/FtbLLZ8Ie/uERs33ReVvtZWyYVcVm5/CCb5ZojQlIzgNXJ0xKAQJd9zIce1MzWCK1/OgO3W4Q8c/LiOpNhNjbMGtAvasEwVsH4hCIggCJcKxQSceM8kkcY9HfjoW7zT/jzXY3PEW9lVSvh7WGHWZ748JeAwNC1GEPENpJ9pcH8pR3Vlx3VxjqBn cardno:000605977679"
   clusters:
     - clusterName: "5gc"
-      extraManifestPath: extra-manifest/
+      extraManifest:
+        searchPaths:
+          - extra-manifest/
       networkType: "OVNKubernetes"
       clusterLabels:
         common: true

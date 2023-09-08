@@ -18,5 +18,5 @@ spec:
     - matchExpressions:
         - key: kubernetes.io/hostname
           operator: In
-          values: [5gc-m1, 5gc-m2]
+          values: [5gc-m0, 5gc-m1,5gc-m2]
   passwordSecret: {}
