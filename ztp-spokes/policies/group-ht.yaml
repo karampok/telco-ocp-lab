@@ -18,14 +18,13 @@ spec:
       spec:
         resourceName: sriovleftdpdk
     - fileName: SriovNetworkNodePolicy.yaml
-      policyName: config-sriov
+      policyName: config-sriov-snnp
       metadata:
         name: sriovleftdpdk
       spec:
         resourceName: sriovleftdpdk
         nodeSelector:
           node-role.kubernetes.io/ht100gb: ""
-        # mtu: 1492  # maybe bug in ixgbe driver
         numVfs: 4
         nicSelector:
           pfNames: ['enp41s0']
