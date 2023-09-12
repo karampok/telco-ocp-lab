@@ -11,7 +11,7 @@ spec:
   managedPolicies:
     # - common-config-cluster
     # - common-config-network
-    # - common-install-operators
+    - common-install-operators
     # - common-config-operators
     # - common-config-policy
     # - common-platform-upgrade

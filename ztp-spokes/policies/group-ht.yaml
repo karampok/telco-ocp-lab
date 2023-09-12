@@ -34,7 +34,7 @@ spec:
         numVfs: 4
         nicSelector:
           pfNames: ['enp41s0']
-        deviceType: netdevice
+        deviceType: vfio-pci
     - fileName: SriovNetworkNodePolicy.yaml
       policyName: config-sriov-snnp
       metadata:
@@ -46,7 +46,7 @@ spec:
         numVfs: 4
         nicSelector:
           pfNames: ['enp42s0']
-        deviceType: netdevice
+        deviceType: vfio-pci
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
       policyName: config-nodes
