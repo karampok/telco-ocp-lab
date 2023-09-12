@@ -14,7 +14,7 @@ spec:
       policyName: config-virt-vfio-noiommu
       metadata:
         labels:
-          machineconfiguration.openshift.io/role: ht100gb
+          node-role.kubernetes.io/ht100gb: ""
         name: vfio-virt-noiommu
       spec:
         config:
