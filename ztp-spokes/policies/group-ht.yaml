@@ -12,6 +12,9 @@ spec:
   sourceFiles:
     - fileName: VfioVirtMC.yaml
       policyName: config-virt-vfio-noiommu
+      metadata:
+        labels:
+          machineconfiguration.openshift.io/role: worker
     # configure SR-IOV
     - fileName: SriovNetwork.yaml
       policyName: config-sriov-sn
