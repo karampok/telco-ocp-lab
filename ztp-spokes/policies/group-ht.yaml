@@ -10,6 +10,8 @@ spec:
   remediationAction: inform
   mcp: "ht100gb"
   sourceFiles:
+    - fileName: VfioVirtMC.yaml
+      policyName: config-virt-vfio-noiommu
     # configure SR-IOV
     - fileName: SriovNetwork.yaml
       policyName: config-sriov-sn
