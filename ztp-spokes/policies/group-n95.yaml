@@ -21,7 +21,10 @@ spec:
           - matchExpressions:
               - key: kubernetes.io/hostname
                 operator: In
-                values: [5gc-m0, 5gc-m1,5gc-m2]
+                values:
+                  - m0.5gc.eric.vlab
+                  - m1.5gc.eric.vlab
+                  - m2.5gc.eric.vlab
     - fileName: metallb/community.yaml
       policyName: "config-metallb"
       spec:
