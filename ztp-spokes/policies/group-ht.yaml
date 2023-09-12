@@ -24,7 +24,7 @@ spec:
           systemd:
             units:
               - enabled: true
-                name: vfio-virt-noiommu
+                name: vfio.service
                 contents: |
                   [Unit]
                   Description=vfio no-iommu
