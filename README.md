@@ -22,9 +22,10 @@ POC on OCP v4.1X.z with complex network setup
 
 ```
 ssh root@lab0
-dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq tcpdump bind-utils wireguard-tools
+dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq tcpdump bind-utils #wireguard-tools
 systemctl enable --now libvirtd
 systemctl disable firewalld && systemctl stop firewalld
+hostnamectl set-hostname lab0
 
 curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | sudo bash
 kcli create pool -p /var/lib/libvirt/images default
@@ -40,4 +41,5 @@ git clone -b dev https://github.com/karampok/telco-ocp-lab.git
 dnf -y install https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
 dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 dnf -y install kmod-wireguard wireguard-tools
+
 ```

@@ -28,3 +28,8 @@ spec:
       url: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/4.12/4.12.0/rhcos-4.12.0-x86_64-live.x86_64.iso"
       rootFSUrl: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/4.12/4.12.0/rhcos-4.12.0-x86_64-live-rootfs.x86_64.img"
       cpuArchitecture: "x86_64"
+    - openshiftVersion: "4.13"
+      version: "413.92.202305041429-0"
+      url: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/4.13/latest/rhcos-live.x86_64.iso"
+      rootFSUrl: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/4.13/latest/rhcos-live-rootfs.x86_64.img"
+      cpuArchitecture: "x86_64"
