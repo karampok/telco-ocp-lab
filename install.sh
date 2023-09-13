@@ -12,7 +12,6 @@ SSHPUBKEY=$(cat "${SSHPUBKEYFILE:-.id-rsa.pub}")
 sed -i "s|SSHPUBKEY|$SSHPUBKEY|" /share/hub/install-config.yaml
 sed -i "s/PULLSECRET/$PULL_SECRET/g" /share/hub/install-config.yaml
 
-
 openshift-install agent create image --log-level info  --dir /share/hub
 
 #read -p -r # discovery ISO created // nmstatectl required
@@ -26,7 +25,9 @@ media_insert "$node" http://10.10.20.200:9000/hub/agent.x86_64.iso
 boot_once "$node" #dummy in sushy
 power_on "$node"
 
+
+mkdir -p ~/.kube && cp /share/hub/auth/kubeconfig ~/.kube/config
 cat << EOF
-export KUBECONFIG=./deployments/5gc/auth/kubeconfig
-openshift-install agent wait-for install-complete --log-level info --dir "./deployments/5gc"
+export KUBECONFIG=/share/hub/auth/kubeconfig
+openshift-install agent wait-for install-complete --log-level info --dir /share/hub
 EOF
