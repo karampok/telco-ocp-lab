@@ -2,7 +2,7 @@
 set -euoE pipefail
 
 REPO=${GITREPO:-karampok/telco-ocp-lab.git}
-KEY=${GITKEY_FILE:-./github-argo}
+KEY=${GITKEY_FILE:-.github-argo}
 
 if [[ ! -f $KEY ]]
 then

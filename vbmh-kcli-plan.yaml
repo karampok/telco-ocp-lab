@@ -71,13 +71,13 @@ hub:
       mac: 02:ca:fe:fa:ce:aa
       noconf: true
       numa: 1
-      vfio: true
-      type: igb
-    - name: dataplane
-      noconf: true
-      vfio: true
-  #     numa: 1
-  #     type: igb
+  #   vfio: true
+  #   type: igb
+  # - name: dataplane
+  #   noconf: true
+  #   vfio: true
+  #   numa: 1
+  #   type: igb
   # numamode: preferred
   # cpupinning:
   #   - vcpus: 0,2,4,6,8,10,12,14
