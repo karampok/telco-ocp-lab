@@ -32,7 +32,8 @@ kcli create pool -p /var/lib/libvirt/images default
 
 git clone -b dev https://github.com/karampok/telco-ocp-lab.git
 #scp ~/.pull-secret.json ~/.id-rsa.pub ~/.github-argo root@lab0:/root/telco-ocp-lab
-./sinfra -setupInfra
+./sinfra --setupInfra # double check vbmh-kcli-plan.yaml
+podman logs workstations
 ```
 
 ## Wireguard on RHEL 8.X
