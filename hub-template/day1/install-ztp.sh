@@ -4,12 +4,12 @@ set -euoE pipefail
 out=/tmp/out
 mkdir -p "$out"
 
-
-podman run --log-driver=none --rm --authfile=/workdir/.pull-secret.json \
-  registry.redhat.io/openshift4/ztp-site-generate-rhel8:v4.12 extract /home/ztp/argocd/deployment --tar | tar x -C "$out"
+PULL_SECRET_PATH=${PULL_SECRET_PATH:-.pull-secret.json}
+podman run --log-driver=none --rm --authfile="$PULL_SECRET_PATH" \
+  registry.redhat.io/openshift4/ztp-site-generate-rhel8:v4.13 extract /home/ztp/argocd/deployment --tar | tar x -C "$out"
 
 # or
-# git clone -b release-4.12 git@github.com:openshift-kni/cnf-features-deploy.git /tmp/out
+# git clone -b release-4.13 git@github.com:openshift-kni/cnf-features-deploy.git /tmp/out
 # cp -r /tmp/ou2/ztp/gitops-subscriptions/argocd/deployment "$out" 
 
 oc patch argocd openshift-gitops -n openshift-gitops --type=merge \
@@ -19,7 +19,8 @@ oc patch argocd openshift-gitops -n openshift-gitops --type=merge \
 # kustomizeBuildOptions: --enable-alpha-plugins
 # add init-container
 
-REPO="git@github.com:karampok/telco-ocp-lab.git"
+REPO=${GITREPO:-karampok/telco-ocp-lab.git}
+BRANCH=${BRANCH:-gitops}
 echo "---
 apiVersion: v1
 kind: Namespace
@@ -38,8 +39,8 @@ spec:
   project: ztp-app-project
   source:
     path: ztp-spokes/sites
-    repoURL: $REPO
-    targetRevision: gitops
+    repoURL: git@github.com:$REPO
+    targetRevision: $BRANCH
   syncPolicy:
     automated:
       prune: true
@@ -65,8 +66,8 @@ spec:
   project: policy-app-project
   source:
     path: ztp-spokes/policies
-    repoURL: $REPO
-    targetRevision: gitops
+    repoURL: git@github.com:$REPO
+    targetRevision: $BRANCH
   syncPolicy:
     automated:
       prune: true

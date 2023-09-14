@@ -1,9 +1,8 @@
 #!/bin/bash
 set -euoE pipefail
 
-#TODO(karampo): make the repo/key env
-REPO=karampok/telco-ocp-lab.git
-KEY=$HOME/.ssh/github-xxxx
+REPO=${GITREPO:-karampok/telco-ocp-lab.git}
+KEY=${GITKEY_FILE:-./github-argo}
 
 if [[ ! -f $KEY ]]
 then
