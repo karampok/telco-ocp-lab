@@ -18,6 +18,7 @@ jobs:
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
+          echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
           ./sinfra --setupInfra -auto-timeout 0s
           podman logs workstation
   stage1:
@@ -56,8 +57,10 @@ jobs:
       - name: Wait SPOKE
         run: |
           COMMANDS=$(cat <<EOF
+            oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
+            timeout 1200 ./bin/watch-ztp 5gc || echo ""
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
             timeout 540 oc -n 5gc get policies -w || echo ""
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=2500s
