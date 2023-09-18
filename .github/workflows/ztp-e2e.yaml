@@ -34,7 +34,7 @@ jobs:
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
           EOF
           )
-          podman exec -it workstation  bash -c $COMMANDS
+          podman exec -it workstation  bash -c "$COMMANDS"
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
       - name: Provision SNO to be ACM/ZTPHub
@@ -46,7 +46,7 @@ jobs:
             PULL_SECRET_PATH=/workdir/.pull-secret.json ./install-ztp.sh
           EOF
           )
-          podman exec -it workstation  bash -c $COMMANDS
+          podman exec -it workstation  bash -c "$COMMANDS"
   stage2:
     name: Wait SPOKE
     runs-on: [self-hosted]
@@ -63,4 +63,4 @@ jobs:
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=2500s
           EOF
           )
-          podman exec -it workstation  bash -c $COMMANDS
+          podman exec -it workstation  bash -c "$COMMANDS"
