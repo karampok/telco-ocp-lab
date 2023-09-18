@@ -36,6 +36,16 @@ git clone -b dev https://github.com/karampok/telco-ocp-lab.git
 podman logs workstations
 ```
 
+## Podman on RHEL 9.2
+
+```
+cp /usr/share/containers/containers.conf /etc/containers/
+#enable CNI backend network_backend = "cni"
+dnf -y install containernetworking-plugins
+sysctl -w net.ipv4.ip_forward=1 #  /etc/sysctl.conf
+setenforce 0 # libvirt errors
+
+```
 ## Wireguard on RHEL 8.X
 
 ```
