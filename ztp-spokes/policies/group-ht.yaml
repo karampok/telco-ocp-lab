@@ -53,30 +53,30 @@ spec:
         name: "rightnet"
       spec:
         resourceName: sriovrightdpdk
-    - fileName: SriovNetworkNodePolicy.yaml
-      policyName: config-sriov-snnp
-      metadata:
-        name: sriovleftdpdk
-      spec:
-        resourceName: sriovleftdpdk
-        nodeSelector:
-          node-role.kubernetes.io/ht100gb: ""
-        numVfs: 4
-        nicSelector:
-          pfNames: ['enp41s0']
-        deviceType: vfio-pci
-    - fileName: SriovNetworkNodePolicy.yaml
-      policyName: config-sriov-snnp
-      metadata:
-        name: sriovrightdpdk
-      spec:
-        resourceName: sriovrightdpdk
-        nodeSelector:
-          node-role.kubernetes.io/ht100gb: ""
-        numVfs: 4
-        nicSelector:
-          pfNames: ['enp42s0']
-        deviceType: vfio-pci
+    # - fileName: SriovNetworkNodePolicy.yaml
+    #   policyName: config-sriov-snnp
+    #   metadata:
+    #     name: sriovleftdpdk
+    #   spec:
+    #     resourceName: sriovleftdpdk
+    #     nodeSelector:
+    #       node-role.kubernetes.io/ht100gb: ""
+    #     numVfs: 4
+    #     nicSelector:
+    #       pfNames: ['enp41s0']
+    #     deviceType: vfio-pci
+    # - fileName: SriovNetworkNodePolicy.yaml
+    #   policyName: config-sriov-snnp
+    #   metadata:
+    #     name: sriovrightdpdk
+    #   spec:
+    #     resourceName: sriovrightdpdk
+    #     nodeSelector:
+    #       node-role.kubernetes.io/ht100gb: ""
+    #     numVfs: 4
+    #     nicSelector:
+    #       pfNames: ['enp42s0']
+    #     deviceType: vfio-pci
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
       policyName: config-nodes
