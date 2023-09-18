@@ -58,6 +58,9 @@ jobs:
           COMMANDS=$(cat <<EOF
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
+            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+            timeout 540 oc -n 5gc get policies -w || echo ""
+            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=2500s
           EOF
           )
           sudo podman exec -it workstation  bash -c $COMMANDS
