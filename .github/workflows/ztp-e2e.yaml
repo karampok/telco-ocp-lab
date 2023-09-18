@@ -1,0 +1,63 @@
+---
+name: ztp-e2e
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
+jobs:
+  stage0:
+    name: Setup Virtual Infra
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clean Virtual Infra
+        run: |
+          sudo ./sinfra --clean -auto-timeout 0s --continue-on-error
+      - name: Setup Virtual Infra
+        run: |
+          echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
+          echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
+          sudo ./sinfra --setupInfra -auto-timeout 0s
+          sudo podman logs workstation
+  stage1:
+    name: Deploy SNO Cluster
+    runs-on: [self-hosted]
+    needs: [stage0]
+    if: needs.stage0.result == 'success'
+    steps:
+      - name: Deploy SNO using agent-based
+        run: |
+          COMMANDS=$(cat <<EOF
+            ./deploy-ocp.sh hub
+            export KUBECONFIG=/share/hub/auth/kubeconfig
+            openshift-install agent wait-for install-complete --log-level info --dir /share/hub
+          EOF
+          )
+          sudo podman exec -it workstation  bash -c $COMMANDS
+          echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
+          echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
+      - name: Provision SNO to be ACM/ZTPHub
+        run: |
+          COMMANDS=$(cat <<EOF
+            cd ./hub-template/day1
+            ./install-acm.sh
+            GITKEY_FILE=/workdir/.github-argo ./git-ssh-access.sh
+            PULL_SECRET_PATH=/workdir/.pull-secret.json ./install-ztp.sh
+          EOF
+          )
+          sudo podman exec -it workstation  bash -c $COMMANDS
+  stage2:
+    name: Wait SPOKE
+    runs-on: [self-hosted]
+    needs: [stage0, stage1]
+    if: needs.stage1.result == 'success'
+    steps:
+      - name: Wait SPOKE
+        run: |
+          COMMANDS=$(cat <<EOF
+            oc apply -k github.com/karampok/autosecret/config/default
+            echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
+          EOF
+          )
+          sudo podman exec -it workstation  bash -c $COMMANDS
