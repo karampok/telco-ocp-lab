@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Deploy SNO using agent-based
         run: |
-          podman exec -it workstation  bash -c '
+          podman exec -it workstation bash -c '
             #!/bin/bash
             set -xeuoE pipefail
             ./deploy-ocp.sh hub
@@ -39,9 +39,15 @@ jobs:
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
+  stage2:
+    name: Provision HUB Cluster
+    runs-on: [self-hosted]
+    needs: [stage1]
+    if: needs.stage0.result == 'success'
+    steps:
       - name: Provision SNO to be ACM/ZTPHub
         run: |
-          podman exec -it workstation  bash -c  '
+          podman exec -it workstation bash -c '
             #!/bin/bash
             set -xeuoE pipefail
             cd ./hub-template/day1
@@ -50,15 +56,15 @@ jobs:
             GITKEY_FILE=/workdir/.github-argo ./git-ssh-access.sh
             PULL_SECRET_PATH=/workdir/.pull-secret.json ./install-ztp.sh
           '
-  stage2:
+  stage3:
     name: Wait SPOKE
     runs-on: [self-hosted]
-    needs: [stage0, stage1]
+    needs: [stage0, stage1,stage2]
     if: needs.stage1.result == 'success'
     steps:
       - name: Wait Siteconfig
         run: |
-          podman exec -it workstation  bash -c  '
+          podman exec -it workstation bash -c '
             #!/bin/bash
             set -xeuoE pipefail
             oc apply -f bmh-secret.yaml
@@ -69,7 +75,7 @@ jobs:
           '
       - name: Wait Policies
         run: |
-          podman exec -it workstation  bash -c  '
+          podman exec -it workstation bash -c '
             #!/bin/bash
             timeout 540 oc -n 5gc get policies -w || echo ""
             oc get policies -A
