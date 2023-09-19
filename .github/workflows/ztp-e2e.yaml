@@ -43,6 +43,7 @@ jobs:
           COMMANDS=$(cat <<EOF
             cd ./hub-template/day1
             ./install-acm.sh
+            sleep 50
             GITKEY_FILE=/workdir/.github-argo ./git-ssh-access.sh
             PULL_SECRET_PATH=/workdir/.pull-secret.json ./install-ztp.sh
           EOF

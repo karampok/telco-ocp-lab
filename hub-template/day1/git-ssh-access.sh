@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euoE pipefail
+set -xeuoE pipefail
 
 REPO=${GITREPO:-karampok/telco-ocp-lab.git}
 KEY=${GITKEY_FILE:-.github-argo}
