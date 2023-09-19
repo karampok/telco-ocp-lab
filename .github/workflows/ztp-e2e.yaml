@@ -66,6 +66,7 @@ jobs:
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
             timeout 1200 ./bin/watch-ztp 5gc || echo ""
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+          '
       - name: Wait Policies
         run: |
           podman exec -it workstation  bash -c  '
