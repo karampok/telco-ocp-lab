@@ -40,15 +40,15 @@ jobs:
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
       - name: Provision SNO to be ACM/ZTPHub
         run: |
-          COMMANDS=$(cat <<EOF
+          podman exec -it workstation  bash -c  '
+            #!/bin/bash
+            set -xeuoE pipefail
             cd ./hub-template/day1
             ./install-acm.sh
             sleep 50
             GITKEY_FILE=/workdir/.github-argo ./git-ssh-access.sh
             PULL_SECRET_PATH=/workdir/.pull-secret.json ./install-ztp.sh
-          EOF
-          )
-          podman exec -it workstation  bash -c "$COMMANDS"
+          '
   stage2:
     name: Wait SPOKE
     runs-on: [self-hosted]
