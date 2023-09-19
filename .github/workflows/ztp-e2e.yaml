@@ -29,13 +29,14 @@ jobs:
     steps:
       - name: Deploy SNO using agent-based
         run: |
-          COMMANDS=$(cat <<EOF
+          podman exec -it workstation  bash -c '
+            #!/bin/bash
+            set -xeuoE pipefail
             ./deploy-ocp.sh hub
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
-          EOF
-          )
-          podman exec -it workstation  bash -c "$COMMANDS"
+            oc get co && oc get clusterversion
+          '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
       - name: Provision SNO to be ACM/ZTPHub
@@ -55,16 +56,21 @@ jobs:
     needs: [stage0, stage1]
     if: needs.stage1.result == 'success'
     steps:
-      - name: Wait SPOKE
+      - name: Wait Siteconfig
         run: |
-          COMMANDS=$(cat <<EOF
+          podman exec -it workstation  bash -c  '
+            #!/bin/bash
+            set -xeuoE pipefail
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
             timeout 1200 ./bin/watch-ztp 5gc || echo ""
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+      - name: Wait Policies
+        run: |
+          podman exec -it workstation  bash -c  '
+            #!/bin/bash
             timeout 540 oc -n 5gc get policies -w || echo ""
-            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=2500s
-          EOF
-          )
-          podman exec -it workstation  bash -c "$COMMANDS"
+            oc get policies -A
+            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
+          '
