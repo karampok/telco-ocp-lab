@@ -63,13 +63,17 @@ jobs:
     needs: [stage0, stage1, stage2]
     if: needs.stage1.result == 'success'
     steps:
-      - name: Wait Siteconfig
+      - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
-          podman exec -it workstation tmux new -s wait-site '
+          podman exec -it workstation tmux new -s auto-secrets '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
+          '
+      - name: Wait Siteconfig
+        run: |
+          podman exec -it workstation tmux new -s wait-site '
             timeout 1200 ./bin/watch-ztp 5gc || echo ""
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
