@@ -22,7 +22,7 @@ POC on OCP v4.1X.z with complex network setup
 
 ```
 ssh root@lab0
-dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq tcpdump bind-utils #wireguard-tools
+dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq tcpdump bind-utils wireguard-tools
 systemctl enable --now libvirtd
 systemctl disable firewalld && systemctl stop firewalld
 hostnamectl set-hostname lab0
