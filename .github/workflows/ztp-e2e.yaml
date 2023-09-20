@@ -25,7 +25,7 @@ jobs:
           podman logs workstation
   stage1:
     name: Deploy SNO Cluster
-    runs-on: ${{needs.get-runner.outputs.RUNNER}}
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0]
     if: needs.stage0.result == 'success'
     steps:
@@ -41,8 +41,8 @@ jobs:
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
   stage2:
     name: Provision HUB Cluster
-    runs-on: ${{needs.get-runner.outputs.RUNNER}}
-    needs: [stage1]
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1]
     if: needs.stage0.result == 'success'
     steps:
       - name: Intall ACM
@@ -63,7 +63,7 @@ jobs:
           '
   stage3:
     name: Wait SPOKE
-    runs-on: ${{needs.get-runner.outputs.RUNNER}}
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1, stage2]
     if: needs.stage1.result == 'success'
     steps:
