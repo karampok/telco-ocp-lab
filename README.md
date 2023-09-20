@@ -32,8 +32,7 @@ kcli create pool -p /var/lib/libvirt/images default
 
 git clone -b dev https://github.com/karampok/telco-ocp-lab.git
 #scp ~/.pull-secret.json ~/.id-rsa.pub ~/.github-argo root@lab0:/root/telco-ocp-lab
-./sinfra --setupInfra # double check vbmh-kcli-plan.yaml
-podman logs workstations
+# grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | tr -s ' ' ' '
 ```
 
 ## Podman on RHEL 9.2
