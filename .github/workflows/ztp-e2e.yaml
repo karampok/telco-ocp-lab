@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Deploy SNO using agent-based
         run: |
-          podman exec -it workstation bash -c '
+          podman exec workstation bash -c '
             #!/bin/bash
             set -xeuoE pipefail
             ./deploy-ocp.sh hub
@@ -47,7 +47,7 @@ jobs:
     steps:
       - name: Intall ACM
         run: |
-          podman exec -it workstation bash -c '
+          podman exec workstation bash -c '
             #!/bin/bash
             set -xeuoE pipefail
             cd ./hub-template/day1
@@ -56,7 +56,7 @@ jobs:
           '
       - name: Install ZTP
         run: |
-          podman exec -it workstation bash -c '
+          podman exec workstation bash -c '
             #!/bin/bash
             GITKEY_FILE=.github-argo ./hub-template/day1/git-ssh-access.sh || true
             PULL_SECRET_PATH=.pull-secret.json ./hub-template/day1/install-ztp.sh
@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: Wait Siteconfig
         run: |
-          podman exec -it workstation bash -c '
+          podman exec workstation bash -c '
             #!/bin/bash
             set -xeuoE pipefail
             oc apply -f bmh-secret.yaml
@@ -80,7 +80,7 @@ jobs:
           '
       - name: Wait Policies
         run: |
-          podman exec -it workstation bash -c '
+          podman exec workstation bash -c '
             #!/bin/bash
             timeout 540 oc -n 5gc get policies -w || echo ""
             oc get policies -A
