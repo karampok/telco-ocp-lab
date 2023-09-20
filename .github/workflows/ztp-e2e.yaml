@@ -4,7 +4,7 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
 jobs:
   stage0:
-    name: Setup Virtual Infra ${{ runner.name }}
+    name: Setup Virtual Infra
     runs-on: [self-hosted]
     outputs:
       RUNNER: ${{ runner.name }}
