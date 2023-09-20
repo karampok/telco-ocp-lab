@@ -73,10 +73,10 @@ hub:
       numa: 1
   #   vfio: true
   #   type: igb
-  # - name: dataplane
-  #   noconf: true
+    - name: dataplane
+      noconf: true
+      numa: 1
   #   vfio: true
-  #   numa: 1
   #   type: igb
   # numamode: preferred
   # cpupinning:

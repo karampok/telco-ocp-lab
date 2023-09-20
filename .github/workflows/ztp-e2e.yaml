@@ -5,59 +5,92 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   stage0:
     name: Setup Virtual Infra
-    runs-on: [self-hosted]
+
+    outputs:
+      RUNNER: ${{ runner.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clean Virtual Infra
         run: |
-          sudo ./sinfra --clean -auto-timeout 0s --continue-on-error
+          ./sinfra --clean -auto-timeout 0s --continue-on-error
       - name: Setup Virtual Infra
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
-          sudo ./sinfra --setupInfra -auto-timeout 0s
-          sudo podman logs workstation
+          ./sinfra --setupInfra -auto-timeout 0s
+          podman logs workstation
   stage1:
     name: Deploy SNO Cluster
-    runs-on: [self-hosted]
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0]
     if: needs.stage0.result == 'success'
     steps:
       - name: Deploy SNO using agent-based
         run: |
-          COMMANDS=$(cat <<EOF
+          podman exec -it workstation tmux new -s deploy-sno '
             ./deploy-ocp.sh hub
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
-          EOF
-          )
-          sudo podman exec -it workstation  bash -c $COMMANDS
+            oc get co && oc get clusterversion
+          '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
-      - name: Provision SNO to be ACM/ZTPHub
+  stage2:
+    name: Provision HUB Cluster
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1]
+    if: needs.stage0.result == 'success'
+    steps:
+      - name: Install ACM
         run: |
-          COMMANDS=$(cat <<EOF
+          podman exec -it workstation tmux new -s install-acm '
             cd ./hub-template/day1
             ./install-acm.sh
-            GITKEY_FILE=/workdir/.github-argo ./git-ssh-access.sh
-            PULL_SECRET_PATH=/workdir/.pull-secret.json ./install-ztp.sh
-          EOF
-          )
-          sudo podman exec -it workstation  bash -c $COMMANDS
-  stage2:
+            sleep 50
+          '
+      - name: Install ZTP
+        run: |
+          podman exec -it workstation tmux new -s install-ztp '
+            GITKEY_FILE=.github-argo ./hub-template/day1/git-ssh-access.sh || true
+            PULL_SECRET_PATH=.pull-secret.json ./hub-template/day1/install-ztp.sh
+          '
+  stage3:
     name: Wait SPOKE
-    runs-on: [self-hosted]
-    needs: [stage0, stage1]
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage2]
     if: needs.stage1.result == 'success'
     steps:
-      - name: Wait SPOKE
+      - name: Enable autosecrets hack
         run: |
-          COMMANDS=$(cat <<EOF
+          echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
+          podman exec -it workstation tmux new -s auto-secrets '
+            oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
-          EOF
-          )
-          sudo podman exec -it workstation  bash -c $COMMANDS
+          '
+      - name: Wait Siteconfig
+        run: |
+          podman exec -it workstation tmux new -s wait-site '
+            timeout 1200 ./bin/watch-ztp 5gc || echo ""
+            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+          '
+      - name: Wait Policies
+        run: |
+          podman exec -it workstation tmux new -s wait-policies '
+            timeout 540 oc -n 5gc get policies -w || echo ""
+            oc get policies -A
+            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
+          '
+# To add github action runner
+# https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new
+#  mkdir actions-runner && cd actions-runner
+#  curl -o actions-runner-linux-x64-2.309.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.309.0/actions-runner-linux-x64-2.309.0.tar.gz
+#  tar xzf ./actions-runner-linux-x64-2.309.0.tar.gz
+#  ./bin/installdependencies.sh
+#  export RUNNER_ALLOW_RUNASROOT=1
+#  ./config.sh --url https://github.com/karampok/telco-ocp-lab --token XXXX
+#  dnf install tmux
+#  tmux new-session -d ./run.sh

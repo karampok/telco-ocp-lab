@@ -22,7 +22,7 @@ POC on OCP v4.1X.z with complex network setup
 
 ```
 ssh root@lab0
-dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq tcpdump bind-utils #wireguard-tools
+dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq tcpdump bind-utils wireguard-tools
 systemctl enable --now libvirtd
 systemctl disable firewalld && systemctl stop firewalld
 hostnamectl set-hostname lab0
@@ -32,8 +32,7 @@ kcli create pool -p /var/lib/libvirt/images default
 
 git clone -b dev https://github.com/karampok/telco-ocp-lab.git
 #scp ~/.pull-secret.json ~/.id-rsa.pub ~/.github-argo root@lab0:/root/telco-ocp-lab
-./sinfra --setupInfra # double check vbmh-kcli-plan.yaml
-podman logs workstations
+grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | cat file | sed 's/^          //'
 ```
 
 ## Podman on RHEL 9.2

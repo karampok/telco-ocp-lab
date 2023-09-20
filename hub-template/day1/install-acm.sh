@@ -11,6 +11,8 @@ oc apply -f 00-talm.yaml
 until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
 until oc get LVMCluster 2>/dev/null; do sleep 30; done
 
+sleep 30
+
 oc apply -f 10-provisioning.yaml
 oc apply -f 10-lvm-instance.yaml
 oc apply -f 10-acm-instance.yaml
