@@ -6,6 +6,8 @@ jobs:
   stage0:
     name: Setup Virtual Infra
     runs-on: [self-hosted]
+    outputs:
+      RUNNER: ${{ runner.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -16,19 +18,20 @@ jobs:
           ./sinfra --clean -auto-timeout 0s --continue-on-error
       - name: Setup Virtual Infra
         run: |
+          echo "selected runner = ${{ runner.name }}"
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
           ./sinfra --setupInfra -auto-timeout 0s
           podman logs workstation
   stage1:
     name: Deploy SNO Cluster
-    runs-on: [self-hosted]
+    runs-on: ${{needs.get-runner.outputs.RUNNER}}
     needs: [stage0]
     if: needs.stage0.result == 'success'
     steps:
       - name: Deploy SNO using agent-based
         run: |
-          podman exec workstation tmux new -s deploy-sno '
+          podman exec -it workstation tmux new -s deploy-sno '
             ./deploy-ocp.sh hub
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
@@ -38,7 +41,7 @@ jobs:
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
   stage2:
     name: Provision HUB Cluster
-    runs-on: [self-hosted]
+    runs-on: ${{needs.get-runner.outputs.RUNNER}}
     needs: [stage1]
     if: needs.stage0.result == 'success'
     steps:
@@ -60,7 +63,7 @@ jobs:
           '
   stage3:
     name: Wait SPOKE
-    runs-on: [self-hosted]
+    runs-on: ${{needs.get-runner.outputs.RUNNER}}
     needs: [stage0, stage1, stage2]
     if: needs.stage1.result == 'success'
     steps:
