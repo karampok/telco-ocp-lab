@@ -8,11 +8,13 @@ spec:
   baseDomain: "eric.vlab"
   pullSecretRef:
     name: "assisted-deployment-pull-secret"
-  clusterImageSetNameRef: "img4.12.13-x86-64-appsub"
+  clusterImageSetNameRef: "img4.12.29-x86-64-appsub"
   sshPublicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeiSA3IDCWxow/r7m4tTwDnOmj3+KeIaUWxQI2KAwabM8wrJkwJR1+KHsKT+HDMW1yXXWYlXOAxOzGGzoBSLmH4P64npxHGIRkAAk+SP5YKXpgv3K/Ivqx/5qmZpIzpxyhgZUOZwvyyBtgJm3BZhb/IKrILllN/FtbLLZ8Ie/uERs33ReVvtZWyYVcVm5/CCb5ZojQlIzgNXJ0xKAQJd9zIce1MzWCK1/OgO3W4Q8c/LiOpNhNjbMGtAvasEwVsH4hCIggCJcKxQSceM8kkcY9HfjoW7zT/jzXY3PEW9lVSvh7WGHWZ748JeAwNC1GEPENpJ9pcH8pR3Vlx3VxjqBn cardno:000605977679"
   clusters:
     - clusterName: "5gc"
-      extraManifestPath: extra-manifest/
+      extraManifest:
+        searchPaths:
+          - extra-manifest/
       networkType: "OVNKubernetes"
       clusterLabels:
         common: true
@@ -240,7 +242,7 @@ spec:
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
-          cpuset: "0,1,7,8"
+          cpuset: "0,1,2,3"
           nodeNetwork:
             interfaces:
               - name: ens3
@@ -260,6 +262,7 @@ spec:
                     port:
                       - ens3
                       - ens4
+                  mac-address: de:ad:be:ff:11:90
                 - name: bond0.10
                   type: vlan
                   state: up
@@ -298,3 +301,70 @@ spec:
                     next-hop-address: 10.10.10.1
                     next-hop-interface: bond0.10
                     table-id: 254
+        # - hostName: 5gc-w1
+        #   role: worker
+        #   bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111114
+        #   bmcCredentialsName:
+        #     name: "5gc-w1-secret"
+        #   bootMACAddress: "de:ad:be:ff:11:92"
+        #   bootMode: "UEFI"
+        #   rootDeviceHints:
+        #     deviceName: "/dev/vda"
+        #   nodeNetwork:
+        #     interfaces:
+        #       - name: ens3
+        #         macAddress: de:ad:be:ff:11:92
+        #       - name: ens4
+        #         macAddress: de:ad:be:ff:11:93
+        #     config:
+        #       interfaces:
+        #         - name: bond0
+        #           type: bond
+        #           state: up
+        #           mtu: 9000
+        #           link-aggregation:
+        #             mode: active-backup
+        #             options:
+        #               miimon: '140'
+        #             port:
+        #               - ens3
+        #               - ens4
+        #           mac-address: de:ad:be:ff:11:92
+        #         - name: bond0.10
+        #           type: vlan
+        #           state: up
+        #           vlan:
+        #             base-iface: bond0
+        #             id: 10
+        #           ipv4:
+        #             enabled: true
+        #             address:
+        #               - ip: 10.10.10.120
+        #                 prefix-length: 24
+        #             dhcp: false
+        #           ipv6:
+        #             enabled: false
+        #         - name: bond0.11
+        #           type: vlan
+        #           state: up
+        #           vlan:
+        #             base-iface: bond0
+        #             id: 11
+        #           ipv4:
+        #             enabled: true
+        #             address:
+        #               - ip: 11.11.11.120
+        #                 prefix-length: 24
+        #             dhcp: false
+        #           ipv6:
+        #             enabled: false
+        #       dns-resolver:
+        #         config:
+        #           server:
+        #             - 10.10.20.10
+        #       routes:
+        #         config:
+        #           - destination: 0.0.0.0/0
+        #             next-hop-address: 10.10.10.1
+        #             next-hop-interface: bond0.10
+        #             table-id: 254

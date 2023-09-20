@@ -16,3 +16,8 @@ spec:
         labels:
           node-role.kubernetes.io/ht100gb: ""
           type: "prod"
+      spec:
+        taints:
+          - effect: NoSchedule
+            key: sriov
+            value: "true"
