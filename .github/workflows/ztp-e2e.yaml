@@ -8,7 +8,7 @@ jobs:
     runs-on: [self-hosted]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clean Virtual Infra
@@ -45,7 +45,7 @@ jobs:
     needs: [stage1]
     if: needs.stage0.result == 'success'
     steps:
-      - name: Provision SNO to be ACM/ZTPHub
+      - name: Intall ACM
         run: |
           podman exec -it workstation bash -c '
             #!/bin/bash
@@ -53,13 +53,18 @@ jobs:
             cd ./hub-template/day1
             ./install-acm.sh
             sleep 50
-            GITKEY_FILE=/workdir/.github-argo ./git-ssh-access.sh
-            PULL_SECRET_PATH=/workdir/.pull-secret.json ./install-ztp.sh
+          '
+      - name: Install ZTP
+        run: |
+          podman exec -it workstation bash -c '
+            #!/bin/bash
+            GITKEY_FILE=.github-argo ./hub-template/day1/git-ssh-access.sh || true
+            PULL_SECRET_PATH=.pull-secret.json ./hub-template/day1/install-ztp.sh
           '
   stage3:
     name: Wait SPOKE
     runs-on: [self-hosted]
-    needs: [stage0, stage1,stage2]
+    needs: [stage0, stage1, stage2]
     if: needs.stage1.result == 'success'
     steps:
       - name: Wait Siteconfig
