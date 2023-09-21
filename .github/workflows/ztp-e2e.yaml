@@ -30,8 +30,9 @@ jobs:
     steps:
       - name: Deploy SNO using agent-based
         run: |
-          podman exec -it workstation tmux new -s deploy-sno '
+          podman exec workstation bash -c '
             ./deploy-ocp.sh hub
+            reset
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
             oc get co && oc get clusterversion
@@ -46,14 +47,14 @@ jobs:
     steps:
       - name: Install ACM
         run: |
-          podman exec -it workstation tmux new -s install-acm '
+          podman exec workstation bash -c '
             cd ./hub-template/day1
             ./install-acm.sh
             sleep 50
           '
       - name: Install ZTP
         run: |
-          podman exec -it workstation tmux new -s install-ztp '
+          podman exec workstation bash -c '
             GITKEY_FILE=.github-argo ./hub-template/day1/git-ssh-access.sh || true
             PULL_SECRET_PATH=.pull-secret.json ./hub-template/day1/install-ztp.sh
           '
@@ -66,20 +67,22 @@ jobs:
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
-          podman exec -it workstation tmux new -s auto-secrets '
+          podman exec workstation bash -c '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
           '
       - name: Wait Siteconfig
         run: |
-          podman exec -it workstation tmux new -s wait-site '
+          podman exec workstation bash -c '
+            reset
             timeout 1200 ./bin/watch-ztp 5gc || echo ""
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Wait Policies
         run: |
-          podman exec -it workstation tmux new -s wait-policies '
+          podman exec workstation bash -c '
+            reset
             timeout 540 oc -n 5gc get policies -w || echo ""
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
