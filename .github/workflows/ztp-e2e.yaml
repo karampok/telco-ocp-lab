@@ -48,15 +48,15 @@ jobs:
       - name: Install ACM
         run: |
           podman exec workstation bash -c '
-            cd ./hub-template/day1
+            cd ./hub-config/
             ./install-acm.sh
             sleep 50
           '
       - name: Install ZTP
         run: |
           podman exec workstation bash -c '
-            GITKEY_FILE=.github-argo ./hub-template/day1/git-ssh-access.sh || true
-            PULL_SECRET_PATH=.pull-secret.json ./hub-template/day1/install-ztp.sh
+            GITKEY_FILE=.github-argo ./hub-config/git-ssh-access.sh || true
+            BRANCH=demo PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
           '
   stage3:
     name: Wait SPOKE
@@ -87,6 +87,15 @@ jobs:
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
           '
+      - name: Access spoke cluster
+        run: |
+          podman exec workstation bash -c '
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
+            export KUBECONFIG=/tmp/ztp5gc.yaml
+            oc get cluster version
+            oc get nodes
+          '
+
 # To add github action runner
 # https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new
 #  mkdir actions-runner && cd actions-runner
