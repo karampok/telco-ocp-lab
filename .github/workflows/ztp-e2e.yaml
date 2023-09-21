@@ -55,7 +55,7 @@ jobs:
         run: |
           podman exec workstation bash -c '
             GITKEY_FILE=.github-argo ./hub-config/git-ssh-access.sh || true
-            BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
+            BRANCH=demo PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
           '
   stage3:
     name: Wait SPOKE

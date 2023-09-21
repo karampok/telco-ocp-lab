@@ -67,3 +67,13 @@ spec:
         history:
           - version: 4.12.29
             state: "Completed"
+    # - fileName: StorageNS.yaml
+    #   policyName: "add-day2-policy"
+    # - fileName: StorageOperGroup.yaml
+    #   policyName: "add-day2-policy"
+    # - fileName: StorageSubscription.yaml
+    #   policyName: "add-day2-policy"
+    # - fileName: StorageOperatorStatus.yaml
+    #   policyName: "add-day2-policy"
+    # - fileName: StorageOperatorStatus.yaml
+    #   policyName: "add-day2-policy"
