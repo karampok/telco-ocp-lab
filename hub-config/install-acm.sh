@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euoE pipefail
+set -xeuoE pipefail
 
 # we need to leverage https://github.com/redhat-cop/gitops-catalog/
 #oc apply -k https://github.com/redhat-cop/gitops-catalog/advanced-cluster-management/operator/overlays/release-2.8
