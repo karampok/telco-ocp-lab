@@ -30,9 +30,10 @@ hostnamectl set-hostname lab0
 curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | sudo bash
 kcli create pool -p /var/lib/libvirt/images default
 
-git clone -b dev https://github.com/karampok/telco-ocp-lab.git
+git clone https://github.com/karampok/telco-ocp-lab.git
+cd telco-ocp-lab
 #scp ~/.pull-secret.json ~/.id-rsa.pub ~/.github-argo root@lab0:/root/telco-ocp-lab
-grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | cat file | sed 's/^          //'
+grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | sed 's/^          //'
 ```
 
 ## Podman on RHEL 9.2
