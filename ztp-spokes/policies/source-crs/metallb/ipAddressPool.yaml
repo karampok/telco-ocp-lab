@@ -5,9 +5,7 @@ metadata:
   name: greenips
   namespace: metallb-system
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "2"
+    ran.openshift.io/ztp-deploy-wave: "10"
 spec:
   autoAssign: false
   addresses:
-    - 5.8.6.1/32
-    - 5.8.6.9/32

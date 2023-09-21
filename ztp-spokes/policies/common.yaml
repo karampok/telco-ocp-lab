@@ -9,6 +9,24 @@ spec:
     common: "true"
   remediationAction: inform
   sourceFiles:
+    - fileName: "MastersSchedulable.yaml"
+      policyName: "config-cluster"
+    - fileName: ReduceMonitoringFootprint.yaml
+      policyName: "config-policy"
+    # install and configure SR-IOV operator
+    - fileName: SriovSubscriptionNS.yaml
+      policyName: "install-operators"
+    - fileName: SriovSubscriptionOperGroup.yaml
+      policyName: "install-operators"
+    - fileName: SriovSubscription.yaml
+      policyName: "install-operators"
+    - fileName: SriovSupportedNicCM.yaml
+      policyName: "install-operators"
+    - fileName: SriovOperatorConfig.yaml
+      policyName: "config-operators"
+      spec:
+        configDaemonNodeSelector:
+          node-role.kubernetes.io/ht100gb: ""
     - fileName: metallb/ns.yaml
       policyName: "install-operators"
     - fileName: metallb/operatorGroup.yaml
@@ -16,7 +34,8 @@ spec:
     - fileName: metallb/subscription.yaml
       policyName: "install-operators"
     - fileName: metallb/instance.yaml
-      policyName: "install-operators"
+      policyName: "config-operators"
+    # install NMState operator
     - fileName: nmstate/subscription.yaml
       policyName: "install-operators"
     - fileName: nmstate/ns.yaml
@@ -24,7 +43,8 @@ spec:
     - fileName: nmstate/operatorGroup.yaml
       policyName: "install-operators"
     - fileName: nmstate/instance.yaml
-      policyName: "install-operators"
+      policyName: "config-operators"
+    # other networking config
     - fileName: RoutingViaHost.yaml
       policyName: "config-network"
     - fileName: AddAdditionalNetworks.yaml
@@ -35,5 +55,15 @@ spec:
             namespace: default
             rawCNIConfig: '{ "cniVersion": "0.3.1", "name": "macvlan", "plugins": [ {"type": "macvlan","master": "bond0.11", "mtu": 1500, "mode": "bridge", "ipam": { "type": "whereabouts", "range": "2520:41:0:2106::/64","gateway": "2520:41:0:2106::1" } }, {"type":"tuning","sysctl":{"net.ipv6.conf.IFNAME.accept_ra":"0"}} ]}'
             type: Raw
-    - fileName: ReduceMonitoringFootprint.yaml
-      policyName: "config-policy"
+    - fileName: ClusterVersion.yaml
+      policyName: "platform-upgrade"
+      metadata:
+        name: version
+      spec:
+        channel: "stable-4.12"
+        desiredUpdate:
+          version: 4.12.29
+      status:
+        history:
+          - version: 4.12.29
+            state: "Completed"

@@ -5,8 +5,6 @@ metadata:
   name: greenc
   namespace: metallb-system
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "2"
+    ran.openshift.io/ztp-deploy-wave: "10"
 spec:
   communities:
-    - name: greenc
-      value: '7003:008'

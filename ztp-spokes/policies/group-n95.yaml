@@ -13,11 +13,39 @@ spec:
       policyName: "config-metallb"
     - fileName: metallb/bgpPeer.yaml
       policyName: "config-metallb"
+      spec:
+        peerAddress: 11.11.11.254
+        peerASN: 8002
+        myASN: 7003
+        nodeSelectors:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - m0.5gc.eric.vlab
+                  - m1.5gc.eric.vlab
+                  - m2.5gc.eric.vlab
     - fileName: metallb/community.yaml
       policyName: "config-metallb"
+      spec:
+        communities:
+          - name: greenc
+            value: '7003:008'
     - fileName: metallb/ipAddressPool.yaml
       policyName: "config-metallb"
+      spec:
+        autoAssign: false
+        addresses:
+          - 5.8.6.1/32
+          - 5.8.6.9/32
     - fileName: metallb/bgpAdvertisement.yaml
       policyName: "config-metallb"
+      spec:
+        communities:
+          - greenc
+        ipAddressPools:
+          - greenips
+        peers:
+          - greenpeers
     - fileName: raw/addGreenStaticRoutes.yaml
       policyName: "config-static-routes"
