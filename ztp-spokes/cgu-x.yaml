@@ -17,8 +17,9 @@ spec:
     # - common-platform-upgrade
     # - label-ht-worker-label-nodes
     # - htworker-config-nodes
-    - htworker-config-sriov-sn
-    - htworker-config-sriov-snnp
+    # - htworker-config-sriov-sn
+    # - htworker-config-sriov-snnp
+    - htworker-config-virt-vfio-noiommu
     # - networks-config-metallb
     # - networks-config-static-routes
   remediationStrategy:

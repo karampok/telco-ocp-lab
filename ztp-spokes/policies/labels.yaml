@@ -12,7 +12,7 @@ spec:
     - fileName: LabelHTNode.yaml
       policyName: "label-nodes"
       metadata:
-        name: "5gc-w0"
+        name: "w0.5gc.eric.vlab"
         labels:
           node-role.kubernetes.io/ht100gb: ""
           type: "prod"

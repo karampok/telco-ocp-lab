@@ -8,8 +8,5 @@ metadata:
     ran.openshift.io/ztp-deploy-wave: "10"
 spec:
   communities:
-    - greenc
   ipAddressPools:
-    - greenips
   peers:
-    - greenpeers
