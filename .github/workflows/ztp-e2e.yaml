@@ -32,7 +32,6 @@ jobs:
         run: |
           podman exec workstation bash -c '
             ./deploy-ocp.sh hub
-            reset
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
             oc get co && oc get clusterversion
@@ -56,7 +55,7 @@ jobs:
         run: |
           podman exec workstation bash -c '
             GITKEY_FILE=.github-argo ./hub-config/git-ssh-access.sh || true
-            BRANCH=demo PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
+            BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
           '
   stage3:
     name: Wait SPOKE
@@ -75,14 +74,12 @@ jobs:
       - name: Wait Siteconfig
         run: |
           podman exec workstation bash -c '
-            reset
             timeout 1200 ./bin/watch-ztp 5gc || echo ""
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Wait Policies
         run: |
           podman exec workstation bash -c '
-            reset
             timeout 540 oc -n 5gc get policies -w || echo ""
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
