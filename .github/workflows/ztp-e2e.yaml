@@ -20,6 +20,7 @@ jobs:
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
+          echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
           podman logs workstation
   stage1:
@@ -89,7 +90,7 @@ jobs:
           podman exec workstation bash -c '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
             export KUBECONFIG=/tmp/ztp5gc.yaml
-            oc get cluster version
+            oc get clusterversion
             oc get nodes
           '
 
