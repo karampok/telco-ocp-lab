@@ -2,10 +2,10 @@
 set -euoE pipefail
 
 openshift-install version
-#read -p -r # https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/
+read -p -r # https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/
 
 cp -r hub-template /share/hub
-#read -p -r # tree before,after
+read -p -r # tree before,after
 
 PULL_SECRET=$(jq '.' -c "${PULL_SECRET_PATH:-.pull-secret.json}") #one liner
 SSHPUBKEY=$(cat "${SSHPUBKEYFILE:-.id-rsa.pub}")
@@ -13,9 +13,7 @@ sed -i "s|SSHPUBKEY|$SSHPUBKEY|" /share/hub/install-config.yaml
 sed -i "s/PULLSECRET/$PULL_SECRET/g" /share/hub/install-config.yaml
 
 openshift-install agent create image --log-level info  --dir /share/hub
-
-#read -p -r # discovery ISO created // nmstatectl required
-#read -p -r  # python3 -m http.server 9000 -d /share
+read -p -r # discovery ISO created // nmstatectl required, python3 -m http.server 9000 -d /share
 
 node="https://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111115"
 source ./redfish-actions/sushy.sh
@@ -24,6 +22,7 @@ media_eject "$node"
 media_insert "$node" http://10.10.20.200:9000/hub/agent.x86_64.iso
 boot_once "$node" #dummy in sushy
 power_on "$node"
+read -p -r #only 204, look iLO
 
 
 mkdir -p ~/.kube && cp /share/hub/auth/kubeconfig ~/.kube/config

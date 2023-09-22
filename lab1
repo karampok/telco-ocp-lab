@@ -1,0 +1,10 @@
+ssh lab1
+./sinfra --clean -auto-timeout 0s --continue-on-error
+echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
+echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
+./sinfra --setupInfra -auto-timeout 0s
+
+podman exec workstation bash -c '
+  cat ./deploy-ocp.sh
+'
+

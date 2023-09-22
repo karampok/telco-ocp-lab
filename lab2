@@ -1,0 +1,23 @@
+ssh lab2
+#echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
+#echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
+./sinfra --clean -auto-timeout 0s --continue-on-error
+./sinfra --setupInfra -auto-timeout 0s
+podman logs workstation
+podman exec workstation bash -c '
+  ./deploy-ocp.sh hub
+  export KUBECONFIG=/share/hub/auth/kubeconfig
+  openshift-install agent wait-for install-complete --log-level info --dir /share/hub
+  oc get co && oc get clusterversion
+'
+echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
+echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
+podman exec workstation bash -c '
+  cd ./hub-config/
+  ./install-acm.sh
+  sleep 50
+'
+podman exec workstation bash -c '
+  GITKEY_FILE=.github-argo ./hub-config/git-ssh-access.sh || true
+  BRANCH=demo PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
+'
