@@ -22,7 +22,6 @@ jobs:
           echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
-          podman logs workstation
   stage1:
     name: Deploy SNO Cluster
     runs-on: ${{needs.stage0.outputs.RUNNER}}
