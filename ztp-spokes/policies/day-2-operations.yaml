@@ -1,22 +1,22 @@
 ---
-apiVersion: ran.openshift.io/v1
-kind: PolicyGenTemplate
-metadata:
-  name: "day2-operations"
-  namespace: "ztp-common"
-spec:
-  bindingRules:
-    common: "true"
-    ztp-done: ""
-  remediationAction: inform
-  sourceFiles:
-    - fileName: StorageNS.yaml
-      policyName: "add-day2-policy"
-    - fileName: StorageOperGroup.yaml
-      policyName: "add-day2-policy"
-    - fileName: StorageSubscription.yaml
-      policyName: "add-day2-policy"
-    - fileName: StorageOperatorStatus.yaml
-      policyName: "add-day2-policy"
-    - fileName: StorageOperatorStatus.yaml
-      policyName: "add-day2-policy"
+# apiVersion: ran.openshift.io/v1
+# kind: PolicyGenTemplate
+# metadata:
+#   name: "day2-operations"
+#   namespace: "ztp-common"
+# spec:
+#   bindingRules:
+#     common: "true"
+#     ztp-done: ""
+#   remediationAction: inform
+#   sourceFiles:
+#     - fileName: StorageNS.yaml
+#       policyName: "add-day2-policy"
+#     - fileName: StorageOperGroup.yaml
+#       policyName: "add-day2-policy"
+#     - fileName: StorageSubscription.yaml
+#       policyName: "add-day2-policy"
+#     - fileName: StorageOperatorStatus.yaml
+#       policyName: "add-day2-policy"
+#     - fileName: StorageOperatorStatus.yaml
+#       policyName: "add-day2-policy"
