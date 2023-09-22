@@ -89,7 +89,7 @@ jobs:
           podman exec workstation bash -c '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
             export KUBECONFIG=/tmp/ztp5gc.yaml
-            oc get cluster version
+            oc get clusterversion
             oc get nodes
           '
 
