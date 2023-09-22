@@ -6,7 +6,6 @@ generators:
   - labels.yaml
   - group-ht.yaml
   - group-n95.yaml
-# - group/standard.yaml
-# - site/mic.yaml
+  - day-2-operations
 resources:
   - ns.yaml
