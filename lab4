@@ -33,9 +33,11 @@ podman exec workstation bash -c '
 '
 podman exec workstation bash -c '
   timeout 540 oc -n 5gc get policies -w || echo ""
-  oc get policies -A
   oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
 '
+
+###DEMO STARTS HERE
+  oc get policies -A
 podman exec workstation bash -c '
   oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
   export KUBECONFIG=/tmp/ztp5gc.yaml
@@ -43,6 +45,5 @@ podman exec workstation bash -c '
   oc get nodes
 '
 
-###DEMO STARTS HERE
 git checkout -b gitops origin/gitops
 
