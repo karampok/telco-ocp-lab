@@ -1,0 +1,30 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - https://github.com/redhat-cop/gitops-catalog/advanced-cluster-management/operator/base?ref=main
+  - https://github.com/redhat-cop/gitops-catalog/lvm-storage/operator/base?ref=main
+  - https://github.com/redhat-cop/gitops-catalog/topology-aware-lifecycle-manager-operator/base?ref=main
+
+patches:
+  - path: acm-version.yaml
+    target:
+      kind: Subscription
+      name: advanced-cluster-management
+  - path: lvm-version.yaml
+    target:
+      group: operators.coreos.com
+      kind: Subscription
+      name: lvms-operator
+      namespace: openshift-storage
+      version: v1alpha1
+  - path: talm-version.yaml
+    target:
+      group: operators.coreos.com
+      kind: Subscription
+      name: openshift-topology-aware-lifecycle-manager-subscription
+      namespace: openshift-operators
+      version: v1alpha1
+  # - 01_talm_deployment.yaml
+  # - 02_mce_deployment.yaml
+  # - 03_aap_deployment.yaml

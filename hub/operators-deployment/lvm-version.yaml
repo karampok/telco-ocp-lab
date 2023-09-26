@@ -1,0 +1,4 @@
+---
+- op: replace
+  path: /spec/channel
+  value: 4.13-stable
