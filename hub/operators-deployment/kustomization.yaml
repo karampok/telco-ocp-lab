@@ -7,24 +7,30 @@ resources:
   - https://github.com/redhat-cop/gitops-catalog/topology-aware-lifecycle-manager-operator/base?ref=main
 
 patches:
-  - path: acm-version.yaml
-    target:
+  - target:
       kind: Subscription
       name: advanced-cluster-management
-  - path: lvm-version.yaml
-    target:
+    patch: |-
+      - op: replace
+        path: /spec/channel
+        value: release-2.8
+  - target:
       group: operators.coreos.com
       kind: Subscription
       name: lvms-operator
       namespace: openshift-storage
       version: v1alpha1
-  - path: talm-version.yaml
-    target:
+    patch: |-
+      - op: replace
+        path: /spec/channel
+        value: stable-4.13
+  - target:
       group: operators.coreos.com
       kind: Subscription
       name: openshift-topology-aware-lifecycle-manager-subscription
       namespace: openshift-operators
       version: v1alpha1
-  # - 01_talm_deployment.yaml
-  # - 02_mce_deployment.yaml
-  # - 03_aap_deployment.yaml
+    patch: |-
+      - op: replace
+        path: /spec/channel
+        value: stable
