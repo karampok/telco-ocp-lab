@@ -53,6 +53,15 @@ jobs:
           podman exec workstation bash -c '
             BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
+      - name: Wait HUB to be ready
+        run: |
+          podman exec workstation bash -c '
+            until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
+            until oc get LVMCluster 2>/dev/null; do sleep 30; done
+            until oc -n openshift-storage get lvmcluster 2>/dev/null; do sleep 30; done
+            oc -n openshift-storage wait lvmcluster lvmcluster --for=jsonpath='{.status.state}'=Ready --timeout=1200s
+            oc -n open-cluster-management wait MultiClusterHub multiclusterhub --for=jsonpath='{.status.phase}'=Running --timeout=1200s
+          '
   stage3:
     name: Wait SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
