@@ -1,0 +1,16 @@
+---
+apiVersion: lvm.topolvm.io/v1alpha1
+kind: LVMCluster
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  name: lvmcluster
+  namespace: openshift-storage
+spec:
+  storage:
+    deviceClasses:
+    - name: vg1
+      thinPoolConfig:
+        name: thin-pool-1
+        sizePercent: 90
+        overprovisionRatio: 10

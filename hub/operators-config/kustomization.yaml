@@ -1,0 +1,14 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonAnnotations:
+  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+resources:
+  - https://github.com/redhat-cop/gitops-catalog/advanced-cluster-management/instance/base?ref=main
+  - 10-lvm-instance.yaml
+  - 20-agent-service-config.yaml
+  # - 00_rhacm_config.yaml
+  # - 01_ai_config.yaml
+  # - 02_patch_provisioning.yaml
+  # - 03_mce_config.yaml
+  # - 04_aap_config.yaml
