@@ -19,7 +19,6 @@ jobs:
       - name: Setup Virtual Infra
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
-          echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
   stage1:
@@ -44,7 +43,7 @@ jobs:
     needs: [stage0, stage1]
     if: needs.stage0.result == 'success'
     steps:
-      - name: Install ACM/LVM/TAML with gitops
+      - name: Install ACM/LVM/TALM with gitops
         run: |
           podman exec workstation bash -c '
             oc apply -f hub/hub-operators-argoapps.yaml
@@ -52,44 +51,44 @@ jobs:
       - name: Install ZTP
         run: |
           podman exec workstation bash -c '
-            BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
+            BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
-  # stage3:
-  #   name: Wait SPOKE
-  #   runs-on: ${{needs.stage0.outputs.RUNNER}}
-  #   needs: [stage0, stage1, stage2]
-  #   if: needs.stage1.result == 'success'
-  #   steps:
-  #     - name: Enable autosecrets hack
-  #       run: |
-  #         echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
-  #         podman exec workstation bash -c '
-  #           oc apply -f bmh-secret.yaml
-  #           oc apply -k github.com/karampok/autosecret/config/default
-  #           echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
-  #         '
-  #     - name: Wait Siteconfig
-  #       run: |
-  #         podman exec workstation bash -c '
-  #           timeout 1200 ./bin/watch-ztp 5gc || echo ""
-  #           oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
-  #         '
-  #     - name: Wait Policies
-  #       run: |
-  #         podman exec workstation bash -c '
-  #           timeout 540 oc -n 5gc get policies -w || echo ""
-  #           oc get policies -A
-  #           oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
-  #         '
-  #     - name: Access spoke cluster
-  #       run: |
-  #         podman exec workstation bash -c '
-  #           oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
-  #           export KUBECONFIG=/tmp/ztp5gc.yaml
-  #           oc get clusterversion
-  #           oc get nodes
-  #         '
-  #
+  stage3:
+    name: Wait SPOKE
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage2]
+    if: needs.stage1.result == 'success'
+    steps:
+      - name: Enable autosecrets hack
+        run: |
+          echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
+          podman exec workstation bash -c '
+            oc apply -f bmh-secret.yaml
+            oc apply -k github.com/karampok/autosecret/config/default
+            echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
+          '
+      - name: Wait Siteconfig
+        run: |
+          podman exec workstation bash -c '
+            timeout 1200 ./bin/watch-ztp 5gc || echo ""
+            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+          '
+      - name: Wait Policies
+        run: |
+          podman exec workstation bash -c '
+            timeout 540 oc -n 5gc get policies -w || echo ""
+            oc get policies -A
+            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
+          '
+      - name: Access spoke cluster
+        run: |
+          podman exec workstation bash -c '
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
+            export KUBECONFIG=/tmp/ztp5gc.yaml
+            oc get clusterversion
+            oc get nodes
+          '
+
 # To add github action runner
 # https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new
 #  mkdir actions-runner && cd actions-runner
