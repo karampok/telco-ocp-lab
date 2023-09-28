@@ -1,6 +1,6 @@
 # Agent-based  on virtual infrastructure
 
-POC on OCP v4.12.z with complex network setup
+POC on OCP v4.13.z with complex network setup
 
 ## Network
 
