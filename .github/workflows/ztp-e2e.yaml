@@ -2,6 +2,11 @@
 name: ztp-e2e
 on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
+  push:
+    branches:
+      - dev
+  schedule:
+    - cron: '0 */5 * * *'  # Runs every 5 hours
 jobs:
   stage0:
     name: Setup Virtual Infra
