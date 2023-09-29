@@ -4,7 +4,7 @@ set -euoE pipefail
 openshift-install version
 #read -p -r # https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/
 
-cp -r hub-template /share/hub
+cp -r sno-template /share/hub
 #read -p -r # tree before,after
 
 PULL_SECRET=$(jq '.' -c "${PULL_SECRET_PATH:-.pull-secret.json}") #one liner
