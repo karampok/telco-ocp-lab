@@ -1,5 +1,5 @@
 ---
-name: ztp-e2e
+name: ztp-e2e-dev
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
