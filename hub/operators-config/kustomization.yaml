@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonAnnotations:
+  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+resources:
+  - https://github.com/redhat-cop/gitops-catalog/advanced-cluster-management/instance/base?ref=main
+  - 10-lvm-instance.yaml
+  - 20-agent-service-config.yaml
+  - 10-provisioning.yaml
+# patchesJson6902:
+#   - target:
+#       group: argoproj.io
+#       version: v1alpha1
+#       kind: ArgoCD
+#       name: openshift-gitops
+#     path: argocd-openshift-gitops-patch.json

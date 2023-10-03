@@ -1,6 +1,11 @@
 ---
 name: ztp-e2e
 on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - dev
+  schedule:
+    - cron: '0 */5 * * *'
   workflow_dispatch:
 jobs:
   stage0:
@@ -19,7 +24,7 @@ jobs:
       - name: Setup Virtual Infra
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
-          echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
+          echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
   stage1:
     name: Deploy SNO Cluster
@@ -43,18 +48,24 @@ jobs:
     needs: [stage0, stage1]
     if: needs.stage0.result == 'success'
     steps:
-      - name: Install ACM
+      - name: Install ACM/LVM/TALM with gitops
         run: |
           podman exec workstation bash -c '
-            cd ./hub-config/
-            ./install-acm.sh
-            sleep 50
+            oc apply -f hub/hub-operators-argoapps.yaml
           '
       - name: Install ZTP
         run: |
           podman exec workstation bash -c '
-            GITKEY_FILE=.github-argo ./hub-config/git-ssh-access.sh || true
-            BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub-config/install-ztp.sh
+            BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
+          '
+      - name: Wait HUB to be ready
+        run: |
+          podman exec workstation bash -c '
+            until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
+            until oc get LVMCluster 2>/dev/null; do sleep 30; done
+            until oc -n openshift-storage get lvmcluster 2>/dev/null; do sleep 30; done
+            oc -n openshift-storage wait lvmcluster lvmcluster --for=jsonpath='{.status.state}'=Ready --timeout=1200s
+            oc -n open-cluster-management wait MultiClusterHub multiclusterhub --for=jsonpath='{.status.phase}'=Running --timeout=1200s
           '
   stage3:
     name: Wait SPOKE
