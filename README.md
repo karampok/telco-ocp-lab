@@ -59,12 +59,3 @@ make -j 10
 make install
 # virsh dumpxml 5gc-w0|grep emulator
 ```
-
-## Wireguard on RHEL 8.X
-
-```
-dnf -y install https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
-dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-dnf -y install kmod-wireguard wireguard-tools
-
-```
