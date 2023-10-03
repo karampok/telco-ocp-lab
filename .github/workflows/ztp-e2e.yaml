@@ -10,7 +10,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   stage0:
     name: Setup Virtual Infra
-    runs-on: [self-hosted]
+    runs-on: [self-hosted, dev]
     outputs:
       RUNNER: ${{ runner.name }}
     steps:
