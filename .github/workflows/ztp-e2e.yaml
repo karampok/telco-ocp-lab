@@ -21,7 +21,6 @@ jobs:
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.ARGO_GIT_KEY }}' > .github-argo
           ./sinfra --setupInfra -auto-timeout 0s
-          podman logs workstation
   stage1:
     name: Deploy SNO Cluster
     runs-on: ${{needs.stage0.outputs.RUNNER}}
