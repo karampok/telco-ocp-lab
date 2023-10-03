@@ -1,5 +1,6 @@
 ---
 run-name: ztp-e2d-@${{ github.ref }}-@${{ github.event_name }}
+name: ztp-e2e-dev
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
