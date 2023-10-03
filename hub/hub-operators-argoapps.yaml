@@ -12,7 +12,7 @@ spec:
   source:
     path: hub/operators-deployment
     repoURL: 'https://github.com/karampok/telco-ocp-lab.git'
-    targetRevision: dev
+    targetRevision: main
   project: default
   syncPolicy:
     automated:
@@ -38,7 +38,7 @@ spec:
   source:
     path: hub/operators-config
     repoURL: 'https://github.com/karampok/telco-ocp-lab.git'
-    targetRevision: dev
+    targetRevision: main
   project: default
   syncPolicy:
     automated:
