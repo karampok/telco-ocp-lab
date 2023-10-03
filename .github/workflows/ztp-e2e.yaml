@@ -3,7 +3,7 @@ name: ztp-e2e
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
-      - dev
+      - main
   schedule:
     - cron: '0 */5 * * *'
   workflow_dispatch:
