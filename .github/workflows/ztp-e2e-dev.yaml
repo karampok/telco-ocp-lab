@@ -1,5 +1,5 @@
 ---
-run-name: ztp-e2d-@${{ github.ref }}-@${{ github.event_name }}
+run-name: ztp-e2e-${{ github.ref }}-${{ github.event_name }}
 name: ztp-e2e-dev
 on:  # yamllint disable-line rule:truthy
   push:
@@ -57,7 +57,7 @@ jobs:
       - name: Install ZTP
         run: |
           podman exec workstation bash -c '
-            BRANCH=gitops PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
+            BRANCH=dev PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
       - name: Wait HUB to be ready
         run: |
