@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: hub-operators-deployment
+  name: hub-provision
   namespace: openshift-gitops
 spec:
   destination:
