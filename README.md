@@ -8,7 +8,7 @@ POC on OCP v4.1X.Z with complex network setup
 
 ## Experiments
 
-- Dual stack / Single stack  (static, DHCPv4, IPv6 SLAAC, DHCPv6)
+- Dual stack / Single stack (static, DHCPv4, IPv6 SLAAC, DHCPv6)
 - W/o proxy for the connected installation
 - RoutingViaHost (=local gateway) (instead of default shared gateway)
 - Network tuning e.g MTU 9000k, bond on the primary interface, VLANs on top of bond
@@ -42,10 +42,24 @@ grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | sed 's/^          //'
 cp /usr/share/containers/containers.conf /etc/containers/
 #enable CNI backend network_backend = "cni"
 dnf -y install containernetworking-plugins
-sysctl -w net.ipv4.ip_forward=1 #  /etc/sysctl.conf
+sysctl -w net.ipv4.ip_forward=1 # /etc/sysctl.conf
 setenforce 0 # libvirt errors
 
 ```
+
+## QEMU v8 on RHEL 9.2
+
+```
+dnf install -y python3-pip python3-pip gcc numactl-libs numactl-devel glib2-devel pixman-devel
+pip install ninja
+git clone -b stable-8.1 https://github.com/qemu/qemu.git && cd qemu/
+mkdir build && cd build/
+../configure --enable-numa --enable-guest-agent --target-list=x86_64-softmmu --disable-docs
+make -j 10
+make install
+# virsh dumpxml 5gc-w0|grep emulator
+```
+
 ## Wireguard on RHEL 8.X
 
 ```
