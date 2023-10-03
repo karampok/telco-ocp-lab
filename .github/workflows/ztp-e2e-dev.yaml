@@ -1,5 +1,5 @@
 ---
-run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+run-name: ztp-e2d-@${{ github.ref }}-@${{ github.event_name }}
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
@@ -51,7 +51,7 @@ jobs:
       - name: Install ACM/LVM/TALM with gitops
         run: |
           podman exec workstation bash -c '
-            oc apply -f hub/hub-operators-argoapps.yaml
+            oc apply -f hub/hub-provision-argoapp.yaml
           '
       - name: Install ZTP
         run: |
