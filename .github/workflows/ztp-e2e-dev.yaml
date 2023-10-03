@@ -1,5 +1,5 @@
 ---
-name: ztp-e2e-dev
+run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
