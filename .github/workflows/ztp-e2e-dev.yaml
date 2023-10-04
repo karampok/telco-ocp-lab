@@ -57,7 +57,7 @@ jobs:
       - name: Install ZTP
         run: |
           podman exec workstation bash -c '
-            BRANCH=dev PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
+            BRANCH=${{ github.ref_name }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
       - name: Wait HUB to be ready
         run: |
