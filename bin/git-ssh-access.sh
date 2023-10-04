@@ -32,3 +32,4 @@ echo
 # username: admin
 # password: $(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
 # argocd repo list
+# argocd app get openshift-gitops/clusters --refresh && argocd app sync openshift-gitops/clusters --prune
