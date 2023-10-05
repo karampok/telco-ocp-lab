@@ -55,9 +55,11 @@ spec:
             - ALL
           add:
             - IPC_LOCK
-            - SYS_RESOURCE
-            - NET_RAW
             - NET_ADMIN
+            - NET_RAW
+            - SYS_ADMIN
+            - SYS_RAWIO
+            - SYS_RESOURCE
         runAsUser: 0
       volumeMounts:
         - mountPath: /mnt/huge
