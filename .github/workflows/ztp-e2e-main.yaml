@@ -1,8 +1,10 @@
 ---
-name: ztp-e2e-main
+run-name: ztp-e2e-${{ github.ref_name }}-${{ github.event_name }}
+name: ztp-e2e
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
+      - dev
       - main
   schedule:
     - cron: '0 */5 * * *'
@@ -51,12 +53,12 @@ jobs:
       - name: Install ACM/LVM/TALM with gitops
         run: |
           podman exec workstation bash -c '
-            oc apply -f hub/hub-operators-argoapps.yaml
+            oc apply -f hub/hub-provision-argoapp.yaml
           '
       - name: Install ZTP
         run: |
           podman exec workstation bash -c '
-            BRANCH=main PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
+            BRANCH=${{ github.ref_name }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
       - name: Wait HUB to be ready
         run: |
