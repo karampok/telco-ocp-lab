@@ -26,10 +26,13 @@ echo "Title: argocd"
 echo "Key: $(cat "$KEY.pub")"
 echo
 # or
-# argocd login openshift-gitops-server-openshift-gitops.apps.x.com --sso"
+# argocd login openshift-gitops-server-openshift-gitops.apps.x.com --sso
+#
+# argocd login openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab --username admin --insecure
+# oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d
+#
 # argocd repo add git@github.com:$REPO --ssh-private-key-path /tmp/github-ed25519 --insecure --insecure-ignore-host-key"
 # argocd repo add https://github.com/argoproj/argocd-example-apps --username <username> --password <password>
-# username: admin
-# password: $(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
 # argocd repo list
+#
 # argocd app get openshift-gitops/clusters --refresh && argocd app sync openshift-gitops/clusters --prune
