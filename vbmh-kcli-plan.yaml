@@ -74,6 +74,7 @@ hub:
   #   vfio: true
   #   type: igb
     - name: dataplane
+      mac: 02:ca:fe:fa:ce:bb
       noconf: true
       numa: 1
   #   vfio: true

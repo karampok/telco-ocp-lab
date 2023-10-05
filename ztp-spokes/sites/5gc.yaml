@@ -41,7 +41,6 @@ spec:
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
-          cpuset: "0,1,7,8"
           nodeNetwork:
             interfaces:
               - name: ens3
@@ -175,7 +174,6 @@ spec:
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
-          cpuset: "0,1,7,8"
           nodeNetwork:
             interfaces:
               - name: ens3
@@ -242,15 +240,39 @@ spec:
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
-          cpuset: "0,1,2,3"
           nodeNetwork:
             interfaces:
               - name: ens3
                 macAddress: de:ad:be:ff:11:90
               - name: ens4
                 macAddress: de:ad:be:ff:11:91
+              - name: enp3s0
+                macAddress: 02:ca:fe:fa:ce:aa
+              - name: enp4s0
+                macAddress: 02:ca:fe:fa:ce:bb
             config:
               interfaces:
+                - name: enp3s0
+                  description: dataplane net
+                  type: ethernet
+                  state: down
+                  mac-address: 02:ca:fe:fa:ce:aa
+                  ipv4:
+                    enabled: false
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                    dhcp: false
+                - name: enp4s0
+                  description: dataplane net
+                  type: ethernet
+                  state: down
+                  ipv4:
+                    enabled: false
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                    dhcp: false
                 - name: bond0
                   type: bond
                   state: up
