@@ -94,8 +94,6 @@ jobs:
         run: |
           podman exec workstation bash -c '
             timeout 540 oc -n 5gc get policies -w || echo ""
-            # oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/kztp5gc.yaml
-            # KUBECONFIG=/tmp/kztp5gc.yaml oc -n openshift-sriov-network-operator delete pod --all
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
           '
@@ -106,46 +104,33 @@ jobs:
             export KUBECONFIG=/tmp/ztp5gc.yaml
             oc get clusterversion
             oc get nodes
-            oc -n openshift-sriov-network-operator delete pod --all
+            oc get operators
           '
   stage4:
-    name: Wait SPOKE
+    name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage1, stage2]
+    needs: [stage0, stage1, stage2, stage3]
     if: needs.stage1.result == 'success'
     steps:
-      - name: Enable autosecrets hack
-        run: |
-          echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
-          podman exec workstation bash -c '
-            oc apply -f bmh-secret.yaml
-            oc apply -k github.com/karampok/autosecret/config/default
-            echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
-          '
-      - name: Wait Siteconfig
-        run: |
-          podman exec workstation bash -c '
-            timeout 1200 ./bin/watch-ztp 5gc || echo ""
-            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
-          '
-      - name: Wait Policies
-        run: |
-          podman exec workstation bash -c '
-            timeout 540 oc -n 5gc get policies -w || echo ""
-            oc get policies -A
-            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
-          '
-      - name: Access & Test spoke cluster
+      - name: Test spoke cluster
         run: |
           podman exec workstation bash -c '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
             export KUBECONFIG=/tmp/ztp5gc.yaml
-            oc get clusterversion
-            oc get nodes
-            oc -n openshift-sriov-network-operator delete pod --all
+
+            oc apply -f dayX/dpdk-pod.yaml
+            oc apply -f dayX/icmp-frag-case.yaml
+
+            oc wait --for=condition=ready pod dpdk
+            oc wait --for=condition=ready pod -l app=bigfile
+
+            oc logs dpdk
+            oc get svc
           '
-
-
+          podman exec green bash -c '
+            wget 5.8.6.1:9000/big.iso
+            wget 5.8.6.9:9000/big.iso
+          '
 
 # To add github action runner
 # https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new
