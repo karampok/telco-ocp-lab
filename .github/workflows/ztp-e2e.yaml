@@ -63,7 +63,7 @@ jobs:
       - name: Wait HUB to be ready
         run: |
           podman exec workstation bash -c '
-            sleep 60
+            sleep 180
             until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
             until oc get LVMCluster 2>/dev/null; do sleep 30; done
             until oc -n openshift-storage get lvmcluster 2>/dev/null; do sleep 30; done
