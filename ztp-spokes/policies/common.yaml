@@ -16,11 +16,11 @@ spec:
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
       policyName: "install-operators"
+    - fileName: SriovSupportedNicCM.yaml
+      policyName: "install-operators"
     - fileName: SriovSubscriptionOperGroup.yaml
       policyName: "install-operators"
     - fileName: SriovSubscription.yaml
-      policyName: "install-operators"
-    - fileName: SriovSupportedNicCM.yaml
       policyName: "install-operators"
     - fileName: SriovOperatorConfig.yaml
       policyName: "config-operators"
