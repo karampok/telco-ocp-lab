@@ -218,8 +218,7 @@ spec:
                 - name: enp3s0
                   description: dataplane net
                   type: ethernet
-                  state: down
-                  mac-address: 02:ca:fe:fa:ce:aa
+                  state: up
                   ipv4:
                     enabled: false
                     dhcp: false
@@ -229,7 +228,7 @@ spec:
                 - name: enp4s0
                   description: dataplane net
                   type: ethernet
-                  state: down
+                  state: up
                   ipv4:
                     enabled: false
                     dhcp: false
