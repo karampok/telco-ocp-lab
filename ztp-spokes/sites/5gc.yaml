@@ -60,7 +60,8 @@ spec:
                     port:
                       - ens3
                       - ens4
-                - name: bond0.10
+                - &bond0-10
+                  name: bond0.10
                   type: vlan
                   state: up
                   vlan:
@@ -116,20 +117,13 @@ spec:
             config:
               interfaces:
                 - *common-bond0
-                - name: bond0.10
-                  type: vlan
-                  state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 10
+                - <<: *bond0-10
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.117
                         prefix-length: 24
                     dhcp: false
-                  ipv6:
-                    enabled: false
                 - name: bond0.11
                   type: vlan
                   state: up
@@ -164,20 +158,12 @@ spec:
             config:
               interfaces:
                 - *common-bond0
-                - name: bond0.10
-                  type: vlan
-                  state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 10
+                - <<: *bond0-10
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.118
                         prefix-length: 24
-                    dhcp: false
-                  ipv6:
-                    enabled: false
                 - name: bond0.11
                   type: vlan
                   state: up
