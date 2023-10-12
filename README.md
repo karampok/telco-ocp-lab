@@ -1,6 +1,6 @@
 # Agent-based/ZTP on virtual infrastructure
 
-POC on OCP v4.1X.z with complex network setup
+POC on OCP v4.1X.Z with complex network setup
 
 ## Network
 
@@ -8,7 +8,7 @@ POC on OCP v4.1X.z with complex network setup
 
 ## Experiments
 
-- Dual stack / Single stack  (static, DHCPv4, IPv6 SLAAC, DHCPv6)
+- Dual stack / Single stack (static, DHCPv4, IPv6 SLAAC, DHCPv6)
 - W/o proxy for the connected installation
 - RoutingViaHost (=local gateway) (instead of default shared gateway)
 - Network tuning e.g MTU 9000k, bond on the primary interface, VLANs on top of bond
@@ -22,7 +22,7 @@ POC on OCP v4.1X.z with complex network setup
 
 ```
 ssh root@lab0
-dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq tcpdump bind-utils wireguard-tools
+dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq conntrack tcpdump bind-utils wireguard-tools
 systemctl enable --now libvirtd
 systemctl disable firewalld && systemctl stop firewalld
 hostnamectl set-hostname lab0
@@ -32,7 +32,7 @@ kcli create pool -p /var/lib/libvirt/images default
 
 git clone https://github.com/karampok/telco-ocp-lab.git
 cd telco-ocp-lab
-#scp ~/.pull-secret.json ~/.id-rsa.pub ~/.github-argo root@lab0:/root/telco-ocp-lab
+#scp ~/.pull-secret.json ~/.id-rsa.pub root@lab0:/root/telco-ocp-lab
 grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | sed 's/^          //'
 ```
 
@@ -42,15 +42,20 @@ grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | sed 's/^          //'
 cp /usr/share/containers/containers.conf /etc/containers/
 #enable CNI backend network_backend = "cni"
 dnf -y install containernetworking-plugins
-sysctl -w net.ipv4.ip_forward=1 #  /etc/sysctl.conf
+sysctl -w net.ipv4.ip_forward=1 # /etc/sysctl.conf
 setenforce 0 # libvirt errors
 
 ```
-## Wireguard on RHEL 8.X
+
+## QEMU v8 on RHEL 9.2
 
 ```
-dnf -y install https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
-dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-dnf -y install kmod-wireguard wireguard-tools
-
+dnf install -y python3-pip python3-pip gcc numactl-libs numactl-devel glib2-devel pixman-devel
+pip install ninja
+git clone -b stable-8.1 https://github.com/qemu/qemu.git && cd qemu/
+mkdir build && cd build/
+../configure --enable-numa --enable-guest-agent --target-list=x86_64-softmmu --disable-docs
+make -j 10
+make install
+# virsh dumpxml 5gc-w0|grep emulator
 ```
