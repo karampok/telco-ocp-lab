@@ -76,9 +76,9 @@ jobs:
             pass=$(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
             argocd login openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab --username admin --insecure --password $pass
             argocd app list
-            argocd app get policies
             argocd app get hub-provision
             argocd app get clusters
+            argocd app get policies
           '
   stage3:
     name: Wait SPOKE
