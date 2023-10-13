@@ -104,6 +104,8 @@ jobs:
       - name: Wait Policies
         run: |
           podman exec workstation bash -c '
+            sleep 600
+            oc get cgu -A
             timeout 540 oc -n 5gc get policies -w || echo ""
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
@@ -121,7 +123,7 @@ jobs:
     name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1, stage2, stage3]
-    if: needs.stage1.result == 'success'
+    if: needs.stage3.result == 'success'
     steps:
       - name: Test spoke cluster
         run: |
