@@ -70,11 +70,21 @@ jobs:
             oc -n openshift-storage wait lvmcluster lvmcluster --for=jsonpath='{.status.state}'=Ready --timeout=1200s
             oc -n open-cluster-management wait MultiClusterHub multiclusterhub --for=jsonpath='{.status.phase}'=Running --timeout=1200s
           '
+      - name: Review argocd sync
+        run: |
+          podman exec workstation bash -c '
+            pass=$(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
+            argocd login openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab --username admin --insecure --password $pass
+            argocd app list
+            argocd app get policies
+            argocd app get hub-provision
+            argocd app get clusters
+          '
   stage3:
     name: Wait SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1, stage2]
-    if: needs.stage1.result == 'success'
+    if: needs.stage2.result == 'success'
     steps:
       - name: Enable autosecrets hack
         run: |
@@ -87,6 +97,7 @@ jobs:
       - name: Wait Siteconfig
         run: |
           podman exec workstation bash -c '
+            sleep 600
             timeout 1200 ./bin/watch-ztp 5gc || echo ""
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
