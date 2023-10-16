@@ -28,6 +28,7 @@ jobs:
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
+          virsh dumpxml 5gc-w0|grep emulator
   stage1:
     name: Deploy SNO Cluster
     runs-on: ${{needs.stage0.outputs.RUNNER}}
@@ -97,8 +98,12 @@ jobs:
       - name: Wait Siteconfig
         run: |
           podman exec workstation bash -c '
-            sleep 600
-            timeout 1200 ./bin/watch-ztp 5gc || echo ""
+            sleep 1200
+            oc get bmh -n 5gc -o yaml
+            oc get agentclusterinstall -n 5gc 5gc -o yaml
+            oc -n 5gc get agents  -o yaml
+            oc get managedcluster 5gc -o yaml
+            oc get clusterdeployment -n 5gc 5gc -o yml
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Wait Policies
@@ -136,6 +141,8 @@ jobs:
 
             oc wait --for=condition=ready pod dpdk
             oc wait --for=condition=ready pod -l app=bigfile
+
+            sleep 30
 
             oc logs dpdk
             oc get svc
