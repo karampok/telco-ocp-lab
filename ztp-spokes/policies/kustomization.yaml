@@ -9,3 +9,4 @@ generators:
   - day-2-operations.yaml
 resources:
   - ns.yaml
+  - crds/crontab.yaml
