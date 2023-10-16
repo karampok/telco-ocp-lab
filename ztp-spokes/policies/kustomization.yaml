@@ -8,5 +8,6 @@ generators:
   - group-n95.yaml
   - day-2-operations.yaml
 resources:
-  - ns.yaml
-  - crds/crontab.yaml
+  - resources/ns.yaml
+  - resources/crontab.yaml
+  - resources/crd-scc.yaml
