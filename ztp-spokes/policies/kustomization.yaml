@@ -9,5 +9,5 @@ generators:
   - day-2-operations.yaml
 resources:
   - resources/ns.yaml
-  - resources/crontab.yaml
-  - resources/crd-scc.yaml
+  # - resources/crontab.yaml
+  # - resources/crd-scc.yaml
