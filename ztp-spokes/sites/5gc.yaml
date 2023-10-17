@@ -25,8 +25,6 @@ spec:
           hostPrefix: 23
       apiVIP: 10.10.10.125
       ingressVIP: 10.10.10.126
-        #      machineNetwork:
-        # - cidr: 10.10.10.0/24
       serviceNetwork:
         - 172.30.0.0/16
       additionalNTPSources:
@@ -41,7 +39,6 @@ spec:
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
-          cpuset: "0,1,7,8"
           nodeNetwork:
             interfaces:
               - name: ens3
@@ -50,7 +47,8 @@ spec:
                 macAddress: de:ad:be:ff:11:61
             config:
               interfaces:
-                - name: bond0
+                - &bond0
+                  name: bond0
                   type: bond
                   state: up
                   mtu: 9000
@@ -62,7 +60,8 @@ spec:
                     port:
                       - ens3
                       - ens4
-                - name: bond0.10
+                - &bond0-10
+                  name: bond0.10
                   type: vlan
                   state: up
                   vlan:
@@ -76,7 +75,8 @@ spec:
                     dhcp: false
                   ipv6:
                     enabled: false
-                - name: bond0.11
+                - &bond0-11
+                  name: bond0.11
                   type: vlan
                   state: up
                   vlan:
@@ -90,11 +90,11 @@ spec:
                     dhcp: false
                   ipv6:
                     enabled: false
-              dns-resolver:
+              dns-resolver: &dns
                 config:
                   server:
                     - 10.10.20.10
-              routes:
+              routes: &routes
                 config:
                   - destination: 0.0.0.0/0
                     next-hop-address: 10.10.10.1
@@ -117,55 +117,23 @@ spec:
                 macAddress: de:ad:be:ff:11:71
             config:
               interfaces:
-                - name: bond0
-                  type: bond
-                  state: up
-                  mtu: 9000
-                  link-aggregation:
-                    mode: active-backup
-                    options:
-                      miimon: '140'
-                    ports:
-                      - ens3
-                      - ens4
-                - name: bond0.10
-                  type: vlan
-                  state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 10
+                - *bond0
+                - <<: *bond0-10
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.117
                         prefix-length: 24
                     dhcp: false
-                  ipv6:
-                    enabled: false
-                - name: bond0.11
-                  type: vlan
-                  state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 11
+                - <<: *bond0-11
                   ipv4:
                     enabled: true
                     address:
                       - ip: 11.11.11.117
                         prefix-length: 24
                     dhcp: false
-                  ipv6:
-                    enabled: false
-              dns-resolver:
-                config:
-                  server:
-                    - 10.10.20.10
-              routes:
-                config:
-                  - destination: 0.0.0.0/0
-                    next-hop-address: 10.10.10.1
-                    next-hop-interface: bond0.10
-                    table-id: 254
+              dns-resolver: *dns
+              routes: *routes
         - hostName: m2.5gc.eric.vlab
           role: master
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111112
@@ -175,7 +143,6 @@ spec:
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
-          cpuset: "0,1,7,8"
           nodeNetwork:
             interfaces:
               - name: ens3
@@ -184,55 +151,22 @@ spec:
                 macAddress: de:ad:be:ff:11:81
             config:
               interfaces:
-                - name: bond0
-                  type: bond
-                  state: up
-                  mtu: 9000
-                  link-aggregation:
-                    mode: active-backup
-                    options:
-                      miimon: '140'
-                    port:
-                      - ens3
-                      - ens4
-                - name: bond0.10
-                  type: vlan
-                  state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 10
+                - *bond0
+                - <<: *bond0-10
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.118
                         prefix-length: 24
-                    dhcp: false
-                  ipv6:
-                    enabled: false
-                - name: bond0.11
-                  type: vlan
-                  state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 11
+                - <<: *bond0-11
                   ipv4:
                     enabled: true
                     address:
                       - ip: 11.11.11.118
                         prefix-length: 24
                     dhcp: false
-                  ipv6:
-                    enabled: false
-              dns-resolver:
-                config:
-                  server:
-                    - 10.10.20.10
-              routes:
-                config:
-                  - destination: 0.0.0.0/0
-                    next-hop-address: 10.10.10.1
-                    next-hop-interface: bond0.10
-                    table-id: 254
+              dns-resolver: *dns
+              routes: *routes
         - hostName: w0.5gc.eric.vlab
           role: worker
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111113
@@ -242,129 +176,52 @@ spec:
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
-          cpuset: "0,1,2,3"
           nodeNetwork:
             interfaces:
               - name: ens3
                 macAddress: de:ad:be:ff:11:90
               - name: ens4
                 macAddress: de:ad:be:ff:11:91
+              - name: enp3s0
+                macAddress: 02:ca:fe:fa:ce:aa
+              - name: enp4s0
+                macAddress: 02:ca:fe:fa:ce:bb
             config:
               interfaces:
-                - name: bond0
-                  type: bond
+                - name: enp3s0
+                  description: dataplane net
+                  type: ethernet
                   state: up
-                  mtu: 9000
-                  link-aggregation:
-                    mode: active-backup
-                    options:
-                      miimon: '140'
-                    port:
-                      - ens3
-                      - ens4
-                  mac-address: de:ad:be:ff:11:90
-                - name: bond0.10
-                  type: vlan
+                  ipv4:
+                    enabled: false
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                    dhcp: false
+                - name: enp4s0
+                  description: dataplane net
+                  type: ethernet
                   state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 10
+                  ipv4:
+                    enabled: false
+                    dhcp: false
+                  ipv6:
+                    enabled: false
+                    dhcp: false
+                - *bond0
+                - <<: *bond0-10
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.119
                         prefix-length: 24
                     dhcp: false
-                  ipv6:
-                    enabled: false
-                - name: bond0.11
-                  type: vlan
-                  state: up
-                  vlan:
-                    base-iface: bond0
-                    id: 11
+                - <<: *bond0-11
                   ipv4:
                     enabled: true
                     address:
                       - ip: 11.11.11.119
                         prefix-length: 24
                     dhcp: false
-                  ipv6:
-                    enabled: false
-              dns-resolver:
-                config:
-                  server:
-                    - 10.10.20.10
-              routes:
-                config:
-                  - destination: 0.0.0.0/0
-                    next-hop-address: 10.10.10.1
-                    next-hop-interface: bond0.10
-                    table-id: 254
-        # - hostName: w1.5gc.eric.vlab
-        #   role: worker
-        #   bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111114
-        #   bmcCredentialsName:
-        #     name: "5gc-w1-secret"
-        #   bootMACAddress: "de:ad:be:ff:11:92"
-        #   bootMode: "UEFI"
-        #   rootDeviceHints:
-        #     deviceName: "/dev/vda"
-        #   nodeNetwork:
-        #     interfaces:
-        #       - name: ens3
-        #         macAddress: de:ad:be:ff:11:92
-        #       - name: ens4
-        #         macAddress: de:ad:be:ff:11:93
-        #     config:
-        #       interfaces:
-        #         - name: bond0
-        #           type: bond
-        #           state: up
-        #           mtu: 9000
-        #           link-aggregation:
-        #             mode: active-backup
-        #             options:
-        #               miimon: '140'
-        #             port:
-        #               - ens3
-        #               - ens4
-        #           mac-address: de:ad:be:ff:11:92
-        #         - name: bond0.10
-        #           type: vlan
-        #           state: up
-        #           vlan:
-        #             base-iface: bond0
-        #             id: 10
-        #           ipv4:
-        #             enabled: true
-        #             address:
-        #               - ip: 10.10.10.120
-        #                 prefix-length: 24
-        #             dhcp: false
-        #           ipv6:
-        #             enabled: false
-        #         - name: bond0.11
-        #           type: vlan
-        #           state: up
-        #           vlan:
-        #             base-iface: bond0
-        #             id: 11
-        #           ipv4:
-        #             enabled: true
-        #             address:
-        #               - ip: 11.11.11.120
-        #                 prefix-length: 24
-        #             dhcp: false
-        #           ipv6:
-        #             enabled: false
-        #       dns-resolver:
-        #         config:
-        #           server:
-        #             - 10.10.20.10
-        #       routes:
-        #         config:
-        #           - destination: 0.0.0.0/0
-        #             next-hop-address: 10.10.10.1
-        #             next-hop-interface: bond0.10
-        #             table-id: 254
+              dns-resolver: *dns
+              routes: *routes
