@@ -7,6 +7,7 @@ generators:
   - group-ht.yaml
   - group-n95.yaml
   - day-2-operations.yaml
+  - post.yaml
 resources:
   - resources/ns.yaml
   - resources/crontab.yaml

@@ -1,0 +1,15 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "post"
+  namespace: "ztp-common"
+spec:
+  bindingRules:
+    common: "true"
+  remediationAction: inform
+  sourceFiles:
+    - fileName: "SCC.yaml"
+      policyName: "add-scc"
+    - fileName: "CrontabCRD.yaml"
+      policyName: "add-crd"
