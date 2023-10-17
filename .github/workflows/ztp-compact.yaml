@@ -79,11 +79,11 @@ jobs:
         run: |
           podman exec workstation bash -c '
             sleep 1200
-            oc get bmh -n 5gc -o yaml
-            oc get agentclusterinstall -n 5gc 5gc -o yaml
-            oc -n 5gc get agents  -o yaml
-            oc get managedcluster 5gc -o yaml
-            oc get clusterdeployment -n 5gc 5gc -o yml
+            oc get bmh -n 5gc -o yaml || true
+            oc get agentclusterinstall -n 5gc 5gc -o yaml || true
+            oc -n 5gc get agents  -o yaml || true
+            oc get managedcluster 5gc -o yaml || true
+            oc get clusterdeployment -n 5gc 5gc -o yaml || true
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Wait Policies
@@ -94,6 +94,7 @@ jobs:
             timeout 540 oc -n 5gc get policies -w || echo ""
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
+            oc -n 5gc get policies
           '
       - name: Access spoke cluster
         run: |
