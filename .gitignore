@@ -1,3 +1,4 @@
 .pull-secret.json
 .github-argo
 pull-secret.yaml
+.ztp-kustomize-plugin
