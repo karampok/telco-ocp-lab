@@ -8,6 +8,7 @@ metadata:
       any SELinux context.  WARNING: this is the most relaxed SCC and should be used
       only for cluster administration. Grant with caution.'
     release.openshift.io/create-only: "true"
+    ran.openshift.io/ztp-deploy-wave: "20"
   name: e-custom-scc
 allowHostDirVolumePlugin: true
 allowHostIPC: true
