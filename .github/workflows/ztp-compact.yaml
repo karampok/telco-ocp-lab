@@ -111,11 +111,6 @@ jobs:
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
             export KUBECONFIG=/tmp/ztp5gc.yaml
 
-            mkdir cluster-dataset-${{ github.sha }}
-            cd cluster-dataset-${{ github.sha }}
-            oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
-            cd -
-
             oc apply -f dayX/dpdk-pod.yaml
             oc apply -f dayX/icmp-frag-case.yaml
 
