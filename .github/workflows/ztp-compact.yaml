@@ -11,7 +11,7 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
 jobs:
   stage0:
-    name: Setup Virtual Infra
+    name: ZTP E2E
     runs-on: [self-hosted]
     steps:
       - name: Checkout code
