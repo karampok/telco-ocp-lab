@@ -1,0 +1,12 @@
+---
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  name: ocs-external-storagecluster
+  namespace: openshift-storage
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "11"
+spec:
+  externalStorage:
+    enable: true
+  labelSelector: {}
