@@ -1,0 +1,23 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "storage"
+  namespace: "ztp-group"
+spec:
+  bindingRules:
+    sites: "n62-ocp2"
+  remediationAction: inform
+  sourceFiles:
+    - fileName: odf/ns.yaml
+      policyName: "install-odf-operator"
+    - fileName: odf/operatorGroup.yaml
+      policyName: "install-odf-operator"
+    - fileName: odf/subscription.yaml
+      policyName: "install-odf-operator"
+# - fileName: odf/externalCEPHSecret.yaml
+#   policyName: "config-odf-operator"
+#   metadata:
+#     name: rook-ceph-external-cluster-details
+#   data:
+#     external_cluster_details: W3siXYZ

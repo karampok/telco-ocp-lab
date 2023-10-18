@@ -11,8 +11,8 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
 jobs:
   stage0:
-    name: ZTP E2E Compact
-    runs-on: [self-hosted, main]
+    name: ZTP E2E
+    runs-on: [self-hosted]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
       - name: Clean Virtual Infra
         run: |
           ./sinfra --clean -auto-timeout 0s --continue-on-error
-      - name: Setup Virtual Infra
+      - name: Setup Virtual Infra -  ${{ runner.name }}
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
@@ -42,7 +42,7 @@ jobs:
           podman exec workstation bash -c '
             oc apply -f hub/hub-provision-argoapp.yaml
           '
-      - name: Install ZTP
+      - name: Install ZTP - point to  ${{ github.sha }}
         run: |
           podman exec workstation bash -c '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
@@ -85,6 +85,7 @@ jobs:
             oc get managedcluster 5gc -o yaml || true
             oc get clusterdeployment -n 5gc 5gc -o yaml || true
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
           '
       - name: Wait Policies
         run: |

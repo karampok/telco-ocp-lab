@@ -1,0 +1,23 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "cluster-upgrade"
+  namespace: "ztp-common"
+spec:
+  bindingRules:
+    common: "true"
+  remediationAction: inform
+  sourceFiles:
+    - fileName: ClusterVersion.yaml
+      policyName: "platform-upgrade"
+      metadata:
+        name: version
+      spec:
+        channel: "stable-4.13"
+        desiredUpdate:
+          version: 4.13.13
+      status:
+        history:
+          - version: 4.13.13
+            state: "Completed"
