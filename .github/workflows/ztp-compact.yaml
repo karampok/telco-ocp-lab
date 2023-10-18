@@ -12,7 +12,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   stage0:
     name: Setup Virtual Infra
-    runs-on: [self-hosted, dev]
+    runs-on: [self-hosted]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,10 +42,10 @@ jobs:
           podman exec workstation bash -c '
             oc apply -f hub/hub-provision-argoapp.yaml
           '
-      - name: Install ZTP
+      - name: Install ZTP - point to  ${{ github.sha }}
         run: |
           podman exec workstation bash -c '
-            BRANCH=${{ github.ref_name }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
+            BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
       - name: Wait HUB to be ready
         run: |
