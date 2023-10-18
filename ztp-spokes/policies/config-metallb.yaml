@@ -13,6 +13,8 @@ spec:
       policyName: "config-metallb"
     - fileName: metallb/bgpPeer.yaml
       policyName: "config-metallb"
+      metadata:
+        name: green
       spec:
         peerAddress: 11.11.11.254
         peerASN: 8002
@@ -27,12 +29,16 @@ spec:
                   - m2.5gc.eric.vlab
     - fileName: metallb/community.yaml
       policyName: "config-metallb"
+      metadata:
+        name: green
       spec:
         communities:
           - name: greenc
             value: '7003:008'
     - fileName: metallb/ipAddressPool.yaml
       policyName: "config-metallb"
+      metadata:
+        name: green
       spec:
         autoAssign: false
         addresses:
@@ -40,6 +46,8 @@ spec:
           - 5.8.6.9/32
     - fileName: metallb/bgpAdvertisement.yaml
       policyName: "config-metallb"
+      metadata:
+        name: green
       spec:
         communities:
           - greenc
