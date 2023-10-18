@@ -1,5 +1,5 @@
 ---
-run-name: ztp-compact-${{ github.ref_name }}-${{ github.event_name }}-${{ runner.name }}
+run-name: ztp-compact-${{ github.ref_name }}-${{ github.event_name }}
 
 name: ztp-compact
 on:  # yamllint disable-line rule:truthy
@@ -86,6 +86,7 @@ jobs:
             oc get managedcluster 5gc -o yaml
             oc get clusterdeployment -n 5gc 5gc -o yaml
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
           '
       - name: Wait Policies
         run: |
@@ -99,7 +100,6 @@ jobs:
       - name: Access spoke cluster
         run: |
           podman exec workstation bash -c '
-            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
             export KUBECONFIG=/tmp/ztp5gc.yaml
             oc get clusterversion
             oc get nodes
