@@ -1,6 +1,6 @@
 ---
-run-name: ztp-e2e-${{ github.ref_name }}-${{ github.event_name }}
-name: ztp-e2e
+run-name: ztp-compact-${{ github.ref_name }}-${{ github.event_name }}
+name: ztp-compact
 on:  # yamllint disable-line rule:truthy
   push:
     branches:
@@ -13,8 +13,6 @@ jobs:
   stage0:
     name: Setup Virtual Infra
     runs-on: [self-hosted, dev]
-    outputs:
-      RUNNER: ${{ runner.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,18 +21,12 @@ jobs:
       - name: Clean Virtual Infra
         run: |
           ./sinfra --clean -auto-timeout 0s --continue-on-error
-      - name: Setup Virtual Infra
+      - name: Setup Virtual Infra -  ${{ runner.name }}
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
-  stage1:
-    name: Deploy SNO Cluster
-    runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0]
-    if: needs.stage0.result == 'success'
-    steps:
       - name: Deploy SNO using agent-based
         run: |
           podman exec workstation bash -c '
@@ -45,12 +37,6 @@ jobs:
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
-  stage2:
-    name: Provision HUB Cluster
-    runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage1]
-    if: needs.stage0.result == 'success'
-    steps:
       - name: Install ACM/LVM/TALM with gitops
         run: |
           podman exec workstation bash -c '
@@ -81,12 +67,6 @@ jobs:
             argocd app get clusters
             argocd app get policies
           '
-  stage3:
-    name: Wait SPOKE
-    runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage1, stage2]
-    if: needs.stage2.result == 'success'
-    steps:
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
@@ -124,12 +104,6 @@ jobs:
             oc get nodes
             oc get operators
           '
-  stage4:
-    name: Test SPOKE
-    runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage1, stage2, stage3]
-    if: needs.stage3.result == 'success'
-    steps:
       - name: Test spoke cluster
         run: |
           podman exec workstation bash -c '
