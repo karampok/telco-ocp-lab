@@ -1,5 +1,6 @@
 ---
-run-name: ztp-compact-${{ github.ref_name }}-${{ github.event_name }}
+run-name: ztp-compact-${{ github.ref_name }}-${{ github.event_name }}-${{ runner.name }}
+
 name: ztp-compact
 on:  # yamllint disable-line rule:truthy
   push:
@@ -83,7 +84,7 @@ jobs:
             oc get agentclusterinstall -n 5gc 5gc -o yaml
             oc -n 5gc get agents  -o yaml
             oc get managedcluster 5gc -o yaml
-            oc get clusterdeployment -n 5gc 5gc -o yml
+            oc get clusterdeployment -n 5gc 5gc -o yaml
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Wait Policies
