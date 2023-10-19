@@ -50,10 +50,10 @@ spec:
         name: green
       spec:
         communities:
-          - greenc
+          - green
         ipAddressPools:
-          - greenips
+          - green
         peers:
-          - greenpeers
+          - green
     - fileName: raw/addGreenStaticRoutes.yaml
       policyName: "config-static-routes"

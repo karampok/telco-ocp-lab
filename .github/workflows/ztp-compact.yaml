@@ -39,7 +39,7 @@ jobs:
 
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
-            oc get co && oc get clusterversion
+            oc get clusterversion && oc get co && oc get ns openshift-gitops
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
@@ -126,8 +126,8 @@ jobs:
             oc get svc
           '
           podman exec green bash -c '
-            wget -q 5.8.6.1:9000/big.iso
-            wget -q 5.8.6.9:9000/big.iso
+            wget --timeout=1 --tries=5 -q 5.8.6.1:9000/big.iso
+            wget --timeout=1 --tries=5 -q 5.8.6.9:9000/big.iso
           '
 
 # To add github action runner
