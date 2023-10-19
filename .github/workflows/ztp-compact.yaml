@@ -56,7 +56,7 @@ jobs:
       - name: Wait HUB to be ready - OCP 4.13.13
         run: |
           podman exec workstation bash -c '
-            sleep 180
+            sleep 240
             until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
             until oc get LVMCluster 2>/dev/null; do sleep 30; done
             until oc -n openshift-storage get lvmcluster 2>/dev/null; do sleep 30; done
@@ -85,11 +85,7 @@ jobs:
         run: |
           podman exec workstation bash -c '
             sleep 1200
-            oc get bmh -n 5gc -o yaml || true
-            oc get agentclusterinstall -n 5gc 5gc -o yaml || true
-            oc -n 5gc get agents  -o yaml || true
-            oc get managedcluster 5gc -o yaml || true
-            oc get clusterdeployment -n 5gc 5gc -o yaml || true
+            timeout 540 ./bin/watch-ztp 5gc
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
           '
