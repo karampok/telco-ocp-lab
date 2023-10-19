@@ -79,11 +79,7 @@ jobs:
         run: |
           podman exec workstation bash -c '
             sleep 1200
-            oc get bmh -n 5gc -o yaml || true
-            oc get agentclusterinstall -n 5gc 5gc -o yaml || true
-            oc -n 5gc get agents  -o yaml || true
-            oc get managedcluster 5gc -o yaml || true
-            oc get clusterdeployment -n 5gc 5gc -o yaml || true
+            timeout 540 ./bin/watch-ztp 5gc
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
           '
