@@ -27,17 +27,23 @@ jobs:
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
-      - name: Deploy SNO using agent-based
+      - name: Deploy SNO using agent-based - OCP 4.13.17 / gitops latest
         run: |
           podman exec workstation bash -c '
+            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/openshift-client-linux-4.13.17.tar.gz -o openshift-install-linux.tar.gz
+            tar xvfz openshift-install-linux.tar.gz
+            mv openshift-install /usr/bin/
+            chmod +x /usr/bin/openshift-install
+
             ./deploy-ocp.sh hub
+
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
             oc get co && oc get clusterversion
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
-      - name: Install ACM/LVM/TALM with gitops
+      - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.13 / stable
         run: |
           podman exec workstation bash -c '
             oc apply -f hub/hub-provision-argoapp.yaml
@@ -47,10 +53,10 @@ jobs:
           podman exec workstation bash -c '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
-      - name: Wait HUB to be ready
+      - name: Wait HUB to be ready - OCP 4.13.13
         run: |
           podman exec workstation bash -c '
-            sleep 180
+            sleep 240
             until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
             until oc get LVMCluster 2>/dev/null; do sleep 30; done
             until oc -n openshift-storage get lvmcluster 2>/dev/null; do sleep 30; done
