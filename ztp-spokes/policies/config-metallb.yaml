@@ -50,7 +50,7 @@ spec:
         name: green
       spec:
         communities:
-          - green
+          - greenc
         ipAddressPools:
           - green
         peers:
