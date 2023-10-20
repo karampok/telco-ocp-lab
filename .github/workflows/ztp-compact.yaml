@@ -84,7 +84,7 @@ jobs:
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
           '
       - name: Wait Siteconfig
-        timeout-minutes: 70
+        timeout-minutes: 90
         run: |
           podman exec workstation bash -c '
             sleep 1200
@@ -101,7 +101,7 @@ jobs:
             oc get operators
           '
       - name: Wait Policies
-        timeout-minutes: 80
+        timeout-minutes: 90
         run: |
           podman exec workstation bash -c '
             sleep 600
