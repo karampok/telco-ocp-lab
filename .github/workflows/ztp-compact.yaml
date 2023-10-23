@@ -98,7 +98,7 @@ jobs:
             export KUBECONFIG=/tmp/spoke.yaml
             oc get clusterversion
             oc get nodes
-            oc get operators
+            oc get co
           '
       - name: Wait Policies
         timeout-minutes: 120
@@ -111,6 +111,7 @@ jobs:
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
             oc -n 5gc get policies
+            oc -n ztp-install get cgu 5gc -o yaml
           '
       - name: Test spoke cluster
         run: |
