@@ -166,6 +166,40 @@ spec:
                     dhcp: false
               dns-resolver: *dns
               routes: *routes
+        - hostName: w1.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111114
+          bmcCredentialsName:
+            name: "5gc-w1-secret"
+          bootMACAddress: "de:ad:be:ff:11:85"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:85
+              - name: ens4
+                macAddress: de:ad:be:ff:11:86
+            config:
+              interfaces:
+                - *bond0
+                - <<: *bond0-10
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.120
+                        prefix-length: 24
+                    dhcp: false
+                - <<: *bond0-11
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 11.11.11.120
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver: *dns
+              routes: *routes
         - hostName: w0.5gc.eric.vlab
           role: worker
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111113
