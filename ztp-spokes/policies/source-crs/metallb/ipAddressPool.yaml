@@ -7,6 +7,6 @@ metadata:
   annotations:
     ran.openshift.io/ztp-deploy-wave: "10"
 spec:
-  autoAssign: true
-  avoidBuggyIPs: false
+  # autoAssign: false
+  # avoidBuggyIPs: false
   addresses:

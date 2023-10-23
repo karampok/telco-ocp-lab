@@ -53,10 +53,9 @@ spec:
                   state: up
                   mtu: 9000
                   link-aggregation:
-                    mode: active-backup
+                    mode: 802.3ad
                     options:
                       miimon: 100
-                      primary: ens3
                     port:
                       - ens3
                       - ens4
