@@ -28,7 +28,6 @@ jobs:
           ./sinfra --setupInfra -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
       - name: Deploy SNO using agent-based - OCP 4.13.17 / gitops latest
-        timeout-minutes: 40
         run: |
           podman exec workstation bash -c '
             curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/openshift-client-linux-4.13.17.tar.gz -o openshift-install-linux.tar.gz
@@ -40,12 +39,11 @@ jobs:
 
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
-            oc get clusterversion && oc get co && oc get ns openshift-gitops || true
+            oc get clusterversion && oc get co && oc get ns openshift-gitops
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
       - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.13 / stable
-        timeout-minutes: 10
         run: |
           podman exec workstation bash -c '
             oc apply -f hub/hub-provision-argoapp.yaml
@@ -84,40 +82,37 @@ jobs:
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
           '
       - name: Wait Siteconfig
-        timeout-minutes: 120
         run: |
           podman exec workstation bash -c '
             sleep 1200
             timeout 540 ./bin/watch-ztp 5gc
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
-          '
-      - name: Access spoke cluster
-        run: |
-          podman exec workstation bash -c '
-            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
-            export KUBECONFIG=/tmp/spoke.yaml
-            oc get clusterversion
-            oc get nodes
-            oc get co
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
           '
       - name: Wait Policies
-        timeout-minutes: 120
         run: |
           podman exec workstation bash -c '
             sleep 600
             oc get cgu -A
             timeout 540 oc -n 5gc get policies -w || echo ""
-            KUBECONFIG=/tmp/zpoke.yaml oc -n openshift-sriov-network-operator delete pod --all
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
             oc -n 5gc get policies
-            oc -n ztp-install get cgu 5gc -o yaml
+          '
+      - name: Access spoke cluster
+        run: |
+          podman exec workstation bash -c '
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
+            export KUBECONFIG=/tmp/ztp5gc.yaml
+            oc get clusterversion
+            oc get nodes
+            oc get operators
           '
       - name: Test spoke cluster
         run: |
           podman exec workstation bash -c '
-            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
-            export KUBECONFIG=/tmp/spoke.yaml
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/ztp5gc.yaml
+            export KUBECONFIG=/tmp/ztp5gc.yaml
 
             oc apply -f dayX/dpdk-pod.yaml
             oc apply -f dayX/icmp-frag-case.yaml
@@ -127,12 +122,12 @@ jobs:
 
             sleep 30
 
-            oc logs dpdk || true
-            oc get svc || true
+            oc logs dpdk
+            oc get svc
           '
           podman exec green bash -c '
-            wget --timeout=1 --tries=5  5.8.6.9:9000/big.iso
-            wget --timeout=1 --tries=5  5.8.6.1:9000/big.iso
+            wget --timeout=1 --tries=5 -q 5.8.6.1:9000/big.iso
+            wget --timeout=1 --tries=5 -q 5.8.6.9:9000/big.iso
           '
 
 # To add github action runner
