@@ -31,7 +31,7 @@ jobs:
         timeout-minutes: 40
         run: |
           podman exec workstation bash -c '
-            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/openshift-client-linux-4.13.17.tar.gz -o openshift-install-linux.tar.gz
+            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.17/openshift-client-linux-4.13.17.tar.gz -o openshift-install-linux.tar.gz
             tar xvfz openshift-install-linux.tar.gz
             mv openshift-install /usr/bin/
             chmod +x /usr/bin/openshift-install
@@ -127,12 +127,13 @@ jobs:
 
             sleep 30
 
-            oc logs dpdk || true
+            oc get nodes || true
+            oc get pods || true
             oc get svc || true
           '
           podman exec green bash -c '
-            wget --timeout=1 --tries=5  5.8.6.9:9000/big.iso
-            wget --timeout=1 --tries=5  5.8.6.1:9000/big.iso
+            wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
+            wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
           '
 
 # To add github action runner
