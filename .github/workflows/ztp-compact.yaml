@@ -127,12 +127,13 @@ jobs:
 
             sleep 30
 
-            oc logs dpdk || true
+            oc get nodes || true
+            oc get pods || true
             oc get svc || true
           '
           podman exec green bash -c '
-            wget --timeout=1 --tries=5  5.8.6.9:9000/big.iso
-            wget --timeout=1 --tries=5  5.8.6.1:9000/big.iso
+            wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
+            wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
           '
 
 # To add github action runner

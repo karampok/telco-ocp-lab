@@ -9,13 +9,20 @@ spec:
     sites: "n95"
   remediationAction: inform
   sourceFiles:
-    - fileName: LabelHTNode.yaml
+    - fileName: LabelNode.yaml
+      policyName: "label-nodes"
+      metadata:
+        name: "w1.5gc.eric.vlab"
+        labels:
+          node-role.kubernetes.io/standard: ""
+          acm-policy-labels-workaround: enabled
+    - fileName: LabelNode.yaml
       policyName: "label-nodes"
       metadata:
         name: "w0.5gc.eric.vlab"
         labels:
           node-role.kubernetes.io/ht100gb: ""
-          type: "prod"
+          acm-policy-labels-workaround: enabled
       spec:
         taints:
           - effect: NoSchedule
