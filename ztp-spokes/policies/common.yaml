@@ -35,6 +35,12 @@ spec:
       policyName: "install-operators"
     - fileName: metallb/instance.yaml
       policyName: "config-operators"
+      spec:
+        logLevel: debug
+        speakerTolerations:
+          - effect: NoSchedule
+            key: sriov
+            value: "true"
     # install NMState operator
     - fileName: nmstate/subscription.yaml
       policyName: "install-operators"
