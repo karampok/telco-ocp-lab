@@ -63,12 +63,12 @@ spec:
     - fileName: "GenericConfigMap.yaml"
       policyName: "config-bgp-learning"
       metadata:
-        name: enable-red-bgp-learning
+        name: bgpextras
         namespace: metallb-system
         annotations:
           ran.openshift.io/ztp-deploy-wave: "10"
       data:
-        extra: |
+        extras: |
           route-map 12.12.12.254-in permit 20
     - fileName: metallb/bgpPeer.yaml
       policyName: "config-metallb-red"

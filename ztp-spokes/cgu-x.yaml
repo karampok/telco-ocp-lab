@@ -22,6 +22,8 @@ spec:
     # - htworker-config-virt-vfio-noiommu
     # - networks-config-metallb
     # - networks-config-static-routes
+    - networks-config-bgp-learning
+    - networks-config-bgp-learning
     - networks-config-metallb-red
   remediationStrategy:
     maxConcurrency: 1
