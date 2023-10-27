@@ -57,3 +57,38 @@ spec:
           - green
     - fileName: raw/addGreenStaticRoutes.yaml
       policyName: "config-static-routes"
+    # RED
+    - fileName: raw/addRedNet.yaml
+      policyName: "config-red-nmstate"
+    - fileName: metallb/bgpPeer.yaml
+      policyName: "config-metallb-red"
+      metadata:
+        name: red
+      spec:
+        peerAddress: 12.12.12.254
+        peerASN: 8012
+        myASN: 7003
+        nodeSelectors:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - w0.5gc.eric.vlab
+    - fileName: metallb/ipAddressPool.yaml
+      policyName: "config-metallb-red"
+      metadata:
+        name: red
+      spec:
+        autoAssign: false
+        addresses:
+          - 6.6.6.1/32
+          - 6.6.6.9/32
+    - fileName: metallb/bgpAdvertisement.yaml
+      policyName: "config-metallb-red"
+      metadata:
+        name: red
+      spec:
+        ipAddressPools:
+          - red
+        peers:
+          - red

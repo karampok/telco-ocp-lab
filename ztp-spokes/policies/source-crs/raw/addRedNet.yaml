@@ -1,0 +1,64 @@
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: w0.5gc.eric.vlab
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "10"
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: w0.5gc.eric.vlab
+  desiredState:
+    interfaces:
+      - name: bond0.12
+        accept-all-mac-addresses: false
+        ethtool:
+          feature:
+            fcoe-mtu: false
+            highdma: true
+            rx-gro: true
+            rx-gro-list: false
+            rx-udp-gro-forwarding: false
+            tx-checksum-fcoe-crc: false
+            tx-checksum-ip-generic: true
+            tx-checksum-sctp: false
+            tx-fcoe-segmentation: false
+            tx-generic-segmentation: true
+            tx-gre-csum-segmentation: false
+            tx-gre-segmentation: false
+            tx-gso-list: true
+            tx-ipxip4-segmentation: false
+            tx-ipxip6-segmentation: false
+            tx-nocache-copy: false
+            tx-scatter-gather-fraglist: false
+            tx-sctp-segmentation: true
+            tx-tcp-ecn-segmentation: true
+            tx-tcp-mangleid-segmentation: true
+            tx-tcp-segmentation: true
+            tx-tcp6-segmentation: true
+            tx-udp-segmentation: true
+            tx-udp_tnl-csum-segmentation: false
+            tx-udp_tnl-segmentation: false
+        ipv4:
+          address:
+            - ip: 12.12.12.119
+              prefix-length: 24
+          dhcp: false
+          enabled: true
+        ipv6:
+          autoconf: false
+          dhcp: false
+          enabled: false
+        state: up
+        type: vlan
+        vlan:
+          base-iface: bond0
+          id: 12
+          protocol: 802.1q
+    routes:
+      config:
+        - destination: 12.100.100.0/24
+          next-hop-address: 12.12.12.254
+          next-hop-interface: bond0.12
+          table-id: 254
+          state: absent #route to be added with bgp learning

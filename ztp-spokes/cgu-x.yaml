@@ -19,7 +19,7 @@ spec:
     # - htworker-config-nodes
     # - htworker-config-sriov-sn
     - htworker-config-sriov-snnp
-    - htworker-config-virt-vfio-noiommu
+      # - htworker-config-virt-vfio-noiommu
     # - networks-config-metallb
     # - networks-config-static-routes
   remediationStrategy:
