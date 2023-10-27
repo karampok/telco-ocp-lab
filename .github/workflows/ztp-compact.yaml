@@ -12,7 +12,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   stage0:
     name: ZTP E2E
-    runs-on: [self-hosted]
+    runs-on: [self-hosted, dev]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -121,6 +121,7 @@ jobs:
 
             oc apply -f dayX/dpdk-pod.yaml
             oc apply -f dayX/icmp-frag-case.yaml
+            oc apply -f dayX/red-net.yaml
 
             oc wait --for=condition=ready pod dpdk --timeout=320s
             oc wait --for=condition=ready pod -l app=bigfile --timeout=320s
@@ -135,6 +136,10 @@ jobs:
             wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
             wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
           '
+          podman exec red bash -c '
+            curl -s http://6.6.6.1/
+          '
+
 
 # To add github action runner
 # https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new
