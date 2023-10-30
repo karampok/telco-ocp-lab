@@ -57,7 +57,15 @@ spec:
       policyName: "config-network"
       spec:
         additionalNetworks:
-          - name: mh-macvlan
+          - name: macnet0
             namespace: default
-            rawCNIConfig: '{ "cniVersion": "0.3.1", "name": "macvlan", "plugins": [ {"type": "macvlan","master": "bond0.11", "mtu": 1500, "mode": "bridge", "ipam": { "type": "whereabouts", "range": "2520:41:0:2106::/64","gateway": "2520:41:0:2106::1" } }, {"type":"tuning","sysctl":{"net.ipv6.conf.IFNAME.accept_ra":"0"}} ]}'
+            rawCNIConfig: '{ "cniVersion": "0.4.0", "name": "macnet0",
+              "plugins": [ {"type": "macvlan", "master": "bond0", "mode": "bridge" },{
+              "type": "tuning", "name": "tuning-arp" }] }'
+            type: Raw
+          - name: macnet1
+            namespace: default
+            rawCNIConfig: '{ "cniVersion": "0.4.0", "name": "macnet1",
+              "plugins": [ {"type": "macvlan", "master": "bond1", "mode": "private" },{
+              "type": "tuning", "name": "tuning-arp" }] }'
             type: Raw

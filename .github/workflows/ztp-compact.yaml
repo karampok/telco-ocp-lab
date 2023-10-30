@@ -122,6 +122,7 @@ jobs:
             oc apply -f dayX/dpdk-pod.yaml
             oc apply -f dayX/icmp-frag-case.yaml
             oc apply -f dayX/red-net.yaml
+            oc apply -f dayX/macnet0-bridge.yaml
 
             oc wait --for=condition=ready pod dpdk --timeout=320s
             oc wait --for=condition=ready pod -l app=bigfile --timeout=320s
