@@ -30,7 +30,7 @@ jobs:
       - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops latest
         timeout-minutes: 40
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.1/openshift-install-linux-4.14.1.tar.gz -o openshift-install-linux.tar.gz
             tar xvfz openshift-install-linux.tar.gz
             mv openshift-install /usr/bin/
@@ -47,17 +47,17 @@ jobs:
       - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.1 / stable
         timeout-minutes: 10
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             oc apply -f hub/hub-provision-argoapp.yaml
           '
       - name: Install ZTP - point to  ${{ github.sha }}
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
       - name: Wait HUB to be ready - OCP 4.14.1
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             sleep 240
             until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
             until oc get LVMCluster 2>/dev/null; do sleep 30; done
@@ -67,7 +67,7 @@ jobs:
           '
       - name: Review argocd sync
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             pass=$(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
             argocd login openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab --username admin --insecure --password $pass
             argocd app list
@@ -78,7 +78,7 @@ jobs:
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
@@ -86,14 +86,14 @@ jobs:
       - name: Wait Siteconfig
         timeout-minutes: 120
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             sleep 1200
             timeout 540 ./bin/watch-ztp 5gc
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Access spoke cluster
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
             oc get clusterversion
@@ -103,8 +103,8 @@ jobs:
       - name: Wait Policies
         timeout-minutes: 120
         run: |
-          podman exec workstation bash -c '
-            sleep 600
+          podman exec workstation bash -ce '
+            sleep 1200
             oc get cgu -A
             timeout 540 oc -n 5gc get policies -w || echo ""
             KUBECONFIG=/tmp/zpoke.yaml oc -n openshift-sriov-network-operator delete pod --all
@@ -115,7 +115,7 @@ jobs:
           '
       - name: Test spoke cluster
         run: |
-          podman exec workstation bash -c '
+          podman exec workstation bash -ce '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
 
@@ -133,11 +133,11 @@ jobs:
             oc get pods || true
             oc get svc || true
           '
-          podman exec green bash -c '
+          podman exec green bash -ce '
             wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
             wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
           '
-          podman exec red bash -c '
+          podman exec red bash -ce '
             curl -s http://6.6.6.1/
           '
 
