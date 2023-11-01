@@ -28,7 +28,7 @@ spec:
             - NET_ADMIN
         runAsUser: 0
       command: ["/bin/sh", "-c"]
-      args: ["/opt/net/config.sh 172.100.100.100/24; nc -k -l 172.100.100.100 1111"]
+      args: ["/opt/net/config.sh 172.100.125.100/24; nc -k -l 172.100.125.100 1111"]
       volumeMounts:
         - name: configs
           mountPath: /opt/net/
@@ -67,7 +67,7 @@ spec:
             - NET_ADMIN
         runAsUser: 0
       command: ["/bin/sh", "-c"]
-      args: ["/opt/net/config.sh 172.100.100.200/24; nc -k -l 172.100.100.200 2222"]
+      args: ["/opt/net/config.sh 172.100.125.200/24; nc -k -l 172.100.125.200 2222"]
       volumeMounts:
         - name: configs
           mountPath: /opt/net/
