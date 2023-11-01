@@ -2,7 +2,6 @@
 set -euoE pipefail
 
 openshift-install version
-#read -p -r # https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.13.9/
 
 cp -r sno-template /share/hub
 #read -p -r # tree before,after
