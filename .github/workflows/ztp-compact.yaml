@@ -107,7 +107,7 @@ jobs:
             sleep 1200
             oc get cgu -A
             timeout 540 oc -n 5gc get policies -w || echo ""
-            KUBECONFIG=/tmp/zpoke.yaml oc -n openshift-sriov-network-operator delete pod --all
+            KUBECONFIG=/tmp/spoke.yaml oc -n openshift-sriov-network-operator delete pod --all
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
             oc -n 5gc get policies
@@ -123,6 +123,7 @@ jobs:
             oc apply -f dayX/icmp-frag-case.yaml
             oc apply -f dayX/red-net.yaml
             oc apply -f dayX/macnet0-bridge.yaml
+            oc apply -f dayX/macnet1-private.yaml
 
             oc wait --for=condition=ready pod dpdk --timeout=320s
             oc wait --for=condition=ready pod -l app=bigfile --timeout=320s
@@ -140,6 +141,11 @@ jobs:
           podman exec red bash -ce '
             curl -s http://6.6.6.1/
           '
+          podman exec macnet bash -ce '
+            nc -vz  172.100.125.100 1111
+            nc -vz  172.100.125.200 2222
+          '
+
 
 
 # To add github action runner

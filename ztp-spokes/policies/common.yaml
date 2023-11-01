@@ -66,6 +66,6 @@ spec:
           - name: macnet1
             namespace: default
             rawCNIConfig: '{ "cniVersion": "0.4.0", "name": "macnet1",
-              "plugins": [ {"type": "macvlan", "master": "bond1", "mode": "private" },{
+              "plugins": [ {"type": "macvlan", "master": "bond0", "mode": "private" },{
               "type": "tuning", "name": "tuning-arp" }] }'
             type: Raw
