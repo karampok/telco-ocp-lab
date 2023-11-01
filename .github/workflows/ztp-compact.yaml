@@ -142,10 +142,14 @@ jobs:
             curl -s http://6.6.6.1/
           '
           podman exec macnet bash -ce '
+            # test bridge mode access
             nc -vz  172.100.125.100 1111
             nc -vz  172.100.125.200 2222
+            # test private private access
+            nc -vz  172.100.127.100 1111
+            nc -vz  172.100.127.110 1111
+            nc -vz  172.100.127.200 2222
           '
-
 
 
 # To add github action runner
