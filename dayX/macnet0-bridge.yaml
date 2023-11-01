@@ -20,7 +20,13 @@ spec:
       image: quay.io/karampok/snife:latest
       imagePullPolicy: Always
       securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
         capabilities:
+          drop:
+            - ALL
           add:
             - IPC_LOCK
             - SYS_RESOURCE
@@ -59,7 +65,13 @@ spec:
       image: quay.io/karampok/snife:latest
       imagePullPolicy: Always
       securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
         capabilities:
+          drop:
+            - ALL
           add:
             - IPC_LOCK
             - SYS_RESOURCE
