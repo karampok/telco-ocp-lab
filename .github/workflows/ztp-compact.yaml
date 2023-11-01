@@ -48,6 +48,7 @@ jobs:
         timeout-minutes: 10
         run: |
           podman exec workstation bash -ce '
+            until oc get Application 2>/dev/null; do sleep 30; done
             oc apply -f hub/hub-provision-argoapp.yaml
           '
       - name: Install ZTP - point to  ${{ github.sha }}
