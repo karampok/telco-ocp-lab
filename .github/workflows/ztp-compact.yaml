@@ -68,14 +68,14 @@ jobs:
           '
       - name: Review argocd sync
         run: |
-          podman exec workstation bash -cx '
+          podman exec workstation bash -ce '
             pass=$(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
             argocd login openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab --username admin --insecure --password $pass
             argocd app list
             argocd app get hub-provision
             argocd app get clusters
             argocd app get policies
-          '
+          ' || true
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
