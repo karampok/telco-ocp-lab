@@ -48,6 +48,7 @@ jobs:
         timeout-minutes: 10
         run: |
           podman exec workstation bash -ce '
+            until oc get Application 2>/dev/null; do sleep 30; done
             oc apply -f hub/hub-provision-argoapp.yaml
           '
       - name: Install ZTP - point to  ${{ github.sha }}
@@ -141,9 +142,14 @@ jobs:
           podman exec red bash -cex '
             curl -s http://6.6.6.1/
           '
-          podman exec macnet bash -cex '
+          podman exec macnet bash -ce '
+            # test bridge mode access
             nc -vz  172.100.125.100 1111
             nc -vz  172.100.125.200 2222
+            # test private private access
+            nc -vz  172.100.127.100 1111
+            nc -vz  172.100.127.110 1111
+            nc -vz  172.100.127.200 2222
           '
 
 
