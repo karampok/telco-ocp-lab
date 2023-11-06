@@ -90,6 +90,8 @@ jobs:
           podman exec workstation bash -ce '
             sleep 1200
             timeout 540 ./bin/watch-ztp 5gc || echo
+            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s ||true
+            timeout 10 ./bin/watch-ztp 5gc || echo
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Access spoke cluster
