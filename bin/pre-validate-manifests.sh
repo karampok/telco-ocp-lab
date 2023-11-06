@@ -12,7 +12,7 @@ BGreen='\033[1;32m'       # Green
 BYellow='\033[1;33m'      # Yellow
 
 VALIDATE_SRC=$1
-ZTP_SITE_GENERATOR_IMG=registry.redhat.io/openshift4/ztp-site-generate-rhel8:v4.13.1
+ZTP_SITE_GENERATOR_IMG=registry.redhat.io/openshift4/ztp-site-generate-rhel8:v4.14.0
 PRE_VALIDATE_ERROR_LOG="/tmp/pre-validate-error-${RANDOM}.log"
 echo "Log details in: ${PRE_VALIDATE_ERROR_LOG}"
 
