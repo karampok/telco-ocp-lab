@@ -18,12 +18,13 @@ spec:
     # - label-ht-worker-label-nodes
     # - htworker-config-nodes
     # - htworker-config-sriov-sn
-    - htworker-config-sriov-snnp
+    # - htworker-config-sriov-snnp
     # - htworker-config-virt-vfio-noiommu
     # - networks-config-metallb
     # - networks-config-static-routes
     # - networks-config-bgp-learning
     #- networks-config-metallb-red
+    - cluster-ocp-version
   remediationStrategy:
     maxConcurrency: 1
     timeout: 240

@@ -6,7 +6,7 @@ mkdir -p "$out"
 
 PULL_SECRET_PATH=${PULL_SECRET_PATH:-~/.pull-secret.json}
 podman run --log-driver=none --rm --authfile="$PULL_SECRET_PATH" \
-  registry.redhat.io/openshift4/ztp-site-generate-rhel8:v4.14 extract /home/ztp/argocd/deployment --tar | tar x -C "$out"
+  registry.redhat.io/openshift4/ztp-site-generate-rhel8:v4.13 extract /home/ztp/argocd/deployment --tar | tar x -C "$out"
 
 oc patch argocd openshift-gitops -n openshift-gitops --type=merge \
   --patch-file "$out"/argocd-openshift-gitops-patch.json
