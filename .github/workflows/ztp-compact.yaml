@@ -135,14 +135,14 @@ jobs:
             oc get pods || true
             oc get svc || true
           '
-          podman exec green bash -ce '
+          podman exec green bash -cex '
             wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
             wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
           '
-          podman exec red bash -ce '
+          podman exec red bash -cex '
             curl -s http://6.6.6.1/
           '
-          podman exec macnet bash -ce '
+          podman exec macnet bash -cex '
             # test bridge mode access
             nc -vz  172.100.125.100 1111
             nc -vz  172.100.125.200 2222
