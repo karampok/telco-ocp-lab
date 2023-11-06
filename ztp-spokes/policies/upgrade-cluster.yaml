@@ -2,7 +2,7 @@
 apiVersion: ran.openshift.io/v1
 kind: PolicyGenTemplate
 metadata:
-  name: "cluster-upgrade"
+  name: "cluster"
   namespace: "ztp-common"
 spec:
   bindingRules:
@@ -10,7 +10,7 @@ spec:
   remediationAction: inform
   sourceFiles:
     - fileName: ClusterVersion.yaml
-      policyName: "platform-upgrade"
+      policyName: "ocp-version"
       metadata:
         name: version
       spec:
