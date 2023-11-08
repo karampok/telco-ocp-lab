@@ -17,7 +17,7 @@ spec:
     - fileName: SriovSubscriptionNS.yaml
       policyName: "install-operators"
     - fileName: SriovSupportedNicCM.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-hack"
     - fileName: SriovSubscriptionOperGroup.yaml
       policyName: "install-operators"
     - fileName: SriovSubscription.yaml

@@ -3,7 +3,7 @@ apiVersion: sriovnetwork.openshift.io/v1
 kind: SriovOperatorConfig
 metadata:
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "2"
+    ran.openshift.io/ztp-deploy-wave: "10"
   name: default
   namespace: openshift-sriov-network-operator
 spec:
