@@ -108,7 +108,6 @@ jobs:
             sleep 1200
             oc get cgu -A
             timeout 540 oc -n 5gc get policies -w || echo ""
-            KUBECONFIG=/tmp/spoke.yaml oc patch sriovoperatorconfig default --type=merge -n openshift-sriov-network-operator --patch '{ "spec": { "enableOperatorWebhook": false } }'
             oc get policies -A
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
             oc -n 5gc get policies
