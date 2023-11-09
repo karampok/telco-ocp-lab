@@ -31,9 +31,9 @@ spec:
                 path: /etc/modprobe.d/vfio.conf
     # configure SR-IOV
     - fileName: SriovOperatorConfig.yaml
-      policyName: "config-operators"
+      policyName: "config-operator-sriov"
       spec:
-        enableOperatorWebhook": false
+        enableOperatorWebhook: false
     - fileName: SriovNetwork.yaml
       policyName: config-sriov-sn
       metadata:
