@@ -106,7 +106,7 @@ spec:
   nodeSelector:
     kubernetes.io/hostname: m2.5gc.eric.vlab
   containers:
-    - name: withmacvlan-c-two
+    - name: withmacvlan-c
       image: quay.io/karampok/snife:latest
       imagePullPolicy: Always
       securityContext:
@@ -144,7 +144,6 @@ data:
     #! /bin/bash
     set -euo pipefail
     ip=$1
-
     ip link add dev bond0 type bond
     ip link set dev net1 down
     ip link set dev bond0 down
@@ -153,7 +152,6 @@ data:
     ip link set dev bond0 up
     for vlan in 127 128
     do
-      echo $vlan
       ip link add link bond0 name bond0."$vlan" type vlan id "$vlan"
       ip link set dev bond0."$vlan" up
       ip a a 172.100."$vlan"."$ip"/24 dev bond0."$vlan"

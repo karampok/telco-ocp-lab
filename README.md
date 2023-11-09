@@ -24,6 +24,7 @@ POC on OCP v4.1X.Z with complex network setup
 ssh root@lab0
 dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq conntrack tcpdump bind-utils wireguard-tools
 systemctl enable --now libvirtd
+systemctl enable --now podman.socket
 systemctl disable firewalld && systemctl stop firewalld
 hostnamectl set-hostname lab0
 
@@ -45,6 +46,13 @@ dnf -y install containernetworking-plugins
 sysctl -w net.ipv4.ip_forward=1 # /etc/sysctl.conf
 setenforce 0 # libvirt errors
 
+```
+
+## Podman-remote
+
+```
+podman system connection add lab0  ssh://root@10.X.Y.Z
+podman remote -c lab0 ps
 ```
 
 ## QEMU v8 on RHEL 9.2

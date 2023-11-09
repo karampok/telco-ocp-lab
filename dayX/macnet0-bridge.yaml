@@ -10,7 +10,7 @@ metadata:
             "namespace": "default"
           }
         ]
-  name: withmacvlan-125-one
+  name: withmacvlan-bridge-m1-a
   namespace": default
 spec:
   nodeSelector:
@@ -34,7 +34,7 @@ spec:
             - NET_ADMIN
         runAsUser: 0
       command: ["/bin/sh", "-c"]
-      args: ["/opt/net/config.sh 172.100.125.100/24 125; nc -k -l 172.100.125.100 1111"]
+      args: ["/opt/net/config.sh 100; nc -k -l 172.100.125.100 1111"]
       volumeMounts:
         - name: configs
           mountPath: /opt/net/
@@ -42,7 +42,7 @@ spec:
     - name: configs
       configMap:
         defaultMode: 0777
-        name: netconfig
+        name: netconfig1256
 ---
 apiVersion: v1
 kind: Pod
@@ -55,13 +55,58 @@ metadata:
             "namespace": "default"
           }
         ]
-  name: withmacvlan-125-two
+  name: withmacvlan-bridge-m1-b
+  namespace": default
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: m1.5gc.eric.vlab
+  containers:
+    - name: withmacvlan-c
+      image: quay.io/karampok/snife:latest
+      imagePullPolicy: Always
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - IPC_LOCK
+            - SYS_RESOURCE
+            - NET_RAW
+            - NET_ADMIN
+        runAsUser: 0
+      command: ["/bin/sh", "-c"]
+      args: ["/opt/net/config.sh 110; nc -k -l 172.100.125.110 1111"]
+      volumeMounts:
+        - name: configs
+          mountPath: /opt/net/
+  volumes:
+    - name: configs
+      configMap:
+        defaultMode: 0777
+        name: netconfig1256
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    k8s.v1.cni.cncf.io/networks: |-
+        [
+          {
+            "name": "macnet0",
+            "namespace": "default"
+          }
+        ]
+  name: withmacvlan-bridge-m2
   namespace": default
 spec:
   nodeSelector:
     kubernetes.io/hostname: m2.5gc.eric.vlab
   containers:
-    - name: withmacvlan-c-two
+    - name: withmacvlan-c
       image: quay.io/karampok/snife:latest
       imagePullPolicy: Always
       securityContext:
@@ -79,7 +124,7 @@ spec:
             - NET_ADMIN
         runAsUser: 0
       command: ["/bin/sh", "-c"]
-      args: ["/opt/net/config.sh 172.100.125.200/24 125; nc -k -l 172.100.125.200 2222"]
+      args: ["/opt/net/config.sh 200; nc -k -l 172.100.125.200 2222"]
       volumeMounts:
         - name: configs
           mountPath: /opt/net/
@@ -87,72 +132,30 @@ spec:
     - name: configs
       configMap:
         defaultMode: 0777
-        name: netconfig
----
-apiVersion: v1
-kind: Pod
-metadata:
-  annotations:
-    k8s.v1.cni.cncf.io/networks: |-
-        [
-          {
-            "name": "macnet0",
-            "namespace": "default"
-          }
-        ]
-  name: withmacvlan-126-one
-  namespace": default
-spec:
-  nodeSelector:
-    kubernetes.io/hostname: m1.5gc.eric.vlab
-  containers:
-    - name: withmacvlan-c-one
-      image: quay.io/karampok/snife:latest
-      imagePullPolicy: Always
-      securityContext:
-        allowPrivilegeEscalation: false
-        runAsNonRoot: false
-        seccompProfile:
-          type: RuntimeDefault
-        capabilities:
-          drop:
-            - ALL
-          add:
-            - IPC_LOCK
-            - SYS_RESOURCE
-            - NET_RAW
-            - NET_ADMIN
-        runAsUser: 0
-      command: ["/bin/sh", "-c"]
-      args: ["/opt/net/config.sh 172.100.126.100/24 126; nc -k -l 172.100.126.100 1111"]
-      volumeMounts:
-        - name: configs
-          mountPath: /opt/net/
-  volumes:
-    - name: configs
-      configMap:
-        defaultMode: 0777
-        name: netconfig
+        name: netconfig1256
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: netconfig
+  name: netconfig1256
   namespace: default
 data:
   config.sh: |
     #! /bin/bash
-    ip=$1
-    vlan=$2
     set -euo pipefail
+    ip=$1
     ip link add dev bond0 type bond
     ip link set dev net1 down
     ip link set dev bond0 down
     ip link set dev net1 master bond0
     ip link set dev net1 up
     ip link set dev bond0 up
-    ip link add link bond0 name bond0."$vlan" type vlan id "$vlan"
-    ip link set dev bond0."$vlan" up
-    ip a a $ip dev bond0."$vlan"
+    for vlan in 125 126
+    do
+      ip link add link bond0 name bond0."$vlan" type vlan id "$vlan"
+      ip link set dev bond0."$vlan" up
+      ip a a 172.100."$vlan"."$ip"/24 dev bond0."$vlan"
+    done
+    ip --br a s
 
     #ssh lab2 tcpdump -i baremetal -nnn -e|grep "vlan 126\|vlan 125"

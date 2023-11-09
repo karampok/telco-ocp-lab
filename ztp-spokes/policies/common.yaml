@@ -16,17 +16,15 @@ spec:
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
       policyName: "install-operators"
-    - fileName: SriovSupportedNicCM.yaml
-      policyName: "install-operators"
+    # - fileName: SriovSupportedNicCM.yaml
+    #   policyName: "install-operators-hack"
     - fileName: SriovSubscriptionOperGroup.yaml
       policyName: "install-operators"
     - fileName: SriovSubscription.yaml
       policyName: "install-operators"
-    - fileName: SriovOperatorConfig.yaml
-      policyName: "config-operators"
       spec:
-        configDaemonNodeSelector:
-          node-role.kubernetes.io/ht100gb: ""
+        channel: stable
+        source: redhat-operators
     - fileName: metallb/ns.yaml
       policyName: "install-operators"
     - fileName: metallb/operatorGroup.yaml
