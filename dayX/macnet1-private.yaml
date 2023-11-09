@@ -2,6 +2,8 @@
 apiVersion: v1
 kind: Pod
 metadata:
+  labels:
+    app: macvlan
   annotations:
     k8s.v1.cni.cncf.io/networks: |-
         [
@@ -47,6 +49,8 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
+  labels:
+    app: macvlan
   annotations:
     k8s.v1.cni.cncf.io/networks: |-
         [
@@ -92,6 +96,8 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
+  labels:
+    app: macvlan
   annotations:
     k8s.v1.cni.cncf.io/networks: |-
         [
