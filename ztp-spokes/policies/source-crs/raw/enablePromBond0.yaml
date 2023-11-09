@@ -1,0 +1,16 @@
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: enable-prom-bond0
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "10"
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/master: ''
+  desiredState:
+    interfaces:
+      - name: bond0
+        accept-all-mac-addresses: true
+        state: up
+        type: bond

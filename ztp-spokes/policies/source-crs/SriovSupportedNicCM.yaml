@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "2"
+  labels:
+    operators.coreos.com/sriov-network-operator.openshift-sriov-network-operator: ""
+  name: supported-nic-ids
+  namespace: openshift-sriov-network-operator
+data:
+  Intel_ixgbe_82576: 8086 10c9 10ca
