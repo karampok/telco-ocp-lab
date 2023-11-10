@@ -85,11 +85,13 @@ jobs:
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
           '
       - name: Wait Siteconfig
-        timeout-minutes: 120
+        timeout-minutes: 150
         run: |
           podman exec workstation bash -ce '
             sleep 1200
             timeout 540 ./bin/watch-ztp 5gc || echo
+            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s ||true
+            timeout 10 ./bin/watch-ztp 5gc || echo
             oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
           '
       - name: Access spoke cluster
@@ -133,16 +135,16 @@ jobs:
             oc get svc || true
           '
           podman exec green bash -cex '
-            echo from green client to access the service in green segment (static)
+            echo "from green client to access the service in green segment (static)"
             wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
             wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
           '
           podman exec red bash -cex '
-            echo from red client to access the service in red segment (bgp learning)
+            echo "from red client to access the service in red segment (bgp learning)"
             curl -s http://6.6.6.1/
           '
           podman exec macnet bash -cex '
-            echo macnet to access pods over secondary interface
+            echo "macnet to access pods over secondary interface"
             # test bridge mode access
             nc -vz  172.100.125.100 1111
             nc -vz  172.100.125.200 2222
