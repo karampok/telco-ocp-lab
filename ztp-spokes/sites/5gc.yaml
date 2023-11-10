@@ -47,8 +47,7 @@ spec:
                 macAddress: de:ad:be:ff:11:61
             config:
               interfaces:
-                - &bond0
-                  name: bond0
+                - name: bond0
                   type: bond
                   state: up
                   mtu: 9000
@@ -60,8 +59,7 @@ spec:
                     port:
                       - ens3
                       - ens4
-                - &bond0-10
-                  name: bond0.10
+                - name: bond0.10
                   type: vlan
                   state: up
                   vlan:
@@ -75,8 +73,7 @@ spec:
                     dhcp: false
                   ipv6:
                     enabled: false
-                - &bond0-11
-                  name: bond0.11
+                - name: bond0.11
                   type: vlan
                   state: up
                   vlan:
@@ -90,11 +87,11 @@ spec:
                     dhcp: false
                   ipv6:
                     enabled: false
-              dns-resolver: &dns
+              dns-resolver:
                 config:
                   server:
                     - 10.10.20.10
-              routes: &routes
+              routes:
                 config:
                   - destination: 0.0.0.0/0
                     next-hop-address: 10.10.10.1
@@ -117,23 +114,56 @@ spec:
                 macAddress: de:ad:be:ff:11:71
             config:
               interfaces:
-                - *bond0
-                - <<: *bond0-10
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: 100
+                      primary: ens3
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.117
                         prefix-length: 24
                     dhcp: false
-                - <<: *bond0-11
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 11.11.11.117
                         prefix-length: 24
                     dhcp: false
-              dns-resolver: *dns
-              routes: *routes
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
         - hostName: m2.5gc.eric.vlab
           role: master
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111112
@@ -151,22 +181,55 @@ spec:
                 macAddress: de:ad:be:ff:11:81
             config:
               interfaces:
-                - *bond0
-                - <<: *bond0-10
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: 100
+                      primary: ens3
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.118
                         prefix-length: 24
-                - <<: *bond0-11
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 11.11.11.118
                         prefix-length: 24
                     dhcp: false
-              dns-resolver: *dns
-              routes: *routes
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
         - hostName: w1.5gc.eric.vlab
           role: worker
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111114
@@ -184,23 +247,56 @@ spec:
                 macAddress: de:ad:be:ff:11:86
             config:
               interfaces:
-                - *bond0
-                - <<: *bond0-10
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: 100
+                      primary: ens3
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.120
                         prefix-length: 24
                     dhcp: false
-                - <<: *bond0-11
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 11.11.11.120
                         prefix-length: 24
                     dhcp: false
-              dns-resolver: *dns
-              routes: *routes
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
         - hostName: w0.5gc.eric.vlab
           role: worker
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111113
@@ -242,20 +338,328 @@ spec:
                   ipv6:
                     enabled: false
                     dhcp: false
-                - *bond0
-                - <<: *bond0-10
+                - name: bond0
+                  type: bond
+                  state: up
+                  mtu: 9000
+                  link-aggregation:
+                    mode: active-backup
+                    options:
+                      miimon: 100
+                      primary: ens3
+                    port:
+                      - ens3
+                      - ens4
+                - name: bond0.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 10
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 10.10.10.119
                         prefix-length: 24
                     dhcp: false
-                - <<: *bond0-11
+                - name: bond0.11
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: bond0
+                    id: 11
+                  ipv6:
+                    enabled: false
                   ipv4:
                     enabled: true
                     address:
                       - ip: 11.11.11.119
                         prefix-length: 24
                     dhcp: false
-              dns-resolver: *dns
-              routes: *routes
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy10.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:01"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:01
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy08.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:02
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy03.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:02
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy04.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:02
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy05.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:02
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy06.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:02
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy06.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:02
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.119
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+
+
