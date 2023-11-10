@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: agnhost
+  name: rednet
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: agnhost
+      app: rednet
   template:
     metadata:
       labels:
-        app: agnhost
+        app: rednet
     spec:
       nodeSelector:
         node-role.kubernetes.io/ht100gb: ""
@@ -50,7 +50,7 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    app: agnhost
+    app: rednet
 
 # from red
 # alias urlencode="python3 -c \"import sys, urllib.parse; print(urllib.parse.quote(''.join(sys.stdin.readlines())))\""
