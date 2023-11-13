@@ -9,5 +9,6 @@ spec:
   defaultNetwork:
     ovnKubernetesConfig:
       gatewayConfig:
+        ipForwarding: "Global"
         routingViaHost: true
     type: OVNKubernetes
