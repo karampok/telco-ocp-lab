@@ -6,7 +6,7 @@ metadata:
   namespace: openshift-operators
 spec:
   channel: gitops-1.9
-  installPlanApproval: Manual
+  installPlanApproval: Automatic
   name: openshift-gitops-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
