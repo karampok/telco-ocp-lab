@@ -388,7 +388,7 @@ spec:
                     next-hop-address: 10.10.10.1
                     next-hop-interface: bond0.10
                     table-id: 254
-        - hostName: dummy10.5gc.eric.vlab
+        - hostName: dummy01.5gc.eric.vlab
           role: worker
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
           bmcCredentialsName:
@@ -414,7 +414,7 @@ spec:
                   ipv4:
                     enabled: true
                     address:
-                      - ip: 10.10.10.119
+                      - ip: 10.10.10.121
                         prefix-length: 24
                     dhcp: false
               dns-resolver:
@@ -427,9 +427,9 @@ spec:
                     next-hop-address: 10.10.10.1
                     next-hop-interface: bond0.10
                     table-id: 254
-        - hostName: dummy08.5gc.eric.vlab
+        - hostName: dummy02.5gc.eric.vlab
           role: worker
-          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01211111-1111-1111-1111-111111111113
           bmcCredentialsName:
             name: "5gc-w0-secret"
           bootMACAddress: "de:ad:be:ff:11:02"
@@ -453,7 +453,7 @@ spec:
                   ipv4:
                     enabled: true
                     address:
-                      - ip: 10.10.10.119
+                      - ip: 10.10.10.122
                         prefix-length: 24
                     dhcp: false
               dns-resolver:
@@ -468,17 +468,17 @@ spec:
                     table-id: 254
         - hostName: dummy03.5gc.eric.vlab
           role: worker
-          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/03111111-1111-1111-1111-111111111113
           bmcCredentialsName:
             name: "5gc-w0-secret"
-          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMACAddress: "de:ad:be:ff:11:03"
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
           nodeNetwork:
             interfaces:
               - name: ens3
-                macAddress: de:ad:be:ff:11:02
+                macAddress: de:ad:be:ff:11:03
             config:
               interfaces:
                 - name: ens3.10
@@ -492,7 +492,7 @@ spec:
                   ipv4:
                     enabled: true
                     address:
-                      - ip: 10.10.10.119
+                      - ip: 10.10.10.123
                         prefix-length: 24
                     dhcp: false
               dns-resolver:
@@ -507,17 +507,17 @@ spec:
                     table-id: 254
         - hostName: dummy04.5gc.eric.vlab
           role: worker
-          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/04444111-1111-1111-1111-111111111113
           bmcCredentialsName:
             name: "5gc-w0-secret"
-          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMACAddress: "de:ad:be:ff:11:06"
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
           nodeNetwork:
             interfaces:
               - name: ens3
-                macAddress: de:ad:be:ff:11:02
+                macAddress: de:ad:be:ff:11:04
             config:
               interfaces:
                 - name: ens3.10
@@ -531,7 +531,7 @@ spec:
                   ipv4:
                     enabled: true
                     address:
-                      - ip: 10.10.10.119
+                      - ip: 10.10.10.124
                         prefix-length: 24
                     dhcp: false
               dns-resolver:
@@ -546,17 +546,17 @@ spec:
                     table-id: 254
         - hostName: dummy05.5gc.eric.vlab
           role: worker
-          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/05111111-1111-1111-1111-111111111113
           bmcCredentialsName:
             name: "5gc-w0-secret"
-          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMACAddress: "de:ad:be:ff:11:05"
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
           nodeNetwork:
             interfaces:
               - name: ens3
-                macAddress: de:ad:be:ff:11:02
+                macAddress: de:ad:be:ff:11:05
             config:
               interfaces:
                 - name: ens3.10
@@ -570,7 +570,7 @@ spec:
                   ipv4:
                     enabled: true
                     address:
-                      - ip: 10.10.10.119
+                      - ip: 10.10.10.125
                         prefix-length: 24
                     dhcp: false
               dns-resolver:
@@ -585,17 +585,17 @@ spec:
                     table-id: 254
         - hostName: dummy06.5gc.eric.vlab
           role: worker
-          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/06111111-1111-1111-1111-111111111113
           bmcCredentialsName:
             name: "5gc-w0-secret"
-          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMACAddress: "de:ad:be:ff:11:06"
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
           nodeNetwork:
             interfaces:
               - name: ens3
-                macAddress: de:ad:be:ff:11:02
+                macAddress: de:ad:be:ff:11:06
             config:
               interfaces:
                 - name: ens3.10
@@ -609,7 +609,7 @@ spec:
                   ipv4:
                     enabled: true
                     address:
-                      - ip: 10.10.10.119
+                      - ip: 10.10.10.126
                         prefix-length: 24
                     dhcp: false
               dns-resolver:
@@ -622,19 +622,19 @@ spec:
                     next-hop-address: 10.10.10.1
                     next-hop-interface: bond0.10
                     table-id: 254
-        - hostName: dummy06.5gc.eric.vlab
+        - hostName: dummy07.5gc.eric.vlab
           role: worker
-          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/01111111-1111-1111-1111-111111111113
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/07111111-1111-1111-1111-111111111113
           bmcCredentialsName:
             name: "5gc-w0-secret"
-          bootMACAddress: "de:ad:be:ff:11:02"
+          bootMACAddress: "de:ad:be:ff:11:07"
           bootMode: "UEFI"
           rootDeviceHints:
             deviceName: "/dev/vda"
           nodeNetwork:
             interfaces:
               - name: ens3
-                macAddress: de:ad:be:ff:11:02
+                macAddress: de:ad:be:ff:11:07
             config:
               interfaces:
                 - name: ens3.10
@@ -648,7 +648,7 @@ spec:
                   ipv4:
                     enabled: true
                     address:
-                      - ip: 10.10.10.119
+                      - ip: 10.10.10.129
                         prefix-length: 24
                     dhcp: false
               dns-resolver:
@@ -661,5 +661,237 @@ spec:
                     next-hop-address: 10.10.10.1
                     next-hop-interface: bond0.10
                     table-id: 254
-
-
+        - hostName: dummy08.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/08111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:08"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:08
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.128
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy09.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/09111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:09"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:09
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.129
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy10.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/10111111-1111-1111-1111-111111111113
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:10"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:10
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.130
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy11.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111183
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:11"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:11
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.131
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy12.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/12111111-1111-1111-1111-111111111183
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:12"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:12
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.132
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
+        - hostName: dummy13.5gc.eric.vlab
+          role: worker
+          bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/13111111-1111-1111-1111-111111111183
+          bmcCredentialsName:
+            name: "5gc-w0-secret"
+          bootMACAddress: "de:ad:be:ff:11:13"
+          bootMode: "UEFI"
+          rootDeviceHints:
+            deviceName: "/dev/vda"
+          nodeNetwork:
+            interfaces:
+              - name: ens3
+                macAddress: de:ad:be:ff:11:13
+            config:
+              interfaces:
+                - name: ens3.10
+                  type: vlan
+                  state: up
+                  vlan:
+                    base-iface: ens3
+                    id: 10
+                  ipv6:
+                    enabled: false
+                  ipv4:
+                    enabled: true
+                    address:
+                      - ip: 10.10.10.133
+                        prefix-length: 24
+                    dhcp: false
+              dns-resolver:
+                config:
+                  server:
+                    - 10.10.20.10
+              routes:
+                config:
+                  - destination: 0.0.0.0/0
+                    next-hop-address: 10.10.10.1
+                    next-hop-interface: bond0.10
+                    table-id: 254
