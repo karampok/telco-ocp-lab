@@ -203,6 +203,8 @@ spec:
               routes: *routes
         - hostName: w0.5gc.eric.vlab
           role: worker
+          nodeLabels:
+            node-role.kubernetes.io/ht: ""
           bmcAddress: redfish-virtualmedia://192.168.100.100:8000/redfish/v1/Systems/11111111-1111-1111-1111-111111111113
           bmcCredentialsName:
             name: "5gc-w0-secret"
