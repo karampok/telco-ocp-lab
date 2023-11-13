@@ -12,7 +12,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   stage0:
     name: ZTP E2E
-    runs-on: [self-hosted, dev]
+    runs-on: [self-hosted, '!block']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -138,11 +138,11 @@ jobs:
             echo "from green client to access the service in green segment (static)"
             wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
             wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
-          '|| true
+          '
           podman exec red bash -cex '
             echo "from red client to access the service in red segment (bgp learning)"
             curl -s http://6.6.6.1/
-          '|| true
+          '
           podman exec macnet bash -cex '
             echo "macnet to access pods over secondary interface"
             # test bridge mode access
@@ -166,6 +166,11 @@ jobs:
 
             oc get nodes || true
             oc get pods || true
+          '
+      - name: Mark runner as ready
+        run: |
+          podman exec workstation bash -ce '
+            RUNNER=${{ runner.name }} ./bin/label-runner.sh block
           '
 
 # To add github action runner
