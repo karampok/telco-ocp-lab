@@ -21,13 +21,13 @@ jobs:
       - name: Clean Virtual Infra
         run: |
           ./sinfra --clean -auto-timeout 0s --continue-on-error
-      - name: Setup Virtual Infra -  ${{ runner.name }}
+      - name: Setup Virtual Infra - ${{ runner.name }}
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
-      - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops latest
+      - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops 1.9
         timeout-minutes: 40
         run: |
           podman exec workstation bash -ce '
@@ -51,7 +51,7 @@ jobs:
             until oc get Application 2>/dev/null; do sleep 30; done
             oc apply -f hub/hub-provision-argoapp.yaml
           '
-      - name: Install ZTP - point to  ${{ github.sha }}
+      - name: Install ZTP - point to ${{ github.sha }}
         run: |
           podman exec workstation bash -ce '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
@@ -121,6 +121,10 @@ jobs:
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
 
+            # configmap to enable bgp learning should have been
+            # before establishing the BGP sessiong, FRR limitation
+            oc -n metallb-system delete pods -l app=metallb,component=speaker
+
             oc apply -f dayX/macnet0-bridge.yaml
             oc apply -f dayX/macnet1-private.yaml
             oc apply -f dayX/red-net.yaml
@@ -136,8 +140,8 @@ jobs:
           '
           podman exec green bash -cex '
             echo "from green client to access the service in green segment (static)"
-            wget --timeout=1 -q --tries=8  5.8.6.9:9000/big.iso
-            wget --timeout=1 -q --tries=8  5.8.6.1:9000/big.iso
+            wget --timeout=1 -q --tries=8 5.8.6.9:9000/big.iso
+            wget --timeout=1 -q --tries=8 5.8.6.1:9000/big.iso
           '
           podman exec red bash -cex '
             echo "from red client to access the service in red segment (bgp learning)"
@@ -149,12 +153,12 @@ jobs:
           podman exec workstation bash -cex '
             echo "macnet to access pods over secondary interface"
             # test bridge mode access
-            nc -vz  172.100.125.100 1111
-            nc -vz  172.100.125.200 2222
+            nc -vz 172.100.125.100 1111
+            nc -vz 172.100.125.200 2222
             # test private private access
-            nc -vz  172.100.127.100 1111
-            nc -vz  172.100.127.110 1111
-            nc -vz  172.100.127.200 2222
+            nc -vz 172.100.127.100 1111
+            nc -vz 172.100.127.110 1111
+            nc -vz 172.100.127.200 2222
           '
         continue-on-error: true
       - name: Test DPDK setup
@@ -174,7 +178,7 @@ jobs:
       - name: Mark runner as red, remove green label
         run: |
           podman exec workstation bash -ce '
-            RUNNER=${{ runner.name }} ./bin/label-runner.sh red
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' RUNNER=${{ runner.name }} ./bin/label-runner.sh red
           '
 
 # To add github action runner
