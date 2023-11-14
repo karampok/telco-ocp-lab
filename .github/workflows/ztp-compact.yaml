@@ -121,14 +121,12 @@ jobs:
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
 
-            # configmap to enable bgp learning should have been
-            # before establishing the BGP sessiong, FRR limitation
-            oc -n metallb-system delete pods -l app=metallb,component=speaker
-
             oc apply -f dayX/macnet0-bridge.yaml
             oc apply -f dayX/macnet1-private.yaml
             oc apply -f dayX/red-net.yaml
             oc apply -f dayX/icmp-frag-case.yaml
+
+            sleep 30
 
             oc wait --for=condition=ready pod -l app=macvlan --timeout=320s
             oc wait --for=condition=ready pod -l app=bigfile --timeout=320s
@@ -145,7 +143,12 @@ jobs:
           '
           podman exec red bash -cex '
             echo "from red client to access the service in red segment (bgp learning)"
-            curl -s http://6.6.6.1/
+
+            # configmap to enable bgp learning should have been
+            # before establishing the BGP sessiong, FRR limitation
+            oc -n metallb-system delete pods -l app=metallb,component=speaker
+
+            curl --retry 5 -s http://6.6.6.1/
           '
         continue-on-error: true
       - name: Test macvlan secondary interfaces
