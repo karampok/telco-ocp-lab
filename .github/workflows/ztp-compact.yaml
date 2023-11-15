@@ -181,7 +181,7 @@ jobs:
       - name: Mark runner as red, remove green label
         run: |
           podman exec workstation bash -ce '
-            GH_TOKEN='${{ secrets.GH_TOKEN }}' RUNNER=${{ runner.name }} ./bin/label-runner.sh red
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +red -green
           '
 
 # To add github action runner
