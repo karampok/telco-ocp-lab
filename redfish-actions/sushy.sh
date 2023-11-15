@@ -6,6 +6,10 @@ media_insert(){
     -X POST "${1/Systems/Managers}"/VirtualMedia/Cd/Actions/VirtualMedia.InsertMedia
 }
 
+media_status(){
+  echo "todo for virt"
+}
+
 media_eject() {
     curl -k -s --noproxy "*" --globoff -L -w "%{http_code} %{url_effective}\\n"  \
     -d '{}'  -X POST "${1/Systems/Managers}"/VirtualMedia/Cd/Actions/VirtualMedia.EjectMedia
