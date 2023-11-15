@@ -17,7 +17,6 @@ media_status(){
     -X GET "${1}/redfish/v1/Managers/1/VirtualMedia/2" | jq
 }
 
-
 boot_once() {
   curl -k -s --noproxy "*" -u "$AUTH" -w "%{http_code} %{url_effective}\\n" -L --globoff -H "Content-Type: application/json" -H "Accept: application/json" \
     -d '{"Boot":{ "BootSourceOverrideEnabled": "Once", "BootSourceOverrideTarget": "Cd"}}' \
