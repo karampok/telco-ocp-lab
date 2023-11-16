@@ -11,3 +11,10 @@ generators:
   - upgrade-cluster.yaml
 resources:
   - resources/ns.yaml
+patches:
+  - target:
+      kind: PolicyGenTemplate
+    patch: |-
+      - op: replace
+        path: /spec/remediationAction
+        value: enforce
