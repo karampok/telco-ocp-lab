@@ -33,4 +33,4 @@ networking:
 platform:
   none: {}
 pullSecret: 'PULLSECRET'
-sshKey: 'SSHPUBKEY'
+sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICGjoGIRGSfiJ8Tv+Qd6S36xuGmeIuFL8w75shdhxy5l ci@only.com'

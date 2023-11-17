@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
       - dev
       - main
   schedule:
-    - cron: '0 */5 * * *'
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 jobs:
   stage0:
@@ -41,6 +41,8 @@ jobs:
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
             oc get clusterversion && oc get co && oc get ns openshift-gitops || true
+
+            echo '${{ secrets.CI_SSH_KEY }}' > ~/.ssh/github-actions || true
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
