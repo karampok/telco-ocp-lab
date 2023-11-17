@@ -12,12 +12,19 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   stage0:
     name: ZTP E2E
-    runs-on: [self-hosted, 'green']
+    runs-on: [self-hosted, green]
+    outputs:
+      RUNNER: ${{ runner.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Reserver Runner
+        run: |
+          podman exec workstation bash -ce '
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green +taken
+          '
       - name: Clean Virtual Infra
         run: |
           ./sinfra --clean -auto-timeout 0s --continue-on-error
@@ -27,6 +34,12 @@ jobs:
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
+  stage1:
+    name: Deploy SNO Cluster - ${{needs.stage0.outputs.RUNNER}}
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0]
+    if: needs.stage0.result == 'success'
+    steps:
       - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops 1.9
         timeout-minutes: 40
         run: |
@@ -41,9 +54,29 @@ jobs:
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
             oc get clusterversion && oc get co && oc get ns openshift-gitops || true
+
+            echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
+  stage1a:
+    name: Install Gitops Operator   - ${{needs.stage0.outputs.RUNNER}}
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1]
+    if: needs.stage1.result == 'success'
+    steps:
+      - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops 1.9
+        timeout-minutes: 40
+        run: |
+          podman exec workstation bash -ce '
+            oc get ns openshift-gitops
+          '
+  stage2:
+    name: Provision HUB Cluster
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1a]
+    if: needs.stage1.result == 'success'
+    steps:
       - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.1 / stable
         timeout-minutes: 10
         run: |
@@ -67,6 +100,7 @@ jobs:
             oc -n open-cluster-management wait MultiClusterHub multiclusterhub --for=jsonpath='{.status.phase}'=Running --timeout=1200s
           '
       - name: Review argocd sync
+        continue-on-error: true
         run: |
           podman exec workstation bash -ce '
             pass=$(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
@@ -75,7 +109,13 @@ jobs:
             argocd app get hub-provision
             argocd app get clusters
             argocd app get policies
-          ' || true
+          '
+  stage3:
+    name: Wait SPOKE
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage2]
+    if: needs.stage2.result == 'success'
+    steps:
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
@@ -115,6 +155,12 @@ jobs:
             oc -n 5gc get policies
             oc -n ztp-install get cgu 5gc -o yaml
           '
+  stage4:
+    name: Test SPOKE
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage3]
+    if: needs.stage3.result == 'success'
+    steps:
       - name: Test Metallb setup
         run: |
           podman exec workstation bash -cex '
@@ -149,7 +195,7 @@ jobs:
             echo "from red client to access the service in red segment (bgp learning)"
             curl --retry 5 -s http://6.6.6.1/
           '
-        continue-on-error: true
+        continue-on-error: false
       - name: Test macvlan secondary interfaces
         run: |
           podman exec macnet bash -cex '
@@ -162,7 +208,7 @@ jobs:
             nc -vz 172.100.127.110 1111
             nc -vz 172.100.127.200 2222
           '
-        continue-on-error: true
+        continue-on-error: false
       - name: Test DPDK setup
         run: |
           podman exec workstation bash -ce '
@@ -177,10 +223,10 @@ jobs:
             oc get nodes || true
             oc get pods || true
           '
-      - name: Cordon runner
+      - name: Mark Runner
         run: |
           podman exec workstation bash -ce '
-            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
           '
 
 # To add github action runner
