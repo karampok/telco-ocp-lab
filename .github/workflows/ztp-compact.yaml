@@ -12,8 +12,13 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   stage0:
     name: ZTP E2E
-    runs-on: [self-hosted, 'green']
+    runs-on: [self-hosted, green]
     steps:
+      - name: Reserver Runner
+        run: |
+          podman exec workstation bash -ce '
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
+          '
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -27,6 +32,12 @@ jobs:
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
+  stage1:
+    name: Deploy SNO Cluster
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0]
+    if: needs.stage0.result == 'success'
+    steps:
       - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops 1.9
         timeout-minutes: 40
         run: |
@@ -46,6 +57,12 @@ jobs:
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
+  stage2:
+    name: Provision HUB Cluster
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1]
+    if: needs.stage1.result == 'success'
+    steps:
       - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.1 / stable
         timeout-minutes: 10
         run: |
@@ -58,6 +75,7 @@ jobs:
           podman exec workstation bash -ce '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
+      - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.1 / stable
       - name: Wait HUB to be ready - OCP 4.14.1
         run: |
           podman exec workstation bash -ce '
@@ -78,6 +96,12 @@ jobs:
             argocd app get clusters
             argocd app get policies
           ' || true
+  stage3:
+    name: Wait SPOKE
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage2]
+    if: needs.stage2.result == 'success'
+    steps:
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
@@ -117,6 +141,12 @@ jobs:
             oc -n 5gc get policies
             oc -n ztp-install get cgu 5gc -o yaml
           '
+  stage4:
+    name: Test SPOKE
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage2]
+    if: needs.stage2.result == 'success'
+    steps:
       - name: Test Metallb setup
         run: |
           podman exec workstation bash -cex '
@@ -179,10 +209,10 @@ jobs:
             oc get nodes || true
             oc get pods || true
           '
-      - name: Cordon runner
+      - name: Mark Runner
         run: |
           podman exec workstation bash -ce '
-            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready
           '
 
 # To add github action runner
