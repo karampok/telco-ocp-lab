@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
       - dev
       - main
   schedule:
-    - cron: '0 */5 * * *'
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 jobs:
   stage0:
@@ -176,6 +176,11 @@ jobs:
 
             oc get nodes || true
             oc get pods || true
+          '
+      - name: Cordon runner
+        run: |
+          podman exec workstation bash -ce '
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
           '
 
 # To add github action runner
