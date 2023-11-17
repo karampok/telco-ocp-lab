@@ -75,7 +75,6 @@ jobs:
           podman exec workstation bash -ce '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
-      - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.1 / stable
       - name: Wait HUB to be ready - OCP 4.14.1
         run: |
           podman exec workstation bash -ce '
@@ -144,8 +143,8 @@ jobs:
   stage4:
     name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage1, stage2]
-    if: needs.stage2.result == 'success'
+    needs: [stage0, stage1, stage2, stage4]
+    if: needs.stage3.result == 'success'
     steps:
       - name: Test Metallb setup
         run: |
