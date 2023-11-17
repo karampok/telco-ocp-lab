@@ -6,7 +6,7 @@ runners=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
               "https://api.github.com/repos/karampok/telco-ocp-lab/actions/runners")
 
 if [ $# -eq 0 ]; then
-  echo "$runners" | jq -r '.runners[] | "\(.name) \(.labels | map(.name) | join(" "))"'
+  echo "$runners" | jq -r '.runners[] | "\(.name): \(.labels[4:] | map(.name) | join(" "))"'
   exit 0
 fi
 
@@ -20,7 +20,7 @@ RUNNER_ID=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
 
 add_label() {
   curl -X POST \
-      -s --noproxy "*"  -w "%{http_code} $RUNNER %{url_effective}\\n" -L --globoff -o /dev/null \
+      -s --noproxy "*"  -w "%{http_code} $RUNNER +$2 %{url_effective}\\n" -L --globoff -o /dev/null \
       -H "Authorization: Bearer $GH_TOKEN" \
       -H "Accept: application/vnd.github.v3+json" \
       -H "Content-Type: application/json" \
@@ -30,7 +30,7 @@ add_label() {
 
 delete_label() {
   curl -X DELETE \
-      -s --noproxy "*"  -w "%{http_code} $RUNNER %{url_effective}\\n" -L --globoff -o /dev/null \
+      -s --noproxy "*"  -w "%{http_code} $RUNNER -$2 %{url_effective}\\n" -L --globoff -o /dev/null \
       -H "Authorization: Bearer $GH_TOKEN" \
       -H "Accept: application/vnd.github.v3+json" \
       "https://api.github.com/repos/karampok/telco-ocp-lab/actions/runners/${1}/labels/${2}"
@@ -51,3 +51,7 @@ while [ "$#" -gt 0 ]; do
     esac
     shift
 done
+
+# gh api "repos/karampok/telco-ocp-lab/actions/runs?status=in_progress" | jq -r '.workflow_runs[].id'
+# gh api "repos/karampok/telco-ocp-lab/actions/runs/$RUN_ID/jobs" \
+#   | jq -r '.jobs[] | select(.status == "in_progress" and (.labels[] | .name) | contains("self-host")) | "\(.name) - Workflow ID: \(.run_id)"'
