@@ -55,7 +55,7 @@ jobs:
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
             oc get clusterversion && oc get co && oc get ns openshift-gitops || true
 
-            echo '${{ secrets.CI_SSH_KEY }}' > ~/.ssh/github-actions || true
+            echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/github-actions || true
           '
           echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
           echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
@@ -88,6 +88,7 @@ jobs:
             oc -n open-cluster-management wait MultiClusterHub multiclusterhub --for=jsonpath='{.status.phase}'=Running --timeout=1200s
           '
       - name: Review argocd sync
+        continue-on-error: true
         run: |
           podman exec workstation bash -ce '
             pass=$(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
@@ -96,7 +97,7 @@ jobs:
             argocd app get hub-provision
             argocd app get clusters
             argocd app get policies
-          ' || true
+          '
   stage3:
     name: Wait SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
