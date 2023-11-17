@@ -13,6 +13,8 @@ jobs:
   stage0:
     name: ZTP E2E
     runs-on: [self-hosted, green]
+    outputs:
+      RUNNER: ${{ runner.name }}
     steps:
       - name: Reserver Runner
         run: |
