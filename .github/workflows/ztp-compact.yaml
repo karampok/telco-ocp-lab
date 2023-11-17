@@ -143,7 +143,7 @@ jobs:
   stage4:
     name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage1, stage2, stage4]
+    needs: [stage0, stage1, stage2, stage3]
     if: needs.stage3.result == 'success'
     steps:
       - name: Test Metallb setup
