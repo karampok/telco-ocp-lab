@@ -70,6 +70,7 @@ jobs:
         run: |
           podman exec workstation bash -ce '
             oc get ns openshift-gitops
+            oc -n openshift-gitops get routes openshift-gitops-server ||  oc -n openshift-operators delete pods --all
           '
   stage2:
     name: Provision HUB Cluster
