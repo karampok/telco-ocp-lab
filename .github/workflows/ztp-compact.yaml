@@ -20,11 +20,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Reserver Runner
-        run: |
-          podman exec workstation bash -ce '
-            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green +taken
-          '
       - name: Clean Virtual Infra
         run: |
           ./sinfra --clean -auto-timeout 0s --continue-on-error
@@ -34,6 +29,11 @@ jobs:
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           ./sinfra --setupInfra -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
+      - name: Reserve Runner
+        run: |
+          podman exec workstation bash -ce '
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green +taken
+          '
   stage1:
     name: Deploy SNO Cluster - ${{needs.stage0.outputs.RUNNER}}
     runs-on: ${{needs.stage0.outputs.RUNNER}}
