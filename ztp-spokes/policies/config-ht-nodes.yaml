@@ -97,6 +97,7 @@ spec:
           kubeletconfig.experimental: |
             {"systemReserved": {"memory": "2Gi"}, "topologyManagerScope": "pod"}
       spec:
+        additionalKernelArgs: []
         cpu:
           isolated: "4-23"
           reserved: "0-3"
