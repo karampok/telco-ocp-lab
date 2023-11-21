@@ -227,7 +227,7 @@ jobs:
       - name: Mark Runner
         run: |
           podman exec workstation bash -ce '
-            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
+            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green -taken
           '
 
 # To add github action runner
