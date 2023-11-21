@@ -90,7 +90,8 @@ spec:
           matchLabels:
             node-role.kubernetes.io/ht100gb: ""
     - fileName: PerformanceProfile.yaml
-      policyName: config-nodes
+      policyName: config-performanceprofile
+      complianceType: mustonlyhave
       metadata:
         name: ht100gb
         annotations:
