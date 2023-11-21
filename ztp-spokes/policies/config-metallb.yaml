@@ -60,8 +60,6 @@ spec:
     # RED
     - fileName: raw/addRedVRF.yaml
       policyName: "config-red-nmstate"
-    - fileName: raw/addRedNet.yaml
-      policyName: "config-red-nmstate"
     - fileName: "GenericConfigMap.yaml"
       policyName: "config-bgp-learning"
       metadata:
