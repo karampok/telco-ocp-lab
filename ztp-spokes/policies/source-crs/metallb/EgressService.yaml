@@ -1,0 +1,12 @@
+---
+apiVersion: k8s.ovn.org/v1
+kind: EgressService
+metadata:
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "10"
+  name:
+  namespace:
+spec:
+  sourceIPBy: 'LoadBalancerIP'
+  nodeSelector:
+  network:

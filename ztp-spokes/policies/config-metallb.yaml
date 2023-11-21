@@ -58,8 +58,8 @@ spec:
     - fileName: raw/addGreenStaticRoutes.yaml
       policyName: "config-static-routes"
     # RED
-    # - fileName: raw/addRedVRF.yaml
-    #   policyName: "config-red-nmstate"
+    - fileName: raw/addRedVRF.yaml
+      policyName: "config-red-nmstate"
     - fileName: raw/addRedNet.yaml
       policyName: "config-red-nmstate"
     - fileName: "GenericConfigMap.yaml"
@@ -80,7 +80,7 @@ spec:
         peerAddress: 12.12.12.254
         peerASN: 8012
         myASN: 7003
-        #  vrf: red-vrf
+        vrf: red-vrf
         nodeSelectors:
           - matchExpressions:
               - key: kubernetes.io/hostname
@@ -105,14 +105,17 @@ spec:
           - red
         peers:
           - red
-    #     nodeSelectors:
-    #       - matchLabels:
-    #           egress-service.k8s.ovn.org/metallb-system-exit-node-red: ""
-    # - fileName: metallb/EgressService.yaml
-    #   policyName: "config-metallb-red"
-    #   metadata:
-    #     name: exit-node-red
-    #     nodeSelector:
-    #       matchLabels:
-    #         node-role.kubernetes.io/ht100gb: ""
-    #     network: "2"
+        nodeSelectors:
+          - matchLabels:
+              egress-service.k8s.ovn.org/metallb-system-exit-node-red: ""
+    - fileName: metallb/EgressService.yaml
+      policyName: "config-metallb-red"
+      metadata:
+        name: exit-node-red
+        namespace: metallb-system
+      spec:
+        sourceIPBy: 'LoadBalancerIP'
+        nodeSelector:
+          matchLabels:
+            node-role.kubernetes.io/ht100gb: ""
+        network: "2"
