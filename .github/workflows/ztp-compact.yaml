@@ -227,8 +227,12 @@ jobs:
             oc get nodes || true
             oc get pods || true
           '
-      - name: Release Runner
-        if: always()
+  on-fail:
+    name: Release Runner
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    steps:
+      - name: Readd Label
         run: |
           podman exec workstation bash -ce '
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
