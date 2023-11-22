@@ -1,0 +1,16 @@
+; 5gc.telco.vlab zone file
+
+$ORIGIN 5gc.telco.vlab.
+$TTL 3600
+
+@   IN  SOA ns1.5gc.telco.vlab. hostmaster.5gc.telco.vlab. (
+           2023112201 ; Serial
+           3600       ; Refresh
+           900        ; Retry
+           604800     ; Expire
+           86400 )    ; Minimum TTL
+
+@   IN  NS  ns1.5gc.telco.vlab.
+
+api IN  A   10.10.10.125
+*.apps IN  A   10.10.10.126
