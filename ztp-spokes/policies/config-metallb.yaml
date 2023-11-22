@@ -105,7 +105,8 @@ spec:
           - red
         nodeSelectors:
           - matchLabels:
-              egress-service.k8s.ovn.org/metallb-system-exit-node-red: ""
+              node-role.kubernetes.io/ht100gb: ""
+              #  egress-service.k8s.ovn.org/metallb-system-exit-node-red: ""
     - fileName: metallb/EgressService.yaml
       policyName: "config-metallb-red"
       metadata:

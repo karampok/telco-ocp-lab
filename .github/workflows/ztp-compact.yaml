@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
       - dev
       - main
   schedule:
-    - cron: '0 */3 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 jobs:
   stage0:
@@ -40,11 +40,11 @@ jobs:
     needs: [stage0]
     if: needs.stage0.result == 'success'
     steps:
-      - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops 1.9
+      - name: Deploy SNO using agent-based - OCP 4.14.3 / gitops 1.9
         timeout-minutes: 40
         run: |
           podman exec workstation bash -ce '
-            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.1/openshift-install-linux-4.14.1.tar.gz -o openshift-install-linux.tar.gz
+            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.3/openshift-install-linux-4.14.3.tar.gz -o openshift-install-linux.tar.gz
             tar xvfz openshift-install-linux.tar.gz
             mv openshift-install /usr/bin/
             chmod +x /usr/bin/openshift-install
@@ -65,11 +65,12 @@ jobs:
     needs: [stage0, stage1]
     if: needs.stage1.result == 'success'
     steps:
-      - name: Deploy SNO using agent-based - OCP 4.14.1 / gitops 1.9
+      - name: Verify gitops 1.9
         timeout-minutes: 40
         run: |
           podman exec workstation bash -ce '
             oc get ns openshift-gitops
+            oc -n openshift-gitops get routes openshift-gitops-server ||  oc -n openshift-operators delete pods --all
           '
   stage2:
     name: Provision HUB Cluster
@@ -77,7 +78,7 @@ jobs:
     needs: [stage0, stage1a]
     if: needs.stage1.result == 'success'
     steps:
-      - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.1 / stable
+      - name: Install ACM / LVM / TALM using gitops - release-2.9 / stable-4.1 / stable
         timeout-minutes: 10
         run: |
           podman exec workstation bash -ce '
@@ -89,7 +90,7 @@ jobs:
           podman exec workstation bash -ce '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
-      - name: Wait HUB to be ready - OCP 4.14.1
+      - name: Wait HUB to be ready - OCP 4.14.3
         run: |
           podman exec workstation bash -ce '
             sleep 240
@@ -100,7 +101,6 @@ jobs:
             oc -n open-cluster-management wait MultiClusterHub multiclusterhub --for=jsonpath='{.status.phase}'=Running --timeout=1200s
           '
       - name: Review argocd sync
-        continue-on-error: true
         run: |
           podman exec workstation bash -ce '
             pass=$(oc get secret -n openshift-gitops openshift-gitops-cluster -o jsonpath="{.data.admin\.password}" |base64 -d)
@@ -110,12 +110,6 @@ jobs:
             argocd app get clusters
             argocd app get policies
           '
-  stage3:
-    name: Wait SPOKE
-    runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage2]
-    if: needs.stage2.result == 'success'
-    steps:
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
@@ -124,6 +118,12 @@ jobs:
             oc apply -k github.com/karampok/autosecret/config/default
             echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
           '
+  stage3:
+    name: Wait SPOKE
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage2]
+    if: needs.stage2.result == 'success'
+    steps:
       - name: Wait Siteconfig
         timeout-minutes: 150
         run: |
@@ -143,6 +143,12 @@ jobs:
             oc get nodes
             oc get co
           '
+  stage4:
+    name: Wait Policies
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage3]
+    if: needs.stage2.result == 'success'
+    steps:
       - name: Wait Policies
         timeout-minutes: 120
         run: |
@@ -155,11 +161,11 @@ jobs:
             oc -n 5gc get policies
             oc -n ztp-install get cgu 5gc -o yaml
           '
-  stage4:
+  stage5:
     name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage3]
-    if: needs.stage3.result == 'success'
+    needs: [stage0, stage4]
+    if: needs.stage4.result == 'success'
     steps:
       - name: Test Metallb setup
         run: |
@@ -195,7 +201,6 @@ jobs:
             echo "from red client to access the service in red segment (bgp learning)"
             # curl --retry 5 -s http://6.6.6.1/
           '
-        continue-on-error: false
       - name: Test macvlan secondary interfaces
         run: |
           podman exec macnet bash -cex '
@@ -208,7 +213,6 @@ jobs:
             nc -vz 172.100.127.110 1111
             nc -vz 172.100.127.200 2222
           '
-        continue-on-error: false
       - name: Test DPDK setup
         run: |
           podman exec workstation bash -ce '
