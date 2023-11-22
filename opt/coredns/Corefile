@@ -4,19 +4,6 @@
          prefer_udp
   }
 
-  hub.telco.vlab {
-    file /etc/coredns/zones/hub.telco.vlab.db
-    log
-    errors
-  }
-
-
-  5gc.telco.vlab {
-    file /etc/coredns/zones/5gc.telco.vlab.db
-    log
-    errors
-  }
-
   hosts /etc/coredns/hub-hosts.db eric.vlab {
     10.10.20.225 api.hub.eric.vlab
     10.10.20.225 console-openshift-console.apps.hub.eric.vlab
@@ -42,4 +29,17 @@
     fallthrough
   }
   log
+}
+
+hub.telco.vlab {
+  file /etc/coredns/zones/hub.telco.vlab.db
+  log
+  errors
+}
+
+
+5gc.telco.vlab {
+  file /etc/coredns/zones/5gc.telco.vlab.db
+  log
+  errors
 }
