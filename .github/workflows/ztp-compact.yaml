@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
       - dev
       - main
   schedule:
-    - cron: '0 */3 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 jobs:
   stage0:
@@ -78,7 +78,7 @@ jobs:
     needs: [stage0, stage1a]
     if: needs.stage1.result == 'success'
     steps:
-      - name: Install ACM / LVM / TALM using gitops - release-2.8 / stable-4.1 / stable
+      - name: Install ACM / LVM / TALM using gitops - release-2.9 / stable-4.1 / stable
         timeout-minutes: 10
         run: |
           podman exec workstation bash -ce '
@@ -227,7 +227,8 @@ jobs:
             oc get nodes || true
             oc get pods || true
           '
-      - name: Mark Runner
+      - name: Release Runner
+        if: always()
         run: |
           podman exec workstation bash -ce '
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
