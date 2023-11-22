@@ -4,7 +4,7 @@ kind: NodeNetworkConfigurationPolicy
 metadata:
   name: w0.5gc.eric.vlab
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "2"
+    ran.openshift.io/ztp-deploy-wave: "4"
 spec:
   nodeSelector:
     kubernetes.io/hostname: w0.5gc.eric.vlab
