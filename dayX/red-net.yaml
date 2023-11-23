@@ -20,6 +20,11 @@ spec:
           key: sriov
           value: "true"
       containers:
+        - name: snife-c
+          image: quay.io/karampok/snife:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
         - name: server
           image: registry.k8s.io/e2e-test-images/agnhost:2.40
           command:
@@ -51,7 +56,19 @@ spec:
       targetPort: 8080
   selector:
     app: rednet
+# ---
+# apiVersion: k8s.ovn.org/v1
+# kind: EgressService
+# metadata:
+#   name: exit-red
+# spec:
+#   sourceIPBy: "LoadBalancerIP"
+#   nodeSelector:
+#     matchLabels:
+#       node-role.kubernetes.io/ht100gb: ""
+#   network: "2"
 
+# show bgp vrf red-vrf ipv4 summary
 # from red
 # alias urlencode="python3 -c \"import sys, urllib.parse; print(urllib.parse.quote(''.join(sys.stdin.readlines())))\""
 # curl -s http://6.6.6.1/shell?cmd="$(echo "env|grep -i node" | urlencode)"|jq -r '.output'

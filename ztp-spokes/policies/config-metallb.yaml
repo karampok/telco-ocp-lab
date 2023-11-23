@@ -145,15 +145,13 @@ spec:
         nodeSelectors:
           - matchLabels:
               node-role.kubernetes.io/ht100gb: ""
-              #  egress-service.k8s.ovn.org/metallb-system-exit-node-red: ""
-    # - fileName: metallb/EgressService.yaml
-    #   policyName: "config-metallb-red-w12"
-    #   metadata:
-    #     name: exit-node-red
-    #     namespace: metallb-system
-    #   spec:
-    #     sourceIPBy: 'LoadBalancerIP'
-    #     nodeSelector:
-    #       matchLabels:
-    #         node-role.kubernetes.io/ht100gb: ""
-    #     network: "2"
+    - fileName: metallb/EgressService.yaml
+      policyName: "config-metallb-red-w12"
+      metadata:
+        name: exit-red
+      spec:
+        sourceIPBy: "LoadBalancerIP"
+        nodeSelector:
+          matchLabels:
+            node-role.kubernetes.io/ht100gb: ""
+        network: "2"
