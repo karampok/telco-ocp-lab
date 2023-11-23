@@ -85,10 +85,10 @@ jobs:
             until oc get Application 2>/dev/null; do sleep 30; done
             oc apply -f hub/hub-provision-argoapp.yaml
           '
-      - name: Install ZTP - point to ${{ github.sha }}
+      - name: Install ZTP - point to dev  #  ${{ github.sha }}
         run: |
           podman exec workstation bash -ce '
-            BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
+            BRANCH=dev PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
       - name: Wait HUB to be ready - OCP 4.14.3
         run: |
