@@ -9,10 +9,26 @@ spec:
     sites: "n95"
   remediationAction: inform
   sourceFiles:
+    # NMStates
+    - fileName: raw/addRedVRF.yaml
+      policyName: "config-red-nmstate-w8"
+    - fileName: raw/addGreenStaticRoutes.yaml
+      policyName: "config-static-routes"
+    # Metallb Instance
+    - fileName: metallb/instance.yaml
+      policyName: "config-operators-metallb-w10"
+      spec:
+        logLevel: debug
+        speakerTolerations:
+          - effect: NoSchedule
+            key: sriov
+            value: "true"
+    # Metallb Config
     - fileName: metallb/bfdProfile.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
+    # Green Segment
     - fileName: metallb/bgpPeer.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -28,7 +44,7 @@ spec:
                   - m1.5gc.eric.vlab
                   - m2.5gc.eric.vlab
     - fileName: metallb/community.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -36,7 +52,7 @@ spec:
           - name: greenc
             value: '7003:008'
     - fileName: metallb/ipAddressPool.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -45,7 +61,7 @@ spec:
           - 5.8.6.1/32
           - 5.8.6.9/32
     - fileName: metallb/bgpAdvertisement.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -55,23 +71,19 @@ spec:
           - green
         peers:
           - green
-    - fileName: raw/addGreenStaticRoutes.yaml
-      policyName: "config-static-routes"
-    # RED
-    - fileName: raw/addRedVRF.yaml
-      policyName: "config-red-nmstate"
+    # Red Segment
     - fileName: "GenericConfigMap.yaml"
-      policyName: "config-bgp-learning"
+      policyName: "config-bgp-learning-w11"
       metadata:
         name: bgpextras
         namespace: metallb-system
         annotations:
-          ran.openshift.io/ztp-deploy-wave: "10"
+          ran.openshift.io/ztp-deploy-wave: "11"
       data:
         extras: |
           route-map 12.12.12.254-in permit 20
     - fileName: metallb/bgpPeer.yaml
-      policyName: "config-metallb-red"
+      policyName: "config-metallb-red-w12"
       metadata:
         name: red
       spec:
@@ -86,7 +98,7 @@ spec:
                 values:
                   - w0.5gc.eric.vlab
     - fileName: metallb/ipAddressPool.yaml
-      policyName: "config-metallb-red"
+      policyName: "config-metallb-red-w12"
       metadata:
         name: red
       spec:
@@ -95,7 +107,7 @@ spec:
           - 6.6.6.1/32
           - 6.6.6.9/32
     - fileName: metallb/bgpAdvertisement.yaml
-      policyName: "config-metallb-red"
+      policyName: "config-metallb-red-w12"
       metadata:
         name: red
       spec:
@@ -107,14 +119,14 @@ spec:
           - matchLabels:
               node-role.kubernetes.io/ht100gb: ""
               #  egress-service.k8s.ovn.org/metallb-system-exit-node-red: ""
-    - fileName: metallb/EgressService.yaml
-      policyName: "config-metallb-red"
-      metadata:
-        name: exit-node-red
-        namespace: metallb-system
-      spec:
-        sourceIPBy: 'LoadBalancerIP'
-        nodeSelector:
-          matchLabels:
-            node-role.kubernetes.io/ht100gb: ""
-        network: "2"
+    # - fileName: metallb/EgressService.yaml
+    #   policyName: "config-metallb-red-w12"
+    #   metadata:
+    #     name: exit-node-red
+    #     namespace: metallb-system
+    #   spec:
+    #     sourceIPBy: 'LoadBalancerIP'
+    #     nodeSelector:
+    #       matchLabels:
+    #         node-role.kubernetes.io/ht100gb: ""
+    #     network: "2"

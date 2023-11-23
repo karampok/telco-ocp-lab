@@ -6,7 +6,7 @@ metadata:
   namespace: openshift-marketplace
   annotations:
     target.workload.openshift.io/management: '{"effect": "PreferredDuringScheduling"}'
-    ran.openshift.io/ztp-deploy-wave: "10"
+    ran.openshift.io/ztp-deploy-wave: "1"
 spec:
   displayName: Openshift Metallb Operator
   icon:

@@ -5,6 +5,6 @@ metadata:
   name:
   namespace: metallb-system
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "10"
+    ran.openshift.io/ztp-deploy-wave: "12"
 spec:
   communities:

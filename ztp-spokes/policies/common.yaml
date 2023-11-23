@@ -25,20 +25,13 @@ spec:
       spec:
         channel: stable
         source: redhat-operators
+    # install NMState operator
     - fileName: metallb/ns.yaml
       policyName: "install-operators"
     - fileName: metallb/operatorGroup.yaml
       policyName: "install-operators"
     - fileName: metallb/subscription.yaml
       policyName: "install-operators"
-    - fileName: metallb/instance.yaml
-      policyName: "config-operators"
-      spec:
-        logLevel: debug
-        speakerTolerations:
-          - effect: NoSchedule
-            key: sriov
-            value: "true"
     # install NMState operator
     - fileName: nmstate/subscription.yaml
       policyName: "install-operators"
@@ -47,7 +40,7 @@ spec:
     - fileName: nmstate/operatorGroup.yaml
       policyName: "install-operators"
     - fileName: nmstate/instance.yaml
-      policyName: "config-operators"
+      policyName: "config-operators-nmstate-w5"
     # other networking config
     - fileName: RoutingViaHost.yaml
       policyName: "config-network"
