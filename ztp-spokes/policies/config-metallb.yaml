@@ -10,10 +10,10 @@ spec:
   remediationAction: inform
   sourceFiles:
     # NMStates
-    - fileName: raw/addRedVRF.yaml
+    - fileName: raw/addRedNet.yaml
       policyName: "config-red-nmstate-w8"
     - fileName: raw/addGreenStaticRoutes.yaml
-      policyName: "config-static-routes"
+      policyName: "config-static-routes-w8"
     # Metallb Instance
     - fileName: metallb/instance.yaml
       policyName: "config-operators-metallb-w10"
