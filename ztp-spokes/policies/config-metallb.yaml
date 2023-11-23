@@ -11,9 +11,36 @@ spec:
   sourceFiles:
     # NMStates
     - fileName: raw/addRedNet.yaml
-      policyName: "config-red-nmstate-w8"
-    - fileName: raw/addGreenStaticRoutes.yaml
-      policyName: "config-static-routes-w8"
+      policyName: config-red-nmstate-w8
+    - fileName: nmstate/nodeNetworkConfigurationPolicy.yaml
+      policyName: config-green-nmstate-w8
+      metadata:
+        name: add-green-static-routes
+      spec:
+        desiredState:
+          # interfaces:
+          #   - &bond0-11
+          #     name: bond0.11
+          #     type: vlan
+          #     state: up
+          #     vlan:
+          #       base-iface: bond0
+          #       id: 11
+          #     ipv4:
+          #       enabled: true
+          #       address:
+          #         - ip: 11.11.11.116
+          #           prefix-length: 24
+          #       dhcp: false
+          #     ipv6:
+          #       enabled: false
+          routes: &routes
+            config:
+              - destination: 203.100.100.0/24
+                metric: 0
+                next-hop-address: 11.11.11.254
+                next-hop-interface: bond0.11
+                table-id: 254
     # Metallb Instance
     - fileName: metallb/instance.yaml
       policyName: "config-operators-metallb-w10"
