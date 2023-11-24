@@ -3,7 +3,7 @@ apiVersion: k8s.ovn.org/v1
 kind: EgressService
 metadata:
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "10"
+    ran.openshift.io/ztp-deploy-wave: "12"
   name:
   namespace:
 spec:
