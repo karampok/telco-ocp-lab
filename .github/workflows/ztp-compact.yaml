@@ -175,7 +175,7 @@ jobs:
 
             oc apply -f dayX/macnet0-bridge.yaml
             oc apply -f dayX/macnet1-private.yaml
-            #oc apply -f dayX/red-net.yaml
+            oc apply -f dayX/red-net.yaml
             oc apply -f dayX/icmp-frag-case.yaml
 
             sleep 30
@@ -186,7 +186,7 @@ jobs:
 
             oc wait --for=condition=ready pod -l app=macvlan --timeout=320s
             oc wait --for=condition=ready pod -l app=bigfile --timeout=320s
-            #oc wait --for=condition=ready pod -l app=rednet --timeout=320s
+            oc wait --for=condition=ready pod -l app=rednet --timeout=320s
 
             oc get nodes || true
             oc get pods || true
@@ -199,7 +199,7 @@ jobs:
           '
           podman exec red bash -cex '
             echo "from red client to access the service in red segment (bgp learning)"
-            # curl --retry 5 -s http://6.6.6.1/
+            curl --retry 5 -s http://6.6.6.1/
           '
       - name: Test macvlan secondary interfaces
         run: |

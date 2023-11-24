@@ -2,7 +2,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rednet
+  name: rednet-no-svc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rednet-no
+  template:
+    metadata:
+      labels:
+        app: rednet-no
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/ht100gb: ""
+      tolerations:
+        - effect: NoSchedule
+          key: sriov
+          value: "true"
+      containers:
+        - name: snife-c
+          image: quay.io/karampok/snife:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rednet-with-svc
 spec:
   replicas: 1
   selector:
@@ -45,10 +72,10 @@ kind: Service
 metadata:
   annotations:
     metallb.universe.tf/address-pool: red
-  name: red-svc-local
+  name: red-svc-cluster
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   ports:
     - name: http
       port: 80
@@ -60,7 +87,7 @@ spec:
 apiVersion: k8s.ovn.org/v1
 kind: EgressService
 metadata:
-  name: red-svc-local
+  name: red-svc-cluster
 spec:
   #  sourceIPBy: "LoadBalancerIP"
   nodeSelector:
