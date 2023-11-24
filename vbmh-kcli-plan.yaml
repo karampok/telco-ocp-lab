@@ -2,6 +2,9 @@
 # https://github.com/karmab/aicli/blob/717355e00d5455e3dff800273f33332777840e65/.github/kcli_plan.yml
 hub:
   numcpus: 16
+  cpupinning:
+    - vcpus: 0-15
+      hostcpus: 0-15
   memory: 32768
   start: false
   uuid: 11111111-1111-1111-1111-111111111115
