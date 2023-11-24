@@ -4,7 +4,7 @@ kind: NodeNetworkConfigurationPolicy
 metadata:
   name: w0.5gc.eric.vlab
   annotations:
-    ran.openshift.io/ztp-deploy-wave: "11"
+    ran.openshift.io/ztp-deploy-wave: "8"
 spec:
   nodeSelector:
     kubernetes.io/hostname: w0.5gc.eric.vlab
@@ -14,8 +14,6 @@ spec:
         accept-all-mac-addresses: false
         ethtool:
           feature:
-            fcoe-mtu: false
-            highdma: true
             rx-gro: true
             rx-gro-list: false
             rx-udp-gro-forwarding: false
@@ -55,10 +53,37 @@ spec:
           base-iface: bond0
           id: 12
           protocol: 802.1q
+      - name: red-vrf
+        state: up
+        type: vrf
+        vrf:
+          port:
+            - bond0.12
+          route-table-id: 2
     routes:
       config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 12.12.12.254
+          next-hop-interface: bond0.12
+          table-id: 2
         - destination: 12.100.100.0/24
           next-hop-address: 12.12.12.254
           next-hop-interface: bond0.12
           table-id: 254
           state: absent #route to be added with bgp learning
+    route-rules:
+      config:
+        - ip-to: 172.30.0.0/16
+          priority: 998
+          route-table: 254
+        - ip-to: 10.128.0.0/14
+          priority: 998
+          route-table: 254
+status:
+  conditions:
+  - status: "True"
+    type: Available
+  - status: "False"
+    type: Degraded
+  - status: "False"
+    type: Progressing

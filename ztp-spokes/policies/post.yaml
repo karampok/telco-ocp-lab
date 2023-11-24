@@ -10,6 +10,6 @@ spec:
   remediationAction: inform
   sourceFiles:
     - fileName: "SCC.yaml"
-      policyName: "add-scc"
+      policyName: "add-scc-w20"
     - fileName: "CrontabCRD.yaml"
-      policyName: "add-crd"
+      policyName: "add-crd-w20"

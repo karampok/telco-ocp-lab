@@ -9,10 +9,53 @@ spec:
     sites: "n95"
   remediationAction: inform
   sourceFiles:
+    # NMStates
+    - fileName: raw/addRedNet.yaml
+      policyName: config-red-nmstate-w8
+    - fileName: nmstate/nodeNetworkConfigurationPolicy.yaml
+      policyName: config-green-nmstate-w8
+      metadata:
+        name: add-green-static-routes
+      spec:
+        desiredState:
+          # interfaces:
+          #   - &bond0-11
+          #     name: bond0.11
+          #     type: vlan
+          #     state: up
+          #     vlan:
+          #       base-iface: bond0
+          #       id: 11
+          #     ipv4:
+          #       enabled: true
+          #       address:
+          #         - ip: 11.11.11.116
+          #           prefix-length: 24
+          #       dhcp: false
+          #     ipv6:
+          #       enabled: false
+          routes: &routes
+            config:
+              - destination: 203.100.100.0/24
+                metric: 0
+                next-hop-address: 11.11.11.254
+                next-hop-interface: bond0.11
+                table-id: 254
+    # Metallb Instance
+    - fileName: metallb/instance.yaml
+      policyName: "config-operators-metallb-w10"
+      spec:
+        logLevel: debug
+        speakerTolerations:
+          - effect: NoSchedule
+            key: sriov
+            value: "true"
+    # Metallb Config
     - fileName: metallb/bfdProfile.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
+    # Green Segment
     - fileName: metallb/bgpPeer.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -28,7 +71,7 @@ spec:
                   - m1.5gc.eric.vlab
                   - m2.5gc.eric.vlab
     - fileName: metallb/community.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -36,7 +79,7 @@ spec:
           - name: greenc
             value: '7003:008'
     - fileName: metallb/ipAddressPool.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -45,7 +88,7 @@ spec:
           - 5.8.6.1/32
           - 5.8.6.9/32
     - fileName: metallb/bgpAdvertisement.yaml
-      policyName: "config-metallb"
+      policyName: "config-metallb-w12"
       metadata:
         name: green
       spec:
@@ -55,32 +98,26 @@ spec:
           - green
         peers:
           - green
-    - fileName: raw/addGreenStaticRoutes.yaml
-      policyName: "config-static-routes"
-    # RED
-    # - fileName: raw/addRedVRF.yaml
-    #   policyName: "config-red-nmstate"
-    - fileName: raw/addRedNet.yaml
-      policyName: "config-red-nmstate"
+    # Red Segment
     - fileName: "GenericConfigMap.yaml"
-      policyName: "config-bgp-learning"
+      policyName: "config-bgp-learning-w11"
       metadata:
         name: bgpextras
         namespace: metallb-system
         annotations:
-          ran.openshift.io/ztp-deploy-wave: "10"
+          ran.openshift.io/ztp-deploy-wave: "11"
       data:
         extras: |
           route-map 12.12.12.254-in permit 20
     - fileName: metallb/bgpPeer.yaml
-      policyName: "config-metallb-red"
+      policyName: "config-metallb-red-w12"
       metadata:
         name: red
       spec:
         peerAddress: 12.12.12.254
         peerASN: 8012
         myASN: 7003
-        #  vrf: red-vrf
+        vrf: red-vrf
         nodeSelectors:
           - matchExpressions:
               - key: kubernetes.io/hostname
@@ -88,7 +125,7 @@ spec:
                 values:
                   - w0.5gc.eric.vlab
     - fileName: metallb/ipAddressPool.yaml
-      policyName: "config-metallb-red"
+      policyName: "config-metallb-red-w12"
       metadata:
         name: red
       spec:
@@ -97,7 +134,7 @@ spec:
           - 6.6.6.1/32
           - 6.6.6.9/32
     - fileName: metallb/bgpAdvertisement.yaml
-      policyName: "config-metallb-red"
+      policyName: "config-metallb-red-w12"
       metadata:
         name: red
       spec:
@@ -105,14 +142,6 @@ spec:
           - red
         peers:
           - red
-    #     nodeSelectors:
-    #       - matchLabels:
-    #           egress-service.k8s.ovn.org/metallb-system-exit-node-red: ""
-    # - fileName: metallb/EgressService.yaml
-    #   policyName: "config-metallb-red"
-    #   metadata:
-    #     name: exit-node-red
-    #     nodeSelector:
-    #       matchLabels:
-    #         node-role.kubernetes.io/ht100gb: ""
-    #     network: "2"
+        nodeSelectors:
+          - matchLabels:
+              egress-service.k8s.ovn.org/default-red-svc-cluster: ""

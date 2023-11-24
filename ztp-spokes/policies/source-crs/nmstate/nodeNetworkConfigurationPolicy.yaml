@@ -1,0 +1,20 @@
+---
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name:
+  annotations:
+    ran.openshift.io/ztp-deploy-wave: "8"
+spec:
+  nodeSelector:
+  desiredState:
+    routes:
+      config: []
+status:
+  conditions:
+    - status: "True"
+      type: Available
+    - status: "False"
+      type: Degraded
+    - status: "False"
+      type: Progressing

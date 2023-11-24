@@ -11,10 +11,10 @@ spec:
   mcp: "ht100gb"
   sourceFiles:
     - fileName: MachineConfigGeneric.yaml
-      policyName: config-virt-vfio-noiommu
+      policyName: config-virt-vfio-noiommu-w1
       metadata:
         annotations:
-          ran.openshift.io/ztp-deploy-wave: "10"
+          ran.openshift.io/ztp-deploy-wave: "1"
         labels:
           machineconfiguration.openshift.io/role: ht100gb
         name: vfio-virt-noiommu
@@ -30,24 +30,27 @@ spec:
                 overwrite: true
                 path: /etc/modprobe.d/vfio.conf
     # configure SR-IOV
+    - fileName: SriovSupportedNicCM.yaml
+      policyName: "patch-sriov-cm-hack-w3"
     - fileName: SriovOperatorConfig.yaml
-      policyName: "config-operator-sriov"
+      policyName: "config-operator-sriov-w10"
       spec:
         enableOperatorWebhook: false
+        logLevel: 0
     - fileName: SriovNetwork.yaml
-      policyName: config-sriov-sn
+      policyName: config-sriov-sn-w100
       metadata:
         name: "leftnet"
       spec:
         resourceName: sriovleftdpdk
     - fileName: SriovNetwork.yaml
-      policyName: config-sriov-sn
+      policyName: config-sriov-sn-w100
       metadata:
         name: "rightnet"
       spec:
         resourceName: sriovrightdpdk
     - fileName: SriovNetworkNodePolicy.yaml
-      policyName: config-sriov-snnp
+      policyName: config-sriov-snnp-w100
       metadata:
         name: sriovleftdpdk
       spec:
@@ -60,7 +63,7 @@ spec:
           pfNames: ['enp41s0']
         deviceType: vfio-pci
     - fileName: SriovNetworkNodePolicy.yaml
-      policyName: config-sriov-snnp
+      policyName: config-sriov-snnp-w100
       metadata:
         name: sriovrightdpdk
       spec:
@@ -74,9 +77,11 @@ spec:
         deviceType: vfio-pci
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
-      policyName: config-nodes
+      policyName: config-nodes-w1
       metadata:
         name: ht100gb
+        annotations:
+          ran.openshift.io/ztp-deploy-wave: "1"
         labels:
           machineconfiguration.openshift.io/role: ht100gb
           pools.operator.machineconfiguration.openshift.io/ht100gb: ""
@@ -90,13 +95,15 @@ spec:
           matchLabels:
             node-role.kubernetes.io/ht100gb: ""
     - fileName: PerformanceProfile.yaml
-      policyName: config-nodes
+      policyName: config-performanceprofile-w10
+      complianceType: mustonlyhave
       metadata:
         name: ht100gb
         annotations:
           kubeletconfig.experimental: |
             {"systemReserved": {"memory": "2Gi"}, "topologyManagerScope": "pod"}
       spec:
+        additionalKernelArgs: []
         cpu:
           isolated: "4-23"
           reserved: "0-3"

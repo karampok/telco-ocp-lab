@@ -10,47 +10,38 @@ spec:
   remediationAction: inform
   sourceFiles:
     - fileName: "MastersSchedulable.yaml"
-      policyName: "config-cluster"
+      policyName: "config-cluster-w1"
     - fileName: ReduceMonitoringFootprint.yaml
-      policyName: "config-policy"
+      policyName: "config-cluster-w1"
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
-      policyName: "install-operators"
-    - fileName: SriovSupportedNicCM.yaml
-      policyName: "install-operators-hack"
+      policyName: "install-operators-w2"
     - fileName: SriovSubscriptionOperGroup.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-w2"
     - fileName: SriovSubscription.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-w2"
       spec:
         channel: stable
         source: redhat-operators
+    # install NMState operator
     - fileName: metallb/ns.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-w2"
     - fileName: metallb/operatorGroup.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-w2"
     - fileName: metallb/subscription.yaml
-      policyName: "install-operators"
-    - fileName: metallb/instance.yaml
-      policyName: "config-operators"
-      spec:
-        logLevel: debug
-        speakerTolerations:
-          - effect: NoSchedule
-            key: sriov
-            value: "true"
+      policyName: "install-operators-w2"
     # install NMState operator
     - fileName: nmstate/subscription.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-w2"
     - fileName: nmstate/ns.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-w2"
     - fileName: nmstate/operatorGroup.yaml
-      policyName: "install-operators"
+      policyName: "install-operators-w2"
     - fileName: nmstate/instance.yaml
-      policyName: "config-operators"
+      policyName: "config-operators-nmstate-w5"
     # other networking config
     - fileName: RoutingViaHost.yaml
-      policyName: "config-network"
+      policyName: "config-network-w1"
     - fileName: AddAdditionalNetworks.yaml
       policyName: "config-network"
       spec:
