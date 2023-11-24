@@ -56,17 +56,17 @@ spec:
       targetPort: 8080
   selector:
     app: rednet
-# ---
-# apiVersion: k8s.ovn.org/v1
-# kind: EgressService
-# metadata:
-#   name: exit-red
-# spec:
-#   sourceIPBy: "LoadBalancerIP"
-#   nodeSelector:
-#     matchLabels:
-#       node-role.kubernetes.io/ht100gb: ""
-#   network: "2"
+---
+apiVersion: k8s.ovn.org/v1
+kind: EgressService
+metadata:
+  name: red-svc-local
+spec:
+  #  sourceIPBy: "LoadBalancerIP"
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/ht100gb: ""
+  network: "2"
 
 # show bgp vrf red-vrf ipv4 summary
 # from red
