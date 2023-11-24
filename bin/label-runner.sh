@@ -55,3 +55,9 @@ done
 # gh api "repos/karampok/telco-ocp-lab/actions/runs?status=in_progress" | jq -r '.workflow_runs[].id'
 # gh api "repos/karampok/telco-ocp-lab/actions/runs/$RUN_ID/jobs" \
 #   | jq -r '.jobs[] | select(.status == "in_progress" and (.labels[] | .name) | contains("self-host")) | "\(.name) - Workflow ID: \(.run_id)"'
+#
+#
+# user=karampok
+# repo=telco-ocp-lab
+# gh api repos/$user/$repo/actions/runs --paginate -q '.workflow_runs[] | select(.head_branch != "master") | "\(.id)"' \
+#   | xargs -n1 -I % gh api repos/$user/$repo/actions/runs/% -X DELETE
