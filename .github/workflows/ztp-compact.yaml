@@ -230,7 +230,7 @@ jobs:
   on-fail:
     name: Release Runner
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0]
+    needs: [stage0, stage5]
     if: ${{ always() }}
     steps:
       - name: Readd Label
