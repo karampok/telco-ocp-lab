@@ -14,6 +14,7 @@ patches:
       kind: PlacementRule
     patch: |-
       - op: add
-        path: /metadata/version
-        value: version-1
+        path: /spec/clusterSelector/matchLabels
+        value:
+          version: version-1
 
