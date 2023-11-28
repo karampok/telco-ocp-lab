@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+generators:
+  - common.yaml
+  - label-nodes.yaml
+  - config-ht-nodes.yaml
+  - config-metallb.yaml
+  - deploy-odf.yaml
+  - post.yaml
+  - upgrade-cluster.yaml
+resources:
+  - resources/ns.yaml
+patches:
+  - target:
+      kind: PolicyGenTemplate
+    patch: |-
+      - op: add
+        path: /spec/bindingRules
+        value:
+          version: "version-1"
