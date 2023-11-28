@@ -20,6 +20,7 @@ spec:
         common: true
         htworker: ""
         sites: "n95"
+        version: "version-1"
       clusterNetwork:
         - cidr: 10.128.0.0/14
           hostPrefix: 23
