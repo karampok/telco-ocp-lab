@@ -8,7 +8,7 @@ spec:
   baseDomain: "eric.vlab"
   pullSecretRef:
     name: "assisted-deployment-pull-secret"
-  clusterImageSetNameRef: "img4.14.5-x86-64-appsub"
+  clusterImageSetNameRef: "img4.14.3-x86-64-appsub"
   sshPublicKey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICGjoGIRGSfiJ8Tv+Qd6S36xuGmeIuFL8w75shdhxy5l ci@only.com"
   clusters:
     - clusterName: "5gc"
