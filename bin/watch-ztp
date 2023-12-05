@@ -17,7 +17,7 @@ cluster(){
    echo '=====> Agent State'
    oc -n "$1" get agents --no-headers -o name
    for agent in $(oc -n "$1" get agents | grep "$1" | awk '{print $1}'); do echo -e "$agent"; oc -n "$1" describe agent "${agent}" | grep "State Info" | sed "s/    //g"; done
-   oc -n "$1" wait clusterdeployment "$1" --for=condition=Provisioned --timeout=10s && exit 0
+   oc -n "$1" wait clusterdeployment "$1" --for=condition=Provisioned --timeout=10s 2>/dev/null && exit 0
 }
 
 policies(){
@@ -25,15 +25,16 @@ policies(){
   oc get policy -n "$1" --sort-by=".metadata.annotations.ran\.openshift\.io\/ztp-deploy-wave" \
     -o custom-columns=WAVE:".metadata.annotations.ran\.openshift\.io\/ztp-deploy-wave",NAME:".metadata.name",STATUS:".status.compliant"
 
-  oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=10s && exit 0
+  oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=10s 2>/dev/null && exit 0
 }
 
 while true; do
   clear
-  echo '====='
+  echo '#############################'
   date
-  "$1" "${2:-5gc}"
-  sleep 30
+  "$1" "${2:-5gc}" || true
+  sleep 60
+  echo '#############################'
   echo ''
 done
 
