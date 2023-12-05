@@ -116,7 +116,11 @@ jobs:
           podman exec workstation bash -ce '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
-            echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
+            ping 10.10.10.116 > /tmp/m0.ping 2>&1 &
+            ping 10.10.10.117 > /tmp/m1.ping 2>&1 &
+            ping 10.10.10.118 > /tmp/m2.ping 2>&1 &
+            ping 10.10.10.119 > /tmp/w0.ping 2>&1 &
+            ping 10.10.10.120 > /tmp/w1.ping 2>&1 &
           '
   stage3:
     name: Wait SPOKE
@@ -152,6 +156,7 @@ jobs:
           podman exec workstation bash -ce '
             timeout 9000 ./bin/watch-ztp policies 5gc
             oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=30s
+            pkill ping || true
           '
   stage5:
     name: Test SPOKE
