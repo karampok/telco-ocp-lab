@@ -128,11 +128,8 @@ jobs:
         timeout-minutes: 150
         run: |
           podman exec workstation bash -ce '
-            sleep 1200
-            timeout 540 ./bin/watch-ztp 5gc || echo
-            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s ||true
-            timeout 10 ./bin/watch-ztp 5gc || echo
-            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+            timeout 9000 ./bin/watch-ztp cluster 5gc
+            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=30s
           '
       - name: Access spoke cluster
         run: |
@@ -153,13 +150,8 @@ jobs:
         timeout-minutes: 120
         run: |
           podman exec workstation bash -ce '
-            sleep 1200
-            oc get cgu -A
-            timeout 540 oc -n 5gc get policies -w || echo ""
-            oc get policies -A
-            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
-            oc -n 5gc get policies
-            oc -n ztp-install get cgu 5gc -o yaml
+            timeout 9000 ./bin/watch-ztp policies 5gc
+            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=30s
           '
   stage5:
     name: Test SPOKE
@@ -233,6 +225,14 @@ jobs:
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready
           '
           #oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
+          #
+          #
+
+# oc delete -f /tmp/out/clusters-app.yaml -f /tmp/out/policies-app.yaml
+# oc delete ns 5gc
+# kcli delete vm 5gc-m0 5gc-m1 5gc-m2 5gc-w0 5gc-w1 -y
+# kcli create plan -f vbmh-kcli-plan.yaml vbmh
+# oc apply -f /tmp/out/clusters-app.yaml -f /tmp/out/policies-app.yaml
 
 # To add github action runner
 # https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new
