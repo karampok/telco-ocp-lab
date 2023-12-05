@@ -35,4 +35,6 @@ echo
 # argocd repo add https://github.com/argoproj/argocd-example-apps --username <username> --password <password>
 # argocd repo list
 #
+# argocd app get openshift-gitops/hub-provision --refresh && argocd app sync openshift-gitops/hub-provision --prune
+# argocd app get openshift-gitops/clusters --refresh && argocd app sync openshift-gitops/clusters --prune
 # argocd app get openshift-gitops/clusters --refresh && argocd app sync openshift-gitops/clusters --prune

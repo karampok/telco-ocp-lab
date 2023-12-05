@@ -94,6 +94,16 @@ spec:
         nodeSelector:
           matchLabels:
             node-role.kubernetes.io/ht100gb: ""
+    - fileName: MachineConfigPool.yaml
+      policyName: "unpause-ht-mcp-w1000"
+      evaluationInterval:
+        compliant: never
+      metadata:
+        name: ht100gb
+        annotations:
+          ran.openshift.io/ztp-deploy-wave: "1000"
+      spec:
+        paused: false
     - fileName: PerformanceProfile.yaml
       policyName: config-performanceprofile-w10
       complianceType: mustonlyhave

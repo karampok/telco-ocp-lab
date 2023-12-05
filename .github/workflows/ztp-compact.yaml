@@ -40,11 +40,11 @@ jobs:
     needs: [stage0]
     if: needs.stage0.result == 'success'
     steps:
-      - name: Deploy SNO using agent-based - OCP 4.14.3 / gitops 1.9
+      - name: Deploy SNO using agent-based - OCP 4.14.5 / gitops 1.9
         timeout-minutes: 40
         run: |
           podman exec workstation bash -ce '
-            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.3/openshift-install-linux-4.14.3.tar.gz -o openshift-install-linux.tar.gz
+            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.5/openshift-install-linux-4.14.5.tar.gz -o openshift-install-linux.tar.gz
             tar xvfz openshift-install-linux.tar.gz
             mv openshift-install /usr/bin/
             chmod +x /usr/bin/openshift-install
@@ -70,7 +70,7 @@ jobs:
         run: |
           podman exec workstation bash -ce '
             oc get ns openshift-gitops
-            oc -n openshift-gitops get routes openshift-gitops-server ||  oc -n openshift-operators delete pods --all
+            oc -n openshift-operators delete pods --all
           '
   stage2:
     name: Provision HUB Cluster
@@ -90,7 +90,7 @@ jobs:
           podman exec workstation bash -ce '
             BRANCH=dev PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
-      - name: Wait HUB to be ready - OCP 4.14.3
+      - name: Wait HUB to be read
         run: |
           podman exec workstation bash -ce '
             sleep 240
@@ -232,6 +232,7 @@ jobs:
           podman exec workstation bash -ce '
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready
           '
+          #oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
 
 # To add github action runner
 # https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new
