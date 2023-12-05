@@ -1,0 +1,32 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "stworker"
+  namespace: "ztp-group"
+spec:
+  bindingRules:
+    htworker: ""
+  remediationAction: inform
+  mcp: "standard"
+  sourceFiles:
+    # configure MachineConfigPools
+    - fileName: MachineConfigPool.yaml
+      policyName: config-nodes-w1000
+      metadata:
+        name: standard
+        annotations:
+          ran.openshift.io/ztp-deploy-wave: "1000"
+        labels:
+          machineconfiguration.openshift.io/role: standard
+          pools.operator.machineconfiguration.openshift.io/standard: ""
+      spec:
+        machineConfigSelector:
+          matchExpressions:
+            - key: machineconfiguration.openshift.io/role
+              operator: In
+              values: [worker, standard]
+        nodeSelector:
+          matchLabels:
+            node-role.kubernetes.io/standard: ""
+        paused: false

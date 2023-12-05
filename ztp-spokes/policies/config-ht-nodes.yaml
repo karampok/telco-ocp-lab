@@ -77,11 +77,11 @@ spec:
         deviceType: vfio-pci
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
-      policyName: config-nodes-w1
+      policyName: config-nodes-w1000
       metadata:
         name: ht100gb
         annotations:
-          ran.openshift.io/ztp-deploy-wave: "1"
+          ran.openshift.io/ztp-deploy-wave: "1000"
         labels:
           machineconfiguration.openshift.io/role: ht100gb
           pools.operator.machineconfiguration.openshift.io/ht100gb: ""
@@ -94,15 +94,6 @@ spec:
         nodeSelector:
           matchLabels:
             node-role.kubernetes.io/ht100gb: ""
-    - fileName: MachineConfigPool.yaml
-      policyName: "unpause-ht-mcp-w1000"
-      evaluationInterval:
-        compliant: never
-      metadata:
-        name: ht100gb
-        annotations:
-          ran.openshift.io/ztp-deploy-wave: "1000"
-      spec:
         paused: false
     - fileName: PerformanceProfile.yaml
       policyName: config-performanceprofile-w10

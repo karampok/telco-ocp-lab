@@ -4,6 +4,7 @@ kind: Kustomization
 generators:
   - common.yaml
   - label-nodes.yaml
+  - config-st-nodes.yaml
   - config-ht-nodes.yaml
   - config-metallb.yaml
   - deploy-odf.yaml

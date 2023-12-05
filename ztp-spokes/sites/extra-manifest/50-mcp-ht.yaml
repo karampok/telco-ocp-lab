@@ -13,8 +13,8 @@ spec:
       - key: machineconfiguration.openshift.io/role
         operator: In
         values:
-          - ht100gb
           - worker
+          - ht100gb
   nodeSelector:
     matchLabels:
       node-role.kubernetes.io/ht100gb: ""
