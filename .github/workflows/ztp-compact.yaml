@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
       - dev
       - main
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 jobs:
   stage0:
@@ -40,11 +40,11 @@ jobs:
     needs: [stage0]
     if: needs.stage0.result == 'success'
     steps:
-      - name: Deploy SNO using agent-based - OCP 4.14.3 / gitops 1.9
+      - name: Deploy SNO using agent-based - OCP 4.14.5 / gitops 1.9
         timeout-minutes: 40
         run: |
           podman exec workstation bash -ce '
-            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.3/openshift-install-linux-4.14.3.tar.gz -o openshift-install-linux.tar.gz
+            curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.14.5/openshift-install-linux-4.14.5.tar.gz -o openshift-install-linux.tar.gz
             tar xvfz openshift-install-linux.tar.gz
             mv openshift-install /usr/bin/
             chmod +x /usr/bin/openshift-install
@@ -70,7 +70,7 @@ jobs:
         run: |
           podman exec workstation bash -ce '
             oc get ns openshift-gitops
-            oc -n openshift-gitops get routes openshift-gitops-server ||  oc -n openshift-operators delete pods --all
+            oc -n openshift-operators delete pods --all
           '
   stage2:
     name: Provision HUB Cluster
@@ -91,7 +91,7 @@ jobs:
           podman exec workstation bash -ce '
             BRANCH=${{ github.sha }} PULL_SECRET_PATH=.pull-secret.json ./hub/install-ztp.sh
           '
-      - name: Wait HUB to be ready - OCP 4.14.3
+      - name: Wait HUB to be read
         run: |
           podman exec workstation bash -ce '
             sleep 240
@@ -117,7 +117,11 @@ jobs:
           podman exec workstation bash -ce '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
-            echo "https://openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab/"
+            ping 10.10.10.116 > /tmp/m0.ping 2>&1 &
+            ping 10.10.10.117 > /tmp/m1.ping 2>&1 &
+            ping 10.10.10.118 > /tmp/m2.ping 2>&1 &
+            ping 10.10.10.119 > /tmp/w0.ping 2>&1 &
+            ping 10.10.10.120 > /tmp/w1.ping 2>&1 &
           '
   stage3:
     name: Wait SPOKE
@@ -129,11 +133,8 @@ jobs:
         timeout-minutes: 150
         run: |
           podman exec workstation bash -ce '
-            sleep 1200
-            timeout 540 ./bin/watch-ztp 5gc || echo
-            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s ||true
-            timeout 10 ./bin/watch-ztp 5gc || echo
-            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=5400s
+            timeout 9000 ./bin/watch-ztp cluster 5gc
+            oc -n 5gc wait clusterdeployment 5gc --for=condition=Provisioned --timeout=30s
           '
       - name: Access spoke cluster
         run: |
@@ -154,13 +155,8 @@ jobs:
         timeout-minutes: 120
         run: |
           podman exec workstation bash -ce '
-            sleep 1200
-            oc get cgu -A
-            timeout 540 oc -n 5gc get policies -w || echo ""
-            oc get policies -A
-            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=5400s
-            oc -n 5gc get policies
-            oc -n ztp-install get cgu 5gc -o yaml
+            timeout 9000 ./bin/watch-ztp policies 5gc
+            oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=30s
           '
   stage5:
     name: Test SPOKE
@@ -173,6 +169,8 @@ jobs:
           podman exec workstation bash -cex '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
+
+            oc wait --for=condition=Ready node --all --timeout=5m
 
             oc apply -f dayX/macnet0-bridge.yaml
             oc apply -f dayX/macnet1-private.yaml
@@ -240,6 +238,12 @@ jobs:
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
           '
           #oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
+
+# oc delete -f /tmp/out/clusters-app.yaml -f /tmp/out/policies-app.yaml
+# oc delete ns 5gc
+# kcli delete vm 5gc-m0 5gc-m1 5gc-m2 5gc-w0 5gc-w1 -y
+# kcli create plan -f vbmh-kcli-plan.yaml vbmh
+# oc apply -f /tmp/out/clusters-app.yaml -f /tmp/out/policies-app.yaml
 
 # To add github action runner
 # https://github.com/karampok/telco-ocp-lab/settings/actions/runners/new

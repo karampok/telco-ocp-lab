@@ -1,29 +1,45 @@
 #!/bin/bash
+set -euo pipefail
 
-DEST_CLUSTER=${1}
+cluster(){
+   echo '=====> INFRAENV:'
+   oc get infraenv -n "$1"
+   echo '=====> BMH:'
+   oc get bmh -n "$1"
+   echo '=====> Agents:'
+   oc get agent -n "$1"
+   echo '=====> AgentClusterInstall Messages:'
+   oc get agentclusterinstall -n "$1" "$1" -o jsonpath={.status.conditions} | jq "." | grep message
+   echo '=====> ManagedCluster'
+   oc get managedcluster "$1"
+   echo '=====> clusterdeployment'
+   oc get clusterdeployment -n "$1" "$1"
+   echo '=====> Agent State'
+   oc -n "$1" get agents --no-headers -o name
+   for agent in $(oc -n "$1" get agents | grep "$1" | awk '{print $1}'); do echo -e "$agent"; oc -n "$1" describe agent "${agent}" | grep "State Info" | sed "s/    //g"; done
+   oc -n "$1" wait clusterdeployment "$1" --for=condition=Provisioned --timeout=10s 2>/dev/null && exit 0
+}
 
-if [[ -z ${DEST_CLUSTER} ]];then
-  echo "Give me a clustername"
-  exit 1
-fi
+policies(){
+  oc -n ztp-install get cgu "$1"
+  oc get policy -n "$1" --sort-by=".metadata.annotations.ran\.openshift\.io\/ztp-deploy-wave" \
+    -o custom-columns=WAVE:".metadata.annotations.ran\.openshift\.io\/ztp-deploy-wave",NAME:".metadata.name",STATUS:".status.compliant"
+
+  oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=10s 2>/dev/null && exit 0
+}
+
+while true; do
+  clear
+  echo '#############################'
+  date
+  "$1" "${2:-5gc}" || true
+  sleep 60
+  echo '#############################'
+  echo ''
+done
 
 
-watch -n 5 "
-  echo '=====> BMH:'; \
-  oc get bmh -n ${DEST_CLUSTER}; \
-  echo; echo '=====> Agents:'; \
-  oc get agent -n ${DEST_CLUSTER}; \
-  echo; echo '=====> AgentClusterInstall Messages:'; \
-  oc get agentclusterinstall -n ${DEST_CLUSTER} ${DEST_CLUSTER} -o jsonpath={.status.conditions} | jq "." | grep message; \
-  echo; echo '=====> ManagedCluster'; \
-  oc get managedcluster ${DEST_CLUSTER}; \
-  echo; echo '=====> clusterdeployment'; \
-  oc get clusterdeployment -n ${DEST_CLUSTER} ${DEST_CLUSTER}; \
-  echo; echo '=====> Agent State'; \
-  oc -n ${DEST_CLUSTER} get agents --no-headers -o name
-"
-
-
-  #for agent in $(oc -n ${DEST_CLUSTER} get agents | grep ${DEST_CLUSTER} | awk '{print $1}'); do oc -n ${DEST_CLUSTER} describe agent ${agent} | grep "State Info" | sed "s/    //g"; done
-#  oc get bmh,agent,agentclusterinstall,clusterdeployment -A
-#  NMStateConfig
+# oc -n ""$CLUSTER"" get policies -o json \
+#   | jq -r '.items[] |  .metadata.annotations."ran.openshift.io/ztp-deploy-wave" + " " + .metadata.name + " " + .status.compliant ' \
+#   | sort -g -t ":" -k 3
+#
