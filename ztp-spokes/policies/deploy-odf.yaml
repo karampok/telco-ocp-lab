@@ -6,7 +6,7 @@ metadata:
   namespace: "ztp-group"
 spec:
   bindingRules:
-    sites: "n62-ocp2"
+    sites: "n95"
   remediationAction: inform
   sourceFiles:
     - fileName: odf/ns.yaml
