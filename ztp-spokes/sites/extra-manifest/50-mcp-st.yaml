@@ -18,4 +18,4 @@ spec:
   nodeSelector:
     matchLabels:
       node-role.kubernetes.io/standard: ""
-  paused: true
+  paused: false
