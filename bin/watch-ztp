@@ -29,7 +29,6 @@ policies(){
 }
 
 while true; do
-  clear
   echo '#############################'
   date
   "$1" "${2:-5gc}" || true
