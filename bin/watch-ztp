@@ -23,9 +23,9 @@ cluster(){
 policies(){
   oc -n ztp-install get cgu "$1"
   oc get policy -n "$1" --sort-by=".metadata.annotations.ran\.openshift\.io\/ztp-deploy-wave" \
-    -o custom-columns=WAVE:".metadata.annotations.ran\.openshift\.io\/ztp-deploy-wave",NAME:".metadata.name",STATUS:".status.compliant"
+    -o custom-columns=WAVE:".metadata.annotations.ran\.openshift\.io\/ztp-deploy-wave",NS:".metadata.namespace",NAME:".metadata.name",STATUS:".status.compliant",REMEDIATION:".spec.remediationAction"
 
-  oc -n ztp-install wait cgu 5gc --for=condition=Succeeded --timeout=10s 2>/dev/null && exit 0
+  oc -n ztp-install wait cgu "$1" --for=condition=Succeeded --timeout=10s 2>/dev/null && exit 0
 }
 
 while true; do
