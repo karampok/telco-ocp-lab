@@ -2,7 +2,7 @@
 apiVersion: ran.openshift.io/v1
 kind: PolicyGenTemplate
 metadata:
-  name: "label-ht-worker"
+  name: "label-node"
   namespace: "ztp-site"
 spec:
   bindingRules:
@@ -10,14 +10,14 @@ spec:
   remediationAction: inform
   sourceFiles:
     - fileName: LabelNode.yaml
-      policyName: "label-nodes"
+      policyName: "st"
       metadata:
         name: "w1.5gc.eric.vlab"
         labels:
           node-role.kubernetes.io/standard: ""
           acm-policy-labels-workaround: enabled
     - fileName: LabelNode.yaml
-      policyName: "label-nodes"
+      policyName: "ht"
       metadata:
         name: "w0.5gc.eric.vlab"
         labels:

@@ -12,11 +12,11 @@ spec:
   sourceFiles:
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
-      policyName: config-nodes-w1000
+      policyName: config-nodes-w1
       metadata:
         name: standard
         annotations:
-          ran.openshift.io/ztp-deploy-wave: "1000"
+          ran.openshift.io/ztp-deploy-wave: "1"
         labels:
           machineconfiguration.openshift.io/role: standard
           pools.operator.machineconfiguration.openshift.io/standard: ""
