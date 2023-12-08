@@ -117,6 +117,7 @@ jobs:
           podman exec workstation bash -ce '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
+            liveping 10.10.10.116,10.10.10.117,10.10.10.118,10.10.10.119,10.10.10.120 >/dev/null &
             ping 10.10.10.116 > /tmp/m0.ping 2>&1 &
             ping 10.10.10.117 > /tmp/m1.ping 2>&1 &
             ping 10.10.10.118 > /tmp/m2.ping 2>&1 &
@@ -170,7 +171,8 @@ jobs:
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
 
-            oc wait --for=condition=Ready node --all --timeout=5m
+            oc wait --for=condition=Ready node --all --timeout=15m
+            kcli list vm ||true
 
             oc apply -f dayX/macnet0-bridge.yaml
             oc apply -f dayX/macnet1-private.yaml
