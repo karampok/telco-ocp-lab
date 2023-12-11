@@ -110,7 +110,7 @@ jobs:
             argocd app get hub-provision
             argocd app get clusters
             argocd app get policies
-          '
+          ' || true
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
@@ -236,7 +236,13 @@ jobs:
     steps:
       - name: Readd Label
         run: |
-          podman exec workstation bash -ce '
+          podman exec workstation bash -c '
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
+            export KUBECONFIG=/tmp/spoke.yaml
+            oc get clusterversion
+            oc get nodes
+            oc get co
+
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
           '
           #oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
