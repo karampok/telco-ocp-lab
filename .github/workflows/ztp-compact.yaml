@@ -117,12 +117,7 @@ jobs:
           podman exec workstation bash -ce '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
-            liveping 10.10.10.116,10.10.10.117,10.10.10.118,10.10.10.119,10.10.10.120 >/dev/null &
-            ping 10.10.10.116 > /tmp/m0.ping 2>&1 &
-            ping 10.10.10.117 > /tmp/m1.ping 2>&1 &
-            ping 10.10.10.118 > /tmp/m2.ping 2>&1 &
-            ping 10.10.10.119 > /tmp/w0.ping 2>&1 &
-            ping 10.10.10.120 > /tmp/w1.ping 2>&1 &
+            liveping $(cat ztp-spokes/sites/5gc.yaml |grep "ip: 10.10.10" | awk '{print $3}' | paste -s -d, -) >liveping.log 2>&1 &
           '
   stage3:
     name: Wait SPOKE
@@ -242,7 +237,7 @@ jobs:
             oc get clusterversion
             oc get nodes
             oc get co
-            pkill ping || true
+            pkill liveping || true
 
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
           '
