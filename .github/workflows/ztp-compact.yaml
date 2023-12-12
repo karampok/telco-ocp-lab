@@ -242,6 +242,7 @@ jobs:
             oc get clusterversion
             oc get nodes
             oc get co
+            pkill ping || true
 
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
           '

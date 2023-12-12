@@ -1,0 +1,17 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "validator"
+  namespace: "ztp-common"
+spec:
+  bindingRules:
+    common: "true"
+  remediationAction: inform
+  sourceFiles:
+    - fileName: "SRIOV.yaml"
+      policyName: "validate-sriov-w1000"
+      metadata:
+        name: validate-sriov
+        annotations:
+          ran.openshift.io/ztp-deploy-wave: "1000"
