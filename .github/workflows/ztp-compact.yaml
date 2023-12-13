@@ -32,7 +32,7 @@ jobs:
       - name: Reserve Runner
         run: |
           podman exec workstation bash -ce '
-            GITHUB_TOKEN='${{ secrets.GITHUB_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
           '
   stage1:
     name: Deploy SNO Cluster - ${{needs.stage0.outputs.RUNNER}}
@@ -239,7 +239,7 @@ jobs:
             oc get co
             pkill liveping || true
 
-            GITHUB_TOKEN='${{ secrets.GITHUB_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green
           '
           #oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
 
