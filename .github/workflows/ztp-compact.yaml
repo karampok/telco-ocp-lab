@@ -32,7 +32,7 @@ jobs:
       - name: Reserve Runner
         run: |
           podman exec workstation bash -ce '
-            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green
           '
   stage1:
     name: Deploy SNO Cluster - ${{needs.stage0.outputs.RUNNER}}
@@ -226,7 +226,7 @@ jobs:
       - name: Mark Runner
         run: |
           podman exec workstation bash -ce '
-            GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready
             pkill ping || true
           '
   on-fail:

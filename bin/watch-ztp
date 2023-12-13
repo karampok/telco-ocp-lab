@@ -7,16 +7,13 @@ cluster(){
    echo '=====> BMH:'
    oc get bmh -n "$1"
    echo '=====> Agents:'
-   oc get agent -n "$1"  -o custom-columns=HOST:".spec.hostname",ROLE:".spec.role",NS:".metadata.namespace",APPROVED:".spec.approved",NAME:".metadata.name",STAGE:".status.progress.currentStage"  --sort-by=".spec.hostname"
+   oc get agent -n "$1"  -o custom-columns=HOST:".spec.hostname",ROLE:".spec.role",NS:".metadata.namespace",APPROVED:".spec.approved",NAME:".metadata.name",STAGE:".status.progress.currentStage",STATEINFO:".status.debugInfo.stateInfo"  --sort-by=".spec.hostname"
    echo '=====> AgentClusterInstall Messages:'
    oc get agentclusterinstall -n "$1" "$1" -o jsonpath={.status.conditions} | jq "." | grep message
    echo '=====> ManagedCluster'
    oc get managedcluster "$1"
    echo '=====> clusterdeployment'
    oc get clusterdeployment -n "$1" "$1"
-   echo '=====> Agent State'
-   oc -n "$1" get agents --no-headers -o name
-   for agent in $(oc -n "$1" get agents | grep "$1" | awk '{print $1}'); do echo -e "$agent"; oc -n "$1" describe agent "${agent}" | grep "State Info" | sed "s/    //g"; done
    oc -n "$1" wait clusterdeployment "$1" --for=condition=Provisioned --timeout=10s 2>/dev/null && exit 0
 }
 
