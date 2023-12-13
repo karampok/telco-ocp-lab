@@ -12,7 +12,7 @@ spec:
     - fileName: "validator/SRIOV.yaml"
       policyName: "validate-sriov-w1000"
       metadata:
-        name: validate-sriov
+        name: w0.5gc.eric.vlab
         annotations:
           ran.openshift.io/ztp-deploy-wave: "1000"
     - fileName: validator/MCP.yaml
