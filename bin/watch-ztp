@@ -7,7 +7,7 @@ cluster(){
    echo '=====> BMH:'
    oc get bmh -n "$1"
    echo '=====> Agents:'
-   oc get agent -n "$1"
+   oc get agent -n "$1"  -o custom-columns=HOST:".spec.hostname",ROLE:".spec.role",NS:".metadata.namespace",APPROVED:".spec.approved",NAME:".metadata.name",STAGE:".status.progress.currentStage"  --sort-by=".spec.hostname"
    echo '=====> AgentClusterInstall Messages:'
    oc get agentclusterinstall -n "$1" "$1" -o jsonpath={.status.conditions} | jq "." | grep message
    echo '=====> ManagedCluster'

@@ -110,18 +110,14 @@ jobs:
             argocd app get hub-provision
             argocd app get clusters
             argocd app get policies
-          '
+          ' || true
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
           podman exec workstation bash -ce '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
-            ping 10.10.10.116 > /tmp/m0.ping 2>&1 &
-            ping 10.10.10.117 > /tmp/m1.ping 2>&1 &
-            ping 10.10.10.118 > /tmp/m2.ping 2>&1 &
-            ping 10.10.10.119 > /tmp/w0.ping 2>&1 &
-            ping 10.10.10.120 > /tmp/w1.ping 2>&1 &
+            liveping 10.10.10.116,10.10.10.117,10.10.10.118,10.10.10.119,10.10.10.120 1>liveping.log 2>&1 &
           '
   stage3:
     name: Wait SPOKE
@@ -170,7 +166,8 @@ jobs:
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
 
-            oc wait --for=condition=Ready node --all --timeout=5m
+            oc wait --for=condition=Ready node --all --timeout=15m
+            kcli list vm ||true
 
             oc apply -f dayX/macnet0-bridge.yaml
             oc apply -f dayX/macnet1-private.yaml
@@ -232,9 +229,23 @@ jobs:
             GH_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready
             pkill ping || true
           '
+  on-fail:
+    name: Release Runner
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage5]
+    if: ${{ always() }}
+    steps:
+      - name: Readd Label
+        run: |
+          podman exec workstation bash -c '
+            oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
+            export KUBECONFIG=/tmp/spoke.yaml
+            oc get clusterversion
+            oc get nodes
+            oc get co
+            pkill liveping || true
+          '
           #oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
-          #
-          #
 
 # oc delete -f /tmp/out/clusters-app.yaml -f /tmp/out/policies-app.yaml
 # oc delete ns 5gc

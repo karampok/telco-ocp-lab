@@ -10,5 +10,6 @@ generators:
   - deploy-odf.yaml
   - post.yaml
   - upgrade-cluster.yaml
+  - validate.yaml
 resources:
   - resources/ns.yaml

@@ -1,0 +1,38 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "validator"
+  namespace: "ztp-common"
+spec:
+  bindingRules:
+    common: "true"
+  remediationAction: inform
+  sourceFiles:
+    - fileName: "validator/SRIOV.yaml"
+      policyName: "validate-sriov-w1000"
+      metadata:
+        name: validate-sriov
+        annotations:
+          ran.openshift.io/ztp-deploy-wave: "1000"
+    - fileName: validator/MCP.yaml
+      policyName: validate-mcp
+      metadata:
+        name: master
+    - fileName: validator/MCP.yaml
+      policyName: validate-mcp
+      metadata:
+        name: standard
+    - fileName: validator/MCP.yaml
+      policyName: validate-mcp
+      metadata:
+        name: ht100gb
+      status:
+        configuration:
+          source:
+            - apiVersion: machineconfiguration.openshift.io/v1
+              kind: MachineConfig
+              name: 50-performance-ht100gb
+            - apiVersion: machineconfiguration.openshift.io/v1
+              kind: MachineConfig
+              name: 50-nto-ht100gb
