@@ -68,7 +68,7 @@ spec:
                   type: bond
                   state: up
                   mtu: 9000
-                  copy-mac-from: ens4
+                  #copy-mac-from: ens4 this is not working here https://issues.redhat.com/browse/OCPBUGS-25447
                   link-aggregation:
                     mode: 802.3ad
                     options:
