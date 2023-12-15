@@ -114,10 +114,11 @@ jobs:
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
-          podman exec workstation bash -ce '
+          ips=$(cat ztp-spokes/sites/5gc.yaml | grep "ip: 10.10.10" | awk '{print $3}' | paste -s -d, -)
+          podman exec --env ips="$ips" workstation bash -ce '
             oc apply -f bmh-secret.yaml
             oc apply -k github.com/karampok/autosecret/config/default
-            liveping 10.10.10.116,10.10.10.117,10.10.10.118,10.10.10.119,10.10.10.120 1>liveping.log 2>&1 &
+            CSVPATH=/share/data ./bin/liveping $ips 1>liveping.log 2>&1 &
           '
   stage3:
     name: Wait SPOKE

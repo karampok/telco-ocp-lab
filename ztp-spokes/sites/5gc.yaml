@@ -47,16 +47,33 @@ spec:
                 macAddress: de:ad:be:ff:11:61
             config:
               interfaces:
+                - &ens3
+                  name: ens3
+                  type: ethernet
+                  state: up
+                  ipv4:
+                    enabled: false
+                  ipv6:
+                    enabled: false
+                - &ens4
+                  name: ens4
+                  type: ethernet
+                  state: up
+                  ipv4:
+                    enabled: false
+                  ipv6:
+                    enabled: false
                 - &bond0
                   name: bond0
                   type: bond
                   state: up
                   mtu: 9000
+                  #copy-mac-from: ens4 this is not working here https://issues.redhat.com/browse/OCPBUGS-25447
                   link-aggregation:
-                    mode: active-backup
+                    mode: 802.3ad
                     options:
                       miimon: 100
-                      primary: ens3
+                      lacp_rate: slow
                     port:
                       - ens3
                       - ens4
@@ -117,6 +134,8 @@ spec:
                 macAddress: de:ad:be:ff:11:71
             config:
               interfaces:
+                - *ens3
+                - *ens4
                 - *bond0
                 - <<: *bond0-10
                   ipv4:
@@ -151,6 +170,8 @@ spec:
                 macAddress: de:ad:be:ff:11:81
             config:
               interfaces:
+                - *ens3
+                - *ens4
                 - *bond0
                 - <<: *bond0-10
                   ipv4:
@@ -186,6 +207,8 @@ spec:
                 macAddress: de:ad:be:ff:11:86
             config:
               interfaces:
+                - *ens3
+                - *ens4
                 - *bond0
                 - <<: *bond0-10
                   ipv4:
@@ -246,6 +269,8 @@ spec:
                   ipv6:
                     enabled: false
                     dhcp: false
+                - *ens3
+                - *ens4
                 - *bond0
                 - <<: *bond0-10
                   ipv4:
