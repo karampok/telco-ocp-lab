@@ -82,7 +82,7 @@ jobs:
       - name: Install ACM / LVM / TALM using gitops - release-2.9 / stable-4.1 / stable
         timeout-minutes: 10
         run: |
-          podman exec workstation bash -ce '
+          podman exec workstation bash -cex '
             until oc get Application 2>/dev/null; do sleep 30; done
             oc apply -f hub/hub-provision-argoapp.yaml
           '
@@ -93,7 +93,7 @@ jobs:
           '
       - name: Wait HUB to be read
         run: |
-          podman exec workstation bash -ce '
+          podman exec workstation bash -cex '
             sleep 240
             until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
             until oc get LVMCluster 2>/dev/null; do sleep 30; done
