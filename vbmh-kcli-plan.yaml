@@ -3,7 +3,7 @@
 hub:
   machine: q35
   numcpus: 12
-  memory: 20480
+  memory: 32000
   start: false
   uuid: 11111111-1111-1111-1111-111111111115
   disks:
