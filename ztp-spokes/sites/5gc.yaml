@@ -70,12 +70,13 @@ spec:
                   mtu: 9000
                   #copy-mac-from: ens4 this is not working here https://issues.redhat.com/browse/OCPBUGS-25447
                   link-aggregation:
-                    mode: 802.3ad
+                    mode: active-backup
                     options:
                       miimon: 100
-                      lacp_rate: slow
+                      primary: ens3
                     port:
                       - ens3
+                      - ens4
                 - &bond0-10
                   name: bond0.10
                   type: vlan
