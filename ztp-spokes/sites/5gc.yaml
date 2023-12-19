@@ -76,7 +76,6 @@ spec:
                       lacp_rate: slow
                     port:
                       - ens3
-                      - ens4
                 - &bond0-10
                   name: bond0.10
                   type: vlan
