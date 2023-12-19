@@ -34,7 +34,7 @@ kcli create pool -p /var/lib/libvirt/images default
 git clone https://github.com/karampok/telco-ocp-lab.git
 cd telco-ocp-lab
 #scp ~/.pull-secret.json ~/.id-rsa.pub root@lab0:/root/telco-ocp-lab
-grep -E '\s{10,}' .github/workflows/ztp-e2e.yaml | sed 's/^          //'
+grep -E '\s{10,}' .github/workflows/ztp-compact.yaml | sed 's/^          //'
 ```
 
 ## Podman on RHEL 9.2

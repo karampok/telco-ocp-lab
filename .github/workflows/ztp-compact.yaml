@@ -82,7 +82,7 @@ jobs:
       - name: Install ACM / LVM / TALM using gitops - release-2.9 / stable-4.1 / stable
         timeout-minutes: 10
         run: |
-          podman exec workstation bash -cex '
+          podman exec workstation bash -ce '
             until oc get Application 2>/dev/null; do sleep 30; done
             oc apply -f hub/hub-provision-argoapp.yaml
           '
@@ -93,7 +93,7 @@ jobs:
           '
       - name: Wait HUB to be read
         run: |
-          podman exec workstation bash -cex '
+          podman exec workstation bash -ce '
             sleep 240
             until oc get MultiClusterHub 2>/dev/null; do sleep 30; done
             until oc get LVMCluster 2>/dev/null; do sleep 30; done
@@ -163,7 +163,7 @@ jobs:
     steps:
       - name: Test Metallb setup
         run: |
-          podman exec workstation bash -cex '
+          podman exec workstation bash -ce '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
 
