@@ -6,7 +6,7 @@ runners=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" \
               "https://api.github.com/repos/karampok/telco-ocp-lab/actions/runners")
 
 if [ $# -eq 0 ]; then
-  echo "$runners" | jq -r '.runners[] | "\(.name): \(.labels[4:] | map(.name) | join(" "))"'
+  echo "$runners" | jq -r '.runners |= sort_by(.name) | .runners[] | "\(.name): \(.labels[4:] | map(.name) | join(" "))"'
   exit 0
 fi
 

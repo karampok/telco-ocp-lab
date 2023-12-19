@@ -77,7 +77,7 @@ jobs:
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1a]
     if: needs.stage1.result == 'success'
-    timeout-minutes: 40
+    timeout-minutes: 20
     steps:
       - name: Install ACM / LVM / TALM using gitops - release-2.9 / stable-4.1 / stable
         timeout-minutes: 10
