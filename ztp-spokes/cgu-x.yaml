@@ -12,7 +12,8 @@ spec:
     # - common-config-cluster
     # - common-config-network
     # - common-install-operators
-    - common-config-operators
+    - common-install-operators
+    #- common-config-operators
     # - common-config-policy
     # - common-platform-upgrade
     # - label-ht-worker-label-nodes
