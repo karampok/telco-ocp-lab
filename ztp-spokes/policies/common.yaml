@@ -23,14 +23,14 @@ spec:
       spec:
         channel: stable
         source: redhat-operators
-    # install NMState operator
+    # install metallb operator
     - fileName: metallb/ns.yaml
       policyName: "install-operators-w2"
     - fileName: metallb/operatorGroup.yaml
       policyName: "install-operators-w2"
     - fileName: metallb/subscription.yaml
       policyName: "install-operators-w2"
-    # install NMState operator
+    # install nmstate operator
     - fileName: nmstate/subscription.yaml
       policyName: "install-operators-w2"
     - fileName: nmstate/ns.yaml
@@ -39,6 +39,15 @@ spec:
       policyName: "install-operators-w2"
     - fileName: nmstate/instance.yaml
       policyName: "config-operators-nmstate-w5"
+    # install NUMA Resources operator
+    - fileName: NUMAResourcesOperator/subscription.yaml
+      policyName: "install-operators"
+    - fileName: NUMAResourcesOperator/ns.yaml
+      policyName: "install-operators"
+    - fileName: NUMAResourcesOperator/operatorGroup.yaml
+      policyName: "install-operators"
+    # - fileName: NUMAResourcesOperator/instance.yaml
+    #   policyName: "config-operators-nmstate"
     # other networking config
     - fileName: RoutingViaHost.yaml
       policyName: "config-network-w1"
