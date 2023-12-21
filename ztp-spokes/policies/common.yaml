@@ -15,28 +15,28 @@ spec:
       policyName: "config-cluster-w1"
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: SriovSubscriptionOperGroup.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: SriovSubscription.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
       spec:
         channel: stable
         source: redhat-operators
     # install metallb operator
     - fileName: metallb/ns.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: metallb/operatorGroup.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: metallb/subscription.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     # install nmstate operator
     - fileName: nmstate/subscription.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: nmstate/ns.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: nmstate/operatorGroup.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: nmstate/instance.yaml
       policyName: "config-operators-nmstate-w5"
     # install NUMA Resources operator
