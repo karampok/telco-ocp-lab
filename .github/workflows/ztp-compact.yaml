@@ -158,7 +158,7 @@ jobs:
   stage5:
     name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage4]
+    needs: [stage0, stage1, stage2, stage3, stage4]
     if: needs.stage4.result == 'success'
     steps:
       - name: Test Metallb setup
@@ -224,11 +224,17 @@ jobs:
             oc get nodes || true
             oc get pods || true
           '
+      - name: Mark Runner
+        run: |
+          podman exec workstation bash -ce '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
+            pkill ping || true
+          '
   on-fail:
     name: Release Runner
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage5]
-    if: ${{ always() }}
+    if: ${{ failure() }}
     steps:
       - name: Readd Label
         run: |
