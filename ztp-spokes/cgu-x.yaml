@@ -12,7 +12,7 @@ spec:
     # - common-config-cluster
     # - common-config-network
     # - common-install-operators
-    # - common-config-operators
+    - common-config-operators
     # - common-config-policy
     # - common-platform-upgrade
     # - label-ht-worker-label-nodes
@@ -22,8 +22,8 @@ spec:
     # - htworker-config-virt-vfio-noiommu
     # - networks-config-metallb
     # - networks-config-static-routes
-    - networks-config-red-nmstate-w8
-    - networks-config-green-nmstate-w8
+    # - networks-config-red-nmstate-w8
+    # - networks-config-green-nmstate-w8
   remediationStrategy:
     maxConcurrency: 1
     timeout: 240
