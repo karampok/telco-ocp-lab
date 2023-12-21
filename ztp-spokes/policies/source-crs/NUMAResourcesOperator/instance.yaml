@@ -1,3 +1,4 @@
+---
 apiVersion: nodetopology.openshift.io/v1
 kind: NUMAResourcesOperator
 metadata:
@@ -6,6 +7,11 @@ metadata:
     ran.openshift.io/ztp-deploy-wave: "10"
 spec:
   nodeGroups:
-  - machineConfigPoolSelector:
-      matchLabels:
-        pools.operator.machineconfiguration.openshift.io/$mcp: ""
+    - config:
+        infoRefreshMode: Periodic
+        infoRefreshPeriod: 10s
+        podsFingerprinting: Enabled
+      name: ht
+      machineConfigPoolSelector:
+        matchLabels:
+          pools.operator.machineconfiguration.openshift.io/$mcp: ""

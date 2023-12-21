@@ -23,8 +23,8 @@ spec:
         labels:
           node-role.kubernetes.io/ht100gb: ""
           acm-policy-labels-workaround: enabled
-      spec:
-        taints:
-          - effect: NoSchedule
-            key: sriov
-            value: "true"
+      # spec:
+      #   taints:
+      #     - effect: NoSchedule
+      #       key: sriov
+      #       value: "true"
