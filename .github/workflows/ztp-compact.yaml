@@ -110,7 +110,7 @@ jobs:
             argocd app get hub-provision
             argocd app get clusters
             argocd app get policies
-          ' || true
+          '
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
