@@ -227,7 +227,7 @@ jobs:
       - name: Mark Runner
         run: |
           podman exec workstation bash -ce '
-            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken +green
             pkill ping || true
           '
   on-fail:
