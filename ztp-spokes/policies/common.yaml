@@ -10,38 +10,49 @@ spec:
   remediationAction: inform
   sourceFiles:
     - fileName: "MastersSchedulable.yaml"
-      policyName: "config-cluster-w1"
+      policyName: "config-cluster"
     - fileName: ReduceMonitoringFootprint.yaml
-      policyName: "config-cluster-w1"
+      policyName: "config-cluster"
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: SriovSubscriptionOperGroup.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: SriovSubscription.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
       spec:
         channel: stable
         source: redhat-operators
-    # install NMState operator
+    # install metallb operator
     - fileName: metallb/ns.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: metallb/operatorGroup.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: metallb/subscription.yaml
-      policyName: "install-operators-w2"
-    # install NMState operator
+      policyName: "install-operators"
+    # install nmstate operator
     - fileName: nmstate/subscription.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: nmstate/ns.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: nmstate/operatorGroup.yaml
-      policyName: "install-operators-w2"
+      policyName: "install-operators"
     - fileName: nmstate/instance.yaml
       policyName: "config-operators-nmstate-w5"
+    # install NUMA Resources operator
+    - fileName: NUMAResourcesOperator/subscription.yaml
+      policyName: "install-operators"
+      spec:
+        channel: "4.14"
+    - fileName: NUMAResourcesOperator/ns.yaml
+      policyName: "install-operators"
+    - fileName: NUMAResourcesOperator/operatorGroup.yaml
+      policyName: "install-operators"
+    # - fileName: NUMAResourcesOperator/instance.yaml
+    #   policyName: "config-operators-nmstate"
     # other networking config
     - fileName: RoutingViaHost.yaml
-      policyName: "config-network-w1"
+      policyName: "config-network"
     - fileName: AddAdditionalNetworks.yaml
       policyName: "config-network"
       spec:

@@ -10,25 +10,6 @@ spec:
   remediationAction: inform
   mcp: "ht100gb"
   sourceFiles:
-    - fileName: MachineConfigGeneric.yaml
-      policyName: config-virt-vfio-noiommu-w1
-      metadata:
-        annotations:
-          ran.openshift.io/ztp-deploy-wave: "1"
-        labels:
-          machineconfiguration.openshift.io/role: ht100gb
-        name: vfio-virt-noiommu
-      spec:
-        config:
-          ignition:
-            version: 3.2.0
-          storage:
-            files:
-              - contents:
-                  source: data:text/plain;charset=utf-8;base64,b3B0aW9ucyB2ZmlvIGVuYWJsZV91bnNhZmVfbm9pb21tdV9tb2RlPTEKb3B0aW9ucyB2ZmlvX2lvbW11X3R5cGUxIGFsbG93X3Vuc2FmZV9pbnRlcnJ1cHRzPTEK
-                mode: 420
-                overwrite: true
-                path: /etc/modprobe.d/vfio.conf
     # configure SR-IOV
     - fileName: SriovSupportedNicCM.yaml
       policyName: "patch-sriov-cm-hack-w3"
@@ -95,8 +76,11 @@ spec:
           matchLabels:
             node-role.kubernetes.io/ht100gb: ""
         paused: false
+    # configure NUMAResource
+    - fileName: NUMAResourcesOperator/instance.yaml
+      policyName: config-ht-node
     - fileName: PerformanceProfile.yaml
-      policyName: config-performanceprofile-w10
+      policyName: config-ht-node
       complianceType: mustonlyhave
       metadata:
         name: ht100gb
