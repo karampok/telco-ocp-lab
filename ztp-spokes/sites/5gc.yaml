@@ -226,7 +226,7 @@ spec:
                     dhcp: false
               dns-resolver: *dns
               routes: *routes
-        - hostName: w0.5gc.eric.vlab
+        - hostName: w2.5gc.eric.vlab
           role: worker
           nodeLabels:
             node-role.kubernetes.io/standard: ""
