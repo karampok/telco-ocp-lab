@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
       - dev
       - main
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */4 * * *'
   workflow_dispatch:
 jobs:
   stage0:
@@ -110,7 +110,7 @@ jobs:
             argocd app get hub-provision
             argocd app get clusters
             argocd app get policies
-          ' || true
+          '
       - name: Enable autosecrets hack
         run: |
           echo '${{ secrets.BMH_SECRET }}' > bmh-secret.yaml
@@ -158,12 +158,12 @@ jobs:
   stage5:
     name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage4]
+    needs: [stage0, stage1, stage2, stage3, stage4]
     if: needs.stage4.result == 'success'
     steps:
       - name: Test Metallb setup
         run: |
-          podman exec workstation bash -cex '
+          podman exec workstation bash -ce '
             oc extract secret/5gc-admin-kubeconfig --to=- -n 5gc > /tmp/spoke.yaml
             export KUBECONFIG=/tmp/spoke.yaml
 
