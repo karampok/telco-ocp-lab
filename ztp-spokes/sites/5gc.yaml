@@ -6,6 +6,7 @@ metadata:
   namespace: "5gc"
 spec:
   baseDomain: "eric.vlab"
+  cpuPartitioningMode: AllNodes
   pullSecretRef:
     name: "assisted-deployment-pull-secret"
   clusterImageSetNameRef: "img4.14.6-x86-64-appsub"
