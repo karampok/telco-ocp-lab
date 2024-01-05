@@ -10,9 +10,9 @@ spec:
   remediationAction: inform
   sourceFiles:
     - fileName: "MastersSchedulable.yaml"
-      policyName: "config-cluster"
+      policyName: "config"
     - fileName: ReduceMonitoringFootprint.yaml
-      policyName: "config-cluster"
+      policyName: "config"
     # install and configure SR-IOV operator
     - fileName: SriovSubscriptionNS.yaml
       policyName: "install-operators"
@@ -38,7 +38,7 @@ spec:
     - fileName: nmstate/operatorGroup.yaml
       policyName: "install-operators"
     - fileName: nmstate/instance.yaml
-      policyName: "config-operators-nmstate-w5"
+      policyName: "config-operators"
     # install NUMA Resources operator
     - fileName: NUMAResourcesOperator/subscription.yaml
       policyName: "install-operators"
@@ -48,13 +48,11 @@ spec:
       policyName: "install-operators"
     - fileName: NUMAResourcesOperator/operatorGroup.yaml
       policyName: "install-operators"
-    # - fileName: NUMAResourcesOperator/instance.yaml
-    #   policyName: "config-operators-nmstate"
     # other networking config
     - fileName: RoutingViaHost.yaml
-      policyName: "config-network"
+      policyName: "config"
     - fileName: AddAdditionalNetworks.yaml
-      policyName: "config-network"
+      policyName: "config"
       spec:
         additionalNetworks:
           - name: macnet0

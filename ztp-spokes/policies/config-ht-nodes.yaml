@@ -11,6 +11,15 @@ spec:
   mcp: "ht100gb"
   sourceFiles:
     # configure SR-IOV
+    - fileName: LabelNode.yaml
+      policyName: "config"
+      metadata:
+        name: "w0.5gc.eric.vlab"
+      spec:
+        taints:
+          - effect: NoSchedule
+            key: sriov
+            value: "true"
     - fileName: SriovSupportedNicCM.yaml
       policyName: "patch-sriov-cm-hack-w3"
     - fileName: SriovOperatorConfig.yaml
@@ -58,7 +67,7 @@ spec:
         deviceType: vfio-pci
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
-      policyName: config-nodes-w1
+      policyName: config
       metadata:
         name: ht100gb
         annotations:
