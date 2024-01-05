@@ -12,7 +12,7 @@ spec:
   sourceFiles:
     # configure MachineConfigPools
     - fileName: MachineConfigPool.yaml
-      policyName: config-nodes-w1
+      policyName: config
       metadata:
         name: standard
         annotations:
