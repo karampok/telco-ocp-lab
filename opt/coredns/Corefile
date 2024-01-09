@@ -29,6 +29,7 @@
     fallthrough
   }
   log
+  debug
 }
 
 hub.telco.vlab {

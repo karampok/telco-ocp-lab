@@ -234,7 +234,7 @@ jobs:
     name: Release Runner
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage5]
-    if: ${{ always() }}
+    if: ${{ failure() }}
     steps:
       - name: Readd Label
         run: |
@@ -245,6 +245,8 @@ jobs:
             oc get nodes
             oc get co
             pkill liveping || true
+
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +failed -taken
           '
           #oc api-resources --verbs=list  -o name | xargs -t -n 1 -I{} sh -c 'oc get --show-kind --ignore-not-found -A -o yaml "$1" > "$1.yaml"' -- {}
 
