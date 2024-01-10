@@ -53,6 +53,7 @@ spec:
       policyName: "config"
     - fileName: AddAdditionalNetworks.yaml
       policyName: "config"
+      complianceType: mustonlyhave
       spec:
         additionalNetworks:
           - name: macnet0
