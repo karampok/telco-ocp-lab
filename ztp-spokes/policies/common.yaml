@@ -52,7 +52,7 @@ spec:
     - fileName: RoutingViaHost.yaml
       policyName: "config"
     - fileName: AddAdditionalNetworks.yaml
-      policyName: "config-macnet"
+      policyName: "config"
       complianceType: mustonlyhave
       spec:
         additionalNetworks:
