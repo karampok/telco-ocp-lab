@@ -1,12 +1,16 @@
 #!/bin/bash
 set -euoE pipefail
 
-runners=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/karampok/telco-ocp-lab/actions/runners")
+repo="karampok/telco-ocp-lab"
+
+runners=$(gh api "repos/${repo}/actions/runners")
+# gh api == curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" "https://api.github.com/${repo}/actions/runners")
 
 if [ $# -eq 0 ]; then
   echo "$runners" | jq -r '.runners |= sort_by(.name) | .runners[] | "\(.name): \(.labels[3:] | map(.name) | join(" "))"'
+  echo "gh run list --workflow=ztp-compact.yaml -s in_progress -c $(git rev-parse HEAD)"
+  echo "gh run list --workflow=ztp-compact.yaml --json 'workflowDatabaseId' --jq '.[0].workflowDatabaseId'"
+  echo "gh api repos/$repo/actions/runs --paginate -q '.workflow_runs[] | (.id)' | xargs -n1 -I % gh api repos/$repo/actions/runs/% -X DELETE"
   exit 0
 fi
 
@@ -51,13 +55,3 @@ while [ "$#" -gt 0 ]; do
     esac
     shift
 done
-
-# gh api "repos/karampok/telco-ocp-lab/actions/runs?status=in_progress" | jq -r '.workflow_runs[].id'
-# gh api "repos/karampok/telco-ocp-lab/actions/runs/$RUN_ID/jobs" \
-#   | jq -r '.jobs[] | select(.status == "in_progress" and (.labels[] | .name) | contains("self-host")) | "\(.name) - Workflow ID: \(.run_id)"'
-#
-#
-# user=karampok
-# repo=telco-ocp-lab
-# gh api repos/$user/$repo/actions/runs --paginate -q '.workflow_runs[] | select(.head_branch != "master") | "\(.id)"' \
-#   | xargs -n1 -I % gh api repos/$user/$repo/actions/runs/% -X DELETE
