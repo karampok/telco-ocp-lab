@@ -37,7 +37,7 @@ cd telco-ocp-lab
 grep -E '\s{10,}' .github/workflows/ztp-compact.yaml | sed 's/^          //'
 ```
 
-## Podman on RHEL 9.2
+## Podman on RHEL 9.2 / CentOS Stream
 
 ```
 cp /usr/share/containers/containers.conf /etc/containers/
@@ -66,4 +66,15 @@ mkdir build && cd build/
 make -j 10
 make install
 # virsh dumpxml 5gc-w0|grep emulator
+```
+
+
+## Notes
+
+```
+# in ci runner
+dnf install  podman-2:4.6.0-3.el9
+#disable ipv6
+# nmcli connection modify enp1s0 ipv6.method "disabled"
+# cat /proc/sys/net/ipv6/conf/enp1s0/disable_ipv6
 ```
