@@ -26,11 +26,11 @@ spec:
           hostPrefix: 23
         - cidr: fd02::/48
           hostPrefix: 64
-            #apiVIP: 10.10.10.125
+      apiVIP: 10.10.10.125
       apiVIPs:
         - 10.10.10.125
         - 2600:52:52:52::125
-          # ingressVIP: -10.10.10.126
+      ingressVIP: -10.10.10.126
       ingressVIPs:
         - 10.10.10.126
         - 2600:52:52:52::126
