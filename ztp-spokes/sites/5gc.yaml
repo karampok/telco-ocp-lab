@@ -24,10 +24,21 @@ spec:
       clusterNetwork:
         - cidr: 10.128.0.0/14
           hostPrefix: 23
+        - cidr: fd02::/48
+          hostPrefix: 64
       apiVIP: 10.10.10.125
-      ingressVIP: 10.10.10.126
+      apiVIPs:
+        - 10.10.10.125
+        - 2600:52:52:52::125
+      ingressVips:
+        - 10.10.10.126
+        - 2600:52:52:52::126
       serviceNetwork:
         - 172.30.0.0/16
+        - fd03::/112
+      machineNetwork:
+        - cidr: 10.10.10.0/24
+        - cidr: 2600:52:52:52::0/64
       additionalNTPSources:
         - pool.ntp.org
       nodes:
@@ -92,7 +103,12 @@ spec:
                         prefix-length: 24
                     dhcp: false
                   ipv6:
-                    enabled: false
+                    enabled: true
+                    autoconf: true
+                    dhcp: true
+                    auto-dns: false
+                    auto-gateway: true
+                    auto-routes: true
                 - &bond0-11
                   name: bond0.11
                   type: vlan
