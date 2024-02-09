@@ -49,7 +49,7 @@ jobs:
             mv openshift-install /usr/bin/
             chmod +x /usr/bin/openshift-install
 
-            ./deploy-ocp.sh hub
+            ./deploy-ocp.sh
 
             export KUBECONFIG=/share/hub/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/hub
