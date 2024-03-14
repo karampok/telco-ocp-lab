@@ -4,34 +4,6 @@
          prefer_udp
   }
 
-  hosts /etc/coredns/hub-hosts.db eric.vlab {
-    10.10.20.225 api.hub.eric.vlab
-    10.10.20.225 console-openshift-console.apps.hub.eric.vlab
-    10.10.20.225 oauth-openshift.apps.hub.eric.vlab
-    10.10.20.225 api.hub.eric.vlab multicloud-console.apps.hub.eric.vlab
-    10.10.20.225 openshift-gitops-server-openshift-gitops.apps.hub.eric.vlab
-    10.10.20.225 assisted-image-service-multicluster-engine.apps.hub.eric.vlab
-    10.10.20.225 assisted-image-service-open-cluster-management.apps.hub.eric.vlab
-    10.10.20.225 assisted-service-multicluster-engine.apps.hub.eric.vlab
-    10.10.20.225 assisted-service-open-cluster-management.apps.hub.eric.vlab
-
-    10.10.10.125 api.5gc.eric.vlab
-    10.10.10.126 assisted-image-service-multicluster-engine.apps.5gc.eric.vlab
-    10.10.10.126 console-openshift-console.apps.5gc.eric.vlab 
-    10.10.10.126 oauth-openshift.apps.5gc.eric.vlab multicloud-console.apps.5gc.eric.vlab 
-    10.10.10.126 openshift-gitops-server-openshift-gitops.apps.5gc.eric.vlab
-    10.10.20.126 assisted-image-service-multicluster-engine.apps.5gc.eric.vlab
-    10.10.20.126 assisted-image-service-open-cluster-management.5gc.hub.eric.vlab
-    10.10.10.126 assisted-service-multicluster-engine.apps.5gc.eric.vlab
-
-    2600:52:52:52::125 api.5gc.eric.vlab
-    2600:52:52:52::126 console-openshift-console.apps.5gc.eric.vlab oauth-openshift.apps.5gc.eric.vlab multicloud-console.apps.5gc.eric.vlab openshift-gitops-server-openshift-gitops.apps.5gc.eric.vlab
-    fallthrough
-  }
-  log
-  debug
-}
-
 hub.telco.vlab {
   file /etc/coredns/zones/hub.telco.vlab.db
   log
