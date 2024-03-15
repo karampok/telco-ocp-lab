@@ -17,13 +17,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clean Virtual Infra
         run: |
-          ./telco-ocp-lab --clean -a -auto-timeout 0s --continue-on-error
+          ./telco-ocp-lab --clean --dry-run=false -a -auto-timeout 0s --continue-on-error
       - name: Setup Virtual Infra - ${{ runner.name }}
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-          ./telco-ocp-lab --setup -a -auto-timeout 0s
+          ./telco-ocp-lab --setup --dry-run=false -a -auto-timeout 0s
       - name: Reserve Runner
         run: |
           podman exec workstation bash -ce '

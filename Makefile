@@ -4,7 +4,7 @@ GO_VERSION := 1.22.1
 
 build:
 	@echo "Building Go binary..."
-	@podman run --rm -v $(PWD):/src:z -w /src golang:$(GO_VERSION) go build ./...
+	@podman run --rm -v $(PWD):/src:z -w /src golang:$(GO_VERSION) go build
 
 infra:
 	./telco-ocp-lab --setup -a -auto-timeout 0s
