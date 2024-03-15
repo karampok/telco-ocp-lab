@@ -80,7 +80,6 @@ hub:
       mac: de:ad:be:ff:11:87
     - name: baremetal
       mac: de:ad:be:ff:11:88
-
 5gc-w0:
   machine: q35
   numcpus: 24
