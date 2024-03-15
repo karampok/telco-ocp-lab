@@ -1,0 +1,25 @@
+{
+   "args": {
+      "podman_options": {
+         "mtu": "9000"
+      }
+   },
+   "cniVersion": "0.4.0",
+   "name": "baremetal",
+   "plugins": [
+      {
+         "type": "bridge",
+         "bridge": "baremetal",
+         "isGateway": false,
+         "ipMasq": false,
+         "mtu": 9000,
+         "hairpinMode": false,
+         "ipam": {
+            "type": ""
+         }
+      },
+      {
+         "type": "tuning"
+      }
+   ]
+}

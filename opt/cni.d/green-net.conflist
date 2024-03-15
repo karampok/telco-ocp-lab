@@ -1,0 +1,16 @@
+{
+   "cniVersion": "0.4.0",
+   "name": "green-net",
+   "plugins": [
+      {
+         "type": "bridge",
+         "bridge": "access",
+         "isGateway": false,
+         "ipMasq": false,
+         "hairpinMode": true,
+         "ipam": {
+            "type": ""
+         }
+      }
+   ]
+}

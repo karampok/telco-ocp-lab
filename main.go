@@ -1,0 +1,85 @@
+package main
+
+import (
+	"embed"
+	"io"
+	"io/fs"
+	"os"
+	"path/filepath"
+
+	"github.com/karampok/telco-ocp-lab/sinfra/pkg"
+	"github.com/saschagrunert/demo"
+)
+
+//go:embed opt/*
+var optFS embed.FS
+
+//go:embed vbmh-kcli-plan.yaml
+var kplan []byte
+
+func main() {
+	d := demo.New()
+	d.Name = "vtelco"
+
+	d.Add(pkg.Clean(), "clean", "clean system")
+	d.Add(pkg.SetupInfra(), "setupInfra", "setup virtual infra")
+	d.Add(pkg.RunNMSTATEDemo(), "runNMSTATEDemo", "setup clients for nmstatectl demo")
+	d.Add(pkg.RunMTUDemo(), "runMTUdemo", "run MTU demo")
+
+	if err := extractConfig(); err != nil {
+		os.Exit(1)
+	}
+
+	d.Run()
+}
+
+func extractConfig() error {
+	plan := "vbmh-kcli-plan.yaml"
+	_, err := os.Stat(plan)
+	if os.IsNotExist(err) {
+		if err := os.WriteFile(plan, kplan, 0644); err != nil {
+			return err
+		}
+	}
+
+	files, err := getAllFilenames(&optFS)
+	if err != nil {
+		return err
+	}
+	for _, f := range files {
+		src, err := optFS.Open(f)
+		if err != nil {
+			return err
+		}
+		if err := os.MkdirAll(filepath.Dir(f), 0755); err != nil {
+			return err
+		}
+
+		dst, err := os.OpenFile(f, os.O_WRONLY|os.O_CREATE, 0644)
+		if err != nil {
+			return err
+		}
+		if _, err = io.Copy(dst, src); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func getAllFilenames(efs *embed.FS) (files []string, err error) {
+	if err := fs.WalkDir(efs, ".", func(path string, d fs.DirEntry, err error) error {
+		if d.IsDir() {
+			return nil
+		}
+
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			files = append(files, path)
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return files, nil
+}
