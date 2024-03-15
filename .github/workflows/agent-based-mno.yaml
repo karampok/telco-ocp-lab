@@ -1,0 +1,92 @@
+---
+run-name: abi-mno-${{ github.ref_name }}-${{ github.event_name }}
+name: abi-mno
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
+jobs:
+  stage0:
+    name: Prepare Server
+    runs-on: [self-hosted, green]
+    outputs:
+      RUNNER: ${{ runner.name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clean Virtual Infra
+        run: |
+          ./sinfra --clean -auto-timeout 0s --continue-on-error
+      - name: Setup Virtual Infra - ${{ runner.name }}
+        run: |
+          echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
+          echo '${{ secrets.WG_AUTH }}' > .wg-auth
+          echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          ./sinfra --setupInfra -auto-timeout 0s
+          virsh dumpxml 5gc-w0|grep emulator
+      - name: Reserve Runner
+        run: |
+          podman exec workstation bash -ce '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green +taken -ready
+          '
+  stage1:
+    name: Deploy MNO Cluster - ${{needs.stage0.outputs.RUNNER}}
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0]
+    if: needs.stage0.result == 'success'
+    steps:
+      - name: Deploy MNO using agent-based
+        timeout-minutes: 60
+        env:
+          OCP_RELEASE: "quay.io/openshift-release-dev/ocp-release:4.15.3-x86_64"
+        run: |
+          podman exec workstation bash -ce '
+            oc adm release extract --registry-config .pull-secret.json \
+              --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
+
+            ./deploy-ocp.sh
+
+            export KUBECONFIG=/share/mno/auth/kubeconfig
+            openshift-install agent wait-for install-complete --log-level info --dir /share/mno
+            oc get clusterversion && oc get co
+          '
+          echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
+          echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
+  stage2:
+    name: Provision Cluster
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1]
+    if: needs.stage1.result == 'success'
+    timeout-minutes: 20
+    steps:
+      - name: Install Metallb/Sriov
+        timeout-minutes: 10
+        run: |
+          podman exec workstation bash -ce '
+          '
+  stage3:
+    name: Test SPOKE
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1,stage2]
+    if: needs.stage3.result == 'success'
+    steps:
+      - name: Test Metallb setup
+        run: |
+          podman exec workstation bash -ce '
+          '
+      - name: Mark Runner
+        run: |
+          podman exec workstation bash -ce '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken +green
+          '
+  on-fail:
+    name: Release Runner
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0,stage1,stage3]
+    if: ${{ failure() }}
+    steps:
+      - name: Readd Label
+        run: |
+          podman exec workstation bash -c '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green -taken
+          '
