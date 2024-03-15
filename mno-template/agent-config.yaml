@@ -250,9 +250,9 @@ hosts:
       deviceName: "/dev/vda"
     interfaces:
       - name: ens3
-        macAddress: de:ad:be:ff:11:87
+        macAddress: de:ad:be:ff:11:85
       - name: ens4
-        macAddress: de:ad:be:ff:11:88
+        macAddress: de:ad:be:ff:11:86
     networkConfig:
       interfaces:
         - name: bond0
