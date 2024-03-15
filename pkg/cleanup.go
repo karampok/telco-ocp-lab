@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	. "github.com/saschagrunert/demo"
+	. "github.com/saschagrunert/demo" //nolint:stylecheck // dot imports are intended here
 )
 
 func Clean() *Run {
