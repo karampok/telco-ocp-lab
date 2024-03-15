@@ -17,13 +17,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clean Virtual Infra
         run: |
-          ./sinfra --clean -auto-timeout 0s --continue-on-error
+          ./telco-ocp-lab --clean -auto-timeout 0s --continue-on-error
       - name: Setup Virtual Infra - ${{ runner.name }}
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-          ./sinfra --setupInfra -auto-timeout 0s
+          ./telco-ocp-lab --setup -auto-timeout 0s
           virsh dumpxml 5gc-w0|grep emulator
       - name: Reserve Runner
         run: |

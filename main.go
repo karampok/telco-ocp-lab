@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/karampok/telco-ocp-lab/sinfra/pkg"
+	"github.com/karampok/telco-ocp-lab/pkg"
 	"github.com/saschagrunert/demo"
 )
 
@@ -19,12 +19,10 @@ var kplan []byte
 
 func main() {
 	d := demo.New()
-	d.Name = "vtelco"
+	d.Name = "telco-ocp-lab"
 
 	d.Add(pkg.Clean(), "clean", "clean system")
-	d.Add(pkg.SetupInfra(), "setupInfra", "setup virtual infra")
-	d.Add(pkg.RunNMSTATEDemo(), "runNMSTATEDemo", "setup clients for nmstatectl demo")
-	d.Add(pkg.RunMTUDemo(), "runMTUdemo", "run MTU demo")
+	d.Add(pkg.SetupInfra(), "setup", "setup virtual infra")
 
 	if err := extractConfig(); err != nil {
 		os.Exit(1)
@@ -37,7 +35,7 @@ func extractConfig() error {
 	plan := "vbmh-kcli-plan.yaml"
 	_, err := os.Stat(plan)
 	if os.IsNotExist(err) {
-		if err := os.WriteFile(plan, kplan, 0644); err != nil {
+		if err := os.WriteFile(plan, kplan, 0o644); err != nil {
 			return err
 		}
 	}
@@ -51,11 +49,11 @@ func extractConfig() error {
 		if err != nil {
 			return err
 		}
-		if err := os.MkdirAll(filepath.Dir(f), 0755); err != nil {
+		if err := os.MkdirAll(filepath.Dir(f), 0o755); err != nil {
 			return err
 		}
 
-		dst, err := os.OpenFile(f, os.O_WRONLY|os.O_CREATE, 0644)
+		dst, err := os.OpenFile(f, os.O_WRONLY|os.O_CREATE, 0o644)
 		if err != nil {
 			return err
 		}
