@@ -58,7 +58,7 @@ jobs:
             do
               power_off "$node"
               media_eject "$node"
-              media_insert "$node" "${HTTP_SERVER:-http://10.10.20.200:9000}"/"${name}"/agent.x86_64.iso
+              media_insert "$node" http://10.10.20.200:9000/mno/agent.x86_64.iso
               boot_once "$node"
               power_on "$node"
             done
