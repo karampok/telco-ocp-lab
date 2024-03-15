@@ -6,7 +6,7 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
 jobs:
   stage0:
-    name: Prepare Server
+    name: Setup HV
     runs-on: [self-hosted, green]
     outputs:
       RUNNER: ${{ runner.name }}
@@ -35,11 +35,11 @@ jobs:
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0]
     if: needs.stage0.result == 'success'
+    env:
+      OCP_RELEASE: "quay.io/openshift-release-dev/ocp-release:4.15.3-x86_64"
     steps:
       - name: Deploy MNO using agent-based
         timeout-minutes: 60
-        env:
-          OCP_RELEASE: "quay.io/openshift-release-dev/ocp-release:4.15.3-x86_64"
         run: |
           podman exec workstation bash -ce '
             oc adm release extract --registry-config .pull-secret.json \
