@@ -20,6 +20,7 @@ var kplan []byte
 func main() {
 	d := demo.New()
 	d.Name = "telco-ocp-lab"
+	d.Description = "Setup virtual infra for multi-interface cluster"
 
 	d.Add(pkg.Clean(), "clean", "clean system")
 	d.Add(pkg.SetupInfra(), "setup", "setup virtual infra")
