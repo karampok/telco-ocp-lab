@@ -23,4 +23,4 @@ do
 done
 
 mkdir -p ~/.kube && cp "${folder}"/auth/kubeconfig ~/.kube/config
-openshift-install agent wait-for install-complete --log-level info --dir /share/${name}
+#openshift-install agent wait-for install-complete --log-level info --dir /share/${name}
