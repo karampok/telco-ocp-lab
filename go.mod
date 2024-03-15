@@ -2,7 +2,7 @@ module github.com/karampok/telco-ocp-lab
 
 go 1.22.1
 
-require github.com/saschagrunert/demo v0.0.0-20240315083533-1e8d4dc09ae4
+require github.com/saschagrunert/demo v0.0.0-20240315151054-3601aaa9f4ba
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
