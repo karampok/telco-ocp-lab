@@ -8,9 +8,9 @@ runners=$(gh api "repos/${repo}/actions/runners")
 
 if [ $# -eq 0 ]; then
   echo "$runners" | jq -r '.runners |= sort_by(.name) | .runners[] | "\(.name): \(.labels[3:] | map(.name) | join(" "))"'
-  echo "gh run list --workflow=ztp-compact.yaml -s in_progress -c $(git rev-parse HEAD)"
-  echo "gh run list --workflow=ztp-compact.yaml --json 'workflowDatabaseId' --jq '.[0].workflowDatabaseId'"
-  echo "gh api repos/$repo/actions/runs --paginate -q '.workflow_runs[] | (.id)' | xargs -n1 -I % gh api repos/$repo/actions/runs/% -X DELETE"
+  # echo "gh run list --workflow=ztp-compact.yaml -s in_progress -c $(git rev-parse HEAD)"
+  # echo "gh run list --workflow=ztp-compact.yaml --json 'workflowDatabaseId' --jq '.[0].workflowDatabaseId'"
+  # echo "gh api repos/$repo/actions/runs --paginate -q '.workflow_runs[] | (.id)' | xargs -n1 -I % gh api repos/$repo/actions/runs/% -X DELETE"
   exit 0
 fi
 
