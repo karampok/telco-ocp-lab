@@ -17,7 +17,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clean Virtual Infra
         run: |
-          ./telco-ocp-lab --clean -auto-timeout 0s --continue-on-error
+          ./telco-ocp-lab --clean -a -auto-timeout 0s --continue-on-error
       - name: Setup Virtual Infra - ${{ runner.name }}
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
@@ -87,8 +87,8 @@ jobs:
   stage3:
     name: Test SPOKE
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0, stage1,stage2]
-    if: needs.stage3.result == 'success'
+    needs: [stage0, stage1, stage2]
+    if: needs.stage2.result == 'success'
     steps:
       - name: Test Metallb setup
         run: |
@@ -102,7 +102,7 @@ jobs:
   on-fail:
     name: Release Runner
     runs-on: ${{needs.stage0.outputs.RUNNER}}
-    needs: [stage0,stage1,stage3]
+    needs: [stage0, stage1, stage3]
     if: ${{ failure() }}
     steps:
       - name: Readd Label
