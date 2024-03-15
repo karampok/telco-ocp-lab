@@ -3,7 +3,7 @@
   forward . /etc/resolv.conf {
          prefer_udp
   }
-
+}
 hub.telco.vlab {
   file /etc/coredns/zones/hub.telco.vlab.db
   log
