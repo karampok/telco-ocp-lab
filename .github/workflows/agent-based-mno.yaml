@@ -24,14 +24,13 @@ jobs:
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
           ./telco-ocp-lab --setup -auto-timeout 0s
-          virsh dumpxml 5gc-w0|grep emulator
       - name: Reserve Runner
         run: |
           podman exec workstation bash -ce '
             GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green +taken -ready
           '
   stage1:
-    name: Deploy MNO Cluster - ${{needs.stage0.outputs.RUNNER}}
+    name: Deploy MNO - ${{needs.stage0.outputs.RUNNER}}
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0]
     if: needs.stage0.result == 'success'
@@ -44,14 +43,35 @@ jobs:
             oc adm release extract --registry-config .pull-secret.json \
               --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
 
-            ./deploy-ocp.sh
+            openshift-install version
+
+            folder=/share/mno
+            cp -r mno-template "${folder}"
+
+            PULL_SECRET=$(jq '.' -c ".pull-secret.json")
+            sed -i "s/PULLSECRET/$PULL_SECRET/g" "${folder}"/install-config.yaml
+
+            openshift-install agent create image --log-level info  --dir "${folder}"
+
+            source ./redfish-actions/sushy.sh
+            for node in $(cat "${folder}"/bmc-hosts);
+            do
+              power_off "$node"
+              media_eject "$node"
+              media_insert "$node" "${HTTP_SERVER:-http://10.10.20.200:9000}"/"${name}"/agent.x86_64.iso
+              boot_once "$node"
+              power_on "$node"
+            done
+
+            mkdir -p ~/.kube && cp "${folder}"/auth/kubeconfig ~/.kube/config
 
             export KUBECONFIG=/share/mno/auth/kubeconfig
             openshift-install agent wait-for install-complete --log-level info --dir /share/mno
+
             oc get clusterversion && oc get co
           '
-          echo "wget http://10.0.0.1:9000/hub/auth/kubeconfig -O ~/.kube/hub.yaml"
-          echo "curl -s http://10.0.0.1:9000/hub/auth/kubeadmin-\password | xsel --input --clipboard"
+          echo "wget http://10.0.0.1:9000/mno/auth/kubeconfig -O ~/.kube/${{ runner.name }}.yaml"
+          echo "curl -s http://10.0.0.1:9000/mno/auth/kubeadmin-\password | xsel --input --clipboard"
   stage2:
     name: Provision Cluster
     runs-on: ${{needs.stage0.outputs.RUNNER}}
