@@ -3,7 +3,7 @@ run-name: abi-mno-${{ github.ref_name }}-${{ github.event_name }}
 name: abi-mno
 on:  # yamllint disable-line rule:truthy
   push:
-  workflow_dispatch:
+    workflow_dispatch:
 jobs:
   stage0:
     name: Setup HV
