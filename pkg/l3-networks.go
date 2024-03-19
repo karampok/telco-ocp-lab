@@ -50,7 +50,7 @@ var gw2 = `podman run --name frr-two --rm -d --hostname frr-two --privileged \
 --net=access:mac=aa:aa:aa:aa:aa:22,interface_name=access \
 --net=green-net:interface_name=green-eth \
 --net=red-net:interface_name=red-eth \
--v ./opt/frr-two:/etc/frr:Z quay.io/frrouting/frr:8.5.1`
+-v ./opt/frr-two:/etc/frr:Z quay.io/frrouting/frr:9.0.2`
 
 var gw20 = `ns=$(podman inspect frr-two | jq -r '.[0]["NetworkSettings"].SandboxKey')
 ip netns exec "${ns##*/}" ip link add link baremetal name baremetal.10 type vlan id 10
