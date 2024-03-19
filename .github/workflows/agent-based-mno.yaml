@@ -35,7 +35,7 @@ jobs:
     if: needs.stage0.result == 'success'
     steps:
       - name: Deploy MNO using agent-based
-        timeout-minutes: 60
+        timeout-minutes: 90
         run: |
           podman exec workstation bash -ce '
             export OCP_RELEASE=quay.io/openshift-release-dev/ocp-release:4.15.3-x86_64
