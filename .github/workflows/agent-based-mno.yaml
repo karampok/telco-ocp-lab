@@ -82,9 +82,13 @@ jobs:
         timeout-minutes: 10
         run: |
           podman exec workstation bash -ce '
+            # oc apply -f mno-template/openshift/99-metallb-operator.yaml ||true
+            oc patch  network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
+            oc apply -k mno-template/day1/
+            oc get network.operator -o yaml
           '
   stage3:
-    name: Test SPOKE
+    name: Test Metallb
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1, stage2]
     if: needs.stage2.result == 'success'

@@ -1,0 +1,12 @@
+{
+  "spec": {
+    "defaultNetwork": {
+      "ovnKubernetesConfig": {
+        "gatewayConfig": {
+          "ipForwarding": "Global",
+          "routingViaHost": true
+        }
+      }
+    }
+  }
+}

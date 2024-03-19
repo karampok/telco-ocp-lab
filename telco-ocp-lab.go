@@ -24,6 +24,7 @@ func main() {
 
 	d.Add(pkg.Clean(), "clean", "clean system")
 	d.Add(pkg.SetupInfra(), "setup", "setup virtual infra")
+	d.Add(pkg.RunIPForwardingDemo(), "ipforwarding", "reproduce ipforwarding demo")
 
 	if err := extractConfig(); err != nil {
 		os.Exit(1)
