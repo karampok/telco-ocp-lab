@@ -8,7 +8,7 @@ var gw0 = `podman run --name frr-zero --rm -d --hostname frr-zero --privileged \
 --sysctl net.ipv6.conf.all.forwarding=1 --sysctl net.ipv4.ip_forward=1 \
 -v /lib/modules:/lib/modules \
 --net=access:interface_name=access --net=bmc:interface_name=bmc \
--v ./opt/frr-zero:/etc/frr:Z quay.io/frrouting/frr:8.5.1`
+-v ./opt/frr-zero:/etc/frr:Z quay.io/frrouting/frr:9.0.2`
 
 var gw00 = `ns=$(podman inspect frr-zero | jq -r '.[0]["NetworkSettings"].SandboxKey')
  ip link add upstream netns "${ns##*/}" type veth peer name frr-zero ; ip a s frr-zero
@@ -35,7 +35,7 @@ var gw1 = `podman run --name frr-one --rm -d --hostname frr-one --privileged \
   --sysctl net.ipv6.conf.all.forwarding=1 --sysctl net.ipv4.ip_forward=1 \
   --net=baremetal:mac=aa:aa:aa:aa:aa:10,interface_name=baremetal \
   --net=access:mac=aa:aa:aa:aa:aa:11,interface_name=access \
-  -v ./opt/frr-one:/etc/frr:Z quay.io/frrouting/frr:8.5.1`
+  -v ./opt/frr-one:/etc/frr:Z quay.io/frrouting/frr:9.0.2`
 
 var gw10 = `ns=$(podman inspect frr-one | jq -r '.[0]["NetworkSettings"].SandboxKey')
  ip netns exec "${ns##*/}" ip link add link baremetal name baremetal.10 type vlan id 10
