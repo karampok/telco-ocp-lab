@@ -2,6 +2,7 @@
 run-name: abi-mno-${{ github.ref_name }}-${{ github.event_name }}
 name: abi-mno
 on:  # yamllint disable-line rule:truthy
+  push:
   workflow_dispatch:
 jobs:
   stage0:
@@ -83,7 +84,7 @@ jobs:
         run: |
           podman exec workstation bash -ce '
             # oc apply -f mno-template/openshift/99-metallb-operator.yaml ||true
-            oc patch  network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
+            oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
             oc apply -k mno-template/day1/
             oc get network.operator -o yaml
           '
@@ -96,6 +97,12 @@ jobs:
       - name: Test Metallb setup
         run: |
           podman exec workstation bash -ce '
+            oc apply -f dayX/green-net.yaml
+          '
+          podman exec green bash -cex '
+            echo "from green client to access the service in green segment (static)"
+            curl --retry 5 -s http://5.5.5.1/hostname -w " #local"
+            curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
           '
       - name: Mark Runner
         run: |
