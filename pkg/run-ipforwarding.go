@@ -26,11 +26,11 @@ ip netns exec "${ns##*/}" ip link set dev eth0.11 up
 ip netns exec "${ns##*/}" ip route add 12.12.12.0/24 via 11.11.11.119
 `
 
-// MTU ISSUE
 var runIPForwarding = `
-export KUBECONFIG=/home/kka/.kube/ztp5gc.yaml
-green-in at green vlan with ip 11.11.11.50 and default route on 11.11.11.118, nc listen
-red-in  at red vlan with ip 12.12.12.50 and default route on a node 12.12.12.118
+1. create connectivity from redin <-> greenin
+2. observe the node that acts as router
+- keep metallb svc testing in a loop
+3. break with restricted forwarding, where is dropped
 `
 
 func RunIPForwardingDemo() *Run {
