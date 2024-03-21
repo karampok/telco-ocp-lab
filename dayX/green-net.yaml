@@ -44,6 +44,7 @@ metadata:
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
+  allocateLoadBalancerNodePorts: false
   ports:
     - name: http
       port: 80
@@ -52,23 +53,23 @@ spec:
   selector:
     app: green
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    metallb.universe.tf/address-pool: green
-  name: green-svc-cluster
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
-  ports:
-    - name: http
-      port: 80
-      protocol: TCP
-      targetPort: 8080
-  selector:
-    app: green
-
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     metallb.universe.tf/address-pool: green
+#   name: green-svc-cluster
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Cluster
+#   ports:
+#     - name: http
+#       port: 80
+#       protocol: TCP
+#       targetPort: 8080
+#   selector:
+#     app: green
+#
 # show bgp vrf green ipv4 summary
 # from green
 # alias urlencode="python3 -c \"import sys, urllib.parse; print(urllib.parse.quote(''.join(sys.stdin.readlines())))\""
