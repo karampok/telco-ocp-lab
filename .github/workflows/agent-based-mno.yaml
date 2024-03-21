@@ -66,6 +66,8 @@ jobs:
             mkdir -p ~/.kube && cp "${folder}"/auth/kubeconfig ~/.kube/config
 
             export KUBECONFIG=/share/mno/auth/kubeconfig
+            openshift-install agent wait-for install-complete --log-level info --dir /share/mno || true
+            sleep 300
             openshift-install agent wait-for install-complete --log-level info --dir /share/mno
 
             oc get clusterversion && oc get co
