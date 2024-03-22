@@ -24,6 +24,7 @@ jobs:
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
           echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
           ./telco-ocp-lab --setup --dry-run=false -a -auto-timeout 0s
+          ./telco-ocp-lab --ipforwarding --dry-run=false -a -auto-timeout 0s
       - name: Reserve Runner
         run: |
           podman exec workstation bash -ce '
@@ -83,7 +84,8 @@ jobs:
         timeout-minutes: 10
         run: |
           podman exec workstation bash -ce '
-            # oc apply -f mno-template/openshift/99-metallb-operator.yaml ||true
+            oc apply -f mno-template/day1/99-metallb-operator.yaml
+            until oc get metallb 2>/dev/null; do sleep 30; done
             oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
             oc apply -k mno-template/day1/
             oc get network.operator -o yaml
