@@ -4,3 +4,4 @@ kind: Kustomization
 
 resources:
   - 00-metallb-instance.yaml
+  - metallb-green.yaml
