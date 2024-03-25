@@ -31,6 +31,16 @@ var runIPForwarding = `
 2. observe the node that acts as router
 - keep metallb svc testing in a loop
 3. break with restricted forwarding, where is dropped
+export KUBECONFIG=/home/kka/.kube/lab1.yaml
+tmux setenv KUBECONFIG /home/kka/.kube/lab1.yaml
+
+tmux new-window -n Nodes; tmux split-window -h -t Nodes; tmux split-window -h -t Nodes; tmux select-layout -t Nodes even-vertical; 
+tmux send-keys -t Nodes.0 "podman-remote -c lab1  exec -it green-in /bin/bash" C-m
+tmux send-keys -t Nodes.0 "ping -c 1 12.12.12.150" C-m
+tmux send-keys -t Nodes.1 "oc debug node/w0 --image quay.io/karampok/snife:latest" C-m
+tmux send-keys -t Nodes.1 "chroot /host" C-m C-m C-m
+tmux send-keys -t Nodes.2 "podman-remote -c lab1  exec -it red-in /bin/bash" C-m
+tmux send-keys -t Nodes.2 "tcpdump -i any icmp" C-m
 `
 
 func RunIPForwardingDemo() *Run {

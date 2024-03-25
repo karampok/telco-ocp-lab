@@ -4,7 +4,8 @@
   # Ignore based on any subset of the file path
   paths = [
     # Ignore all example certs
-    '''sinfra''',
+    '''telco-ocp-lab''',
+    '''\/opt/sushy/.*$''',
   ]
         
   # Ignore based on any subset of the line
