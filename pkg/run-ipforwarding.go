@@ -34,12 +34,18 @@ var runIPForwarding = `
 export KUBECONFIG=/home/kka/.kube/lab1.yaml
 tmux setenv KUBECONFIG /home/kka/.kube/lab1.yaml
 
+tmux new-window -n Good; tmux split-window -h -t Goot; tmux split-window -h -t Good; tmux select-layout -t Good even-vertical; 
+tmux send-keys -t Good.0 "podman-remote -c lab1 exec -it green /bin/bash" C-m
+tmux send-keys -t Good.1 "oc debug node/w0 --image quay.io/karampok/snife:latest" C-m
+tmux send-keys -t Good.1 "tcpdump -i any -nnn port 2311" C-m
+tmux send-keys -t Good.0 "nc 5.5.5.1 5555 -p 2311" C-m
+
 tmux new-window -n Nodes; tmux split-window -h -t Nodes; tmux split-window -h -t Nodes; tmux select-layout -t Nodes even-vertical; 
-tmux send-keys -t Nodes.0 "podman-remote -c lab1  exec -it green-in /bin/bash" C-m
-tmux send-keys -t Nodes.0 "ping -c 1 12.12.12.150" C-m
-tmux send-keys -t Nodes.1 "oc debug node/w0 --image quay.io/karampok/snife:latest" C-m
+tmux send-keys -t Nodes.0 "podman-remote -c lab1  exec -it red-in /bin/bash" C-m
+tmux send-keys -t Nodes.0 "ip route add 203.100.100.0/24 via 12.12.12.119" C-m
+tmux send-keys -t Nodes.0 "ping -c 1 203.100.100.100" C-m
 tmux send-keys -t Nodes.1 "chroot /host" C-m C-m C-m
-tmux send-keys -t Nodes.2 "podman-remote -c lab1  exec -it red-in /bin/bash" C-m
+tmux send-keys -t Nodes.2 "podman-remote -c lab1  exec -it green /bin/bash" C-m
 tmux send-keys -t Nodes.2 "tcpdump -i any icmp" C-m
 `
 

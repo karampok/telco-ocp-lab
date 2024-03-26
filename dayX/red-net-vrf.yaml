@@ -2,17 +2,50 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: red
+  name: rednet-no-svc
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: red
+      app: rednet-no
   template:
     metadata:
       labels:
-        app: red
+        app: rednet-no
     spec:
+      nodeSelector:
+        node-role.kubernetes.io/ht100gb: ""
+      tolerations:
+        - effect: NoSchedule
+          key: sriov
+          value: "true"
+      containers:
+        - name: snife-c
+          image: quay.io/karampok/snife:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rednet-with-svc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rednet
+  template:
+    metadata:
+      labels:
+        app: rednet
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/ht100gb: ""
+      tolerations:
+        - effect: NoSchedule
+          key: sriov
+          value: "true"
       containers:
         - name: snife-c
           image: quay.io/karampok/snife:latest
@@ -33,44 +66,36 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
   annotations:
     metallb.universe.tf/address-pool: red
-  name: red-svc-local
+  name: red-svc-cluster
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
-  allocateLoadBalancerNodePorts: false
+  externalTrafficPolicy: Cluster
   ports:
     - name: http
       port: 6666
       protocol: TCP
       targetPort: 8080
   selector:
-    app: red
+    app: rednet
 ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   annotations:
-#     metallb.universe.tf/address-pool: red
-#   name: red-svc-cluster
-# spec:
-#   type: LoadBalancer
-#   externalTrafficPolicy: Cluster
-#   ports:
-#     - name: http
-#       port: 80
-#       protocol: TCP
-#       targetPort: 8080
-#   selector:
-#     app: red
-#
-# show bgp vrf red ipv4 summary
+apiVersion: k8s.ovn.org/v1
+kind: EgressService
+metadata:
+  name: red-svc-cluster
+spec:
+  #  sourceIPBy: "LoadBalancerIP"
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/ht100gb: ""
+  network: "2"
+
+# show bgp vrf red-vrf ipv4 summary
 # from red
 # alias urlencode="python3 -c \"import sys, urllib.parse; print(urllib.parse.quote(''.join(sys.stdin.readlines())))\""
 # curl -s http://6.6.6.1/shell?cmd="$(echo "env|grep -i node" | urlencode)"|jq -r '.output'

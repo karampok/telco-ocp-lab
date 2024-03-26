@@ -47,7 +47,7 @@ spec:
   allocateLoadBalancerNodePorts: false
   ports:
     - name: http
-      port: 80
+      port: 5555
       protocol: TCP
       targetPort: 8080
   selector:

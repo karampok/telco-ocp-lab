@@ -63,44 +63,44 @@ spec:
         peerASN: 8002
         myASN: 7003
         nodeSelectors:
-          - matchExpressions:
+          - matchexpressions:
               - key: kubernetes.io/hostname
-                operator: In
+                operator: in
                 values:
                   - m0.5gc.eric.vlab
                   - m1.5gc.eric.vlab
                   - m2.5gc.eric.vlab
-    - fileName: metallb/community.yaml
-      policyName: "config-metallb-w12"
+    - filename: metallb/community.yaml
+      policyname: "config-metallb-w12"
       metadata:
         name: green
       spec:
         communities:
           - name: greenc
             value: '7003:008'
-    - fileName: metallb/ipAddressPool.yaml
-      policyName: "config-metallb-w12"
+    - filename: metallb/ipaddresspool.yaml
+      policyname: "config-metallb-w12"
       metadata:
         name: green
       spec:
-        autoAssign: false
+        autoassign: false
         addresses:
           - 5.8.6.1/32
           - 5.8.6.9/32
-    - fileName: metallb/bgpAdvertisement.yaml
-      policyName: "config-metallb-w12"
+    - filename: metallb/bgpadvertisement.yaml
+      policyname: "config-metallb-w12"
       metadata:
         name: green
       spec:
         communities:
           - greenc
-        ipAddressPools:
+        ipaddresspools:
           - green
         peers:
           - green
-    # Red Segment
-    - fileName: "GenericConfigMap.yaml"
-      policyName: "config-bgp-learning-w11"
+    # red segment
+    - filename: "genericconfigmap.yaml"
+      policyname: "config-bgp-learning-w11"
       metadata:
         name: bgpextras
         namespace: metallb-system
