@@ -104,7 +104,7 @@ jobs:
           '
           podman exec green bash -cex '
             echo "from green client to access the service in green segment (static)"
-            curl --retry 5 -s http://5.5.5.1/hostname -w " #local"
+            curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
             # curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
           '
       - name: Mark Runner

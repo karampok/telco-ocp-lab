@@ -2,7 +2,7 @@
 apiVersion: metallb.io/v1beta1
 kind: BFDProfile
 metadata:
-  name: bfd-profile
+  name: bfd-red
   namespace: metallb-system
 spec:
   receiveInterval: 300
@@ -23,22 +23,13 @@ spec:
   peerASN: 8012
   myASN: 7003
   holdTime: "180s"
-  bfdProfile: bfd-profile
+  bfdProfile: bfd-red
   nodeSelectors:
     # - matchExpressions:
     #     - key: kubernetes.io/hostname
     #       operator: In
     #       values:
     #         - w0
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: bgpextras
-  namespace: metallb-system
-data:
-  extras: |
-    route-map 12.12.12.254-in permit 2
 ---
 apiVersion: metallb.io/v1beta1
 kind: BGPAdvertisement

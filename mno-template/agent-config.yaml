@@ -21,7 +21,7 @@ hosts:
         - name: bond0
           type: bond
           state: up
-          mtu: 9000
+          mtu: 1500
           link-aggregation:
             mode: active-backup
             options:
@@ -106,7 +106,7 @@ hosts:
         - name: bond0
           type: bond
           state: up
-          mtu: 9000
+          mtu: 1500
           link-aggregation:
             mode: active-backup
             options:
@@ -177,7 +177,7 @@ hosts:
         - name: bond0
           type: bond
           state: up
-          mtu: 9000
+          mtu: 1500
           link-aggregation:
             mode: active-backup
             options:
@@ -248,7 +248,7 @@ hosts:
         - name: bond0
           type: bond
           state: up
-          mtu: 9000
+          mtu: 1500
           link-aggregation:
             mode: active-backup
             options:
@@ -315,7 +315,7 @@ hosts:
         - name: bond0
           type: bond
           state: up
-          mtu: 9000
+          mtu: 1500
           link-aggregation:
             mode: active-backup
             options:
