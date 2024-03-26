@@ -87,6 +87,7 @@ jobs:
             oc apply -f mno-template/day1/99-metallb-operator.yaml
             until oc get metallb 2>/dev/null; do sleep 30; done
             oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
+            sleep 30
             oc apply -k mno-template/day1/
             oc get network.operator -o yaml
           '
@@ -106,6 +107,10 @@ jobs:
             echo "from green client to access the service in green segment (static)"
             curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
             # curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
+          '
+          podman exec green bash -cex '
+            echo "from red client to access the service in red segment (static)"
+            curl --retry 5 -s http://6.6.6.1:6666/hostname -w " #local"
           '
       - name: Mark Runner
         run: |
