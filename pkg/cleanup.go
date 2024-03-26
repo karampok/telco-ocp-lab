@@ -6,6 +6,7 @@ import (
 
 func Clean() *Run {
 	r := NewRun("Clean")
+	r.StepCanFail(S("Clean Red/Green-in"), S(cleanup06))
 	r.StepCanFail(S("Clean Workstation"), S(cleanup05))
 	r.StepCanFail(S("Clean VMS"), S(cleanup04))
 	r.StepCanFail(S("Clean clients"), S(cleanup03))

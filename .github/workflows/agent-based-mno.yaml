@@ -100,6 +100,7 @@ jobs:
         run: |
           podman exec workstation bash -ce '
             oc apply -f dayX/green-net.yaml
+            oc apply -f dayX/red-net.yaml
           '
           podman exec green bash -cex '
             echo "from green client to access the service in green segment (static)"

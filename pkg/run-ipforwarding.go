@@ -49,6 +49,8 @@ tmux send-keys -t Nodes.2 "podman-remote -c lab1  exec -it green /bin/bash" C-m
 tmux send-keys -t Nodes.2 "tcpdump -i any icmp" C-m
 `
 
+var cleanup06 = `podman stop green-in red-in`
+
 func RunIPForwardingDemo() *Run {
 	r := NewRun("Run runIPForwarding issue")
 	r.Step(S("Green-in"), S(greenin))
