@@ -89,6 +89,7 @@ jobs:
             oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
             sleep 30
             oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
+            sleep 30
             oc apply -k mno-template/day1/
             oc get network.operator -o yaml
           '
