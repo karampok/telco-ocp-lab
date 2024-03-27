@@ -52,7 +52,7 @@ setenforce 0 # libvirt errors
 
 ```
 podman system connection add lab0  ssh://root@10.X.Y.Z
-podman remote -c lab0 ps
+podman-remote -c lab0 ps
 ```
 
 ## QEMU v8 on RHEL 9.2
