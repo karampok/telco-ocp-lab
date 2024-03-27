@@ -3,7 +3,7 @@
     "defaultNetwork": {
       "ovnKubernetesConfig": {
         "gatewayConfig": {
-          "ipForwarding": "Global",
+          "ipForwarding": "Restricted",
           "routingViaHost": true
         }
       }
