@@ -92,6 +92,10 @@ hosts:
             metric: 400
             next-hop-address: 11.11.11.254
             next-hop-interface: bond0.11
+          - destination: 12.100.100.0/24
+            metric: 400
+            next-hop-address: 12.12.12.254
+            next-hop-interface: bond0.12
   - hostname: m1
     role: master
     rootDeviceHints:

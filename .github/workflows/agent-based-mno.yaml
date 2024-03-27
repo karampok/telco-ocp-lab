@@ -86,6 +86,7 @@ jobs:
           podman exec workstation bash -ce '
             oc apply -f mno-template/day1/99-metallb-operator.yaml
             until oc get metallb 2>/dev/null; do sleep 30; done
+            oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
             oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
             sleep 30
             oc apply -k mno-template/day1/
@@ -97,19 +98,22 @@ jobs:
     needs: [stage0, stage1, stage2]
     if: needs.stage2.result == 'success'
     steps:
-      - name: Test Metallb setup
+      - name: SmokeTest Metallb setup
         run: |
           podman exec workstation bash -ce '
             oc apply -f dayX/green-net.yaml
             oc apply -f dayX/red-net.yaml
+
+            oc wait --for=condition=ready pod -l app=red --timeout=320s
+            oc wait --for=condition=ready pod -l app=green --timeout=320s
           '
           podman exec green bash -cex '
-            echo "from green client to access the service in green segment (static)"
+            echo "from green client to access the service in green segment (static routes)"
             curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
             # curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
           '
           podman exec red bash -cex '
-            echo "from red client to access the service in red segment (static)"
+            echo "from red client to access the service in red segment (static routes)"
             curl --retry 5 -s http://6.6.6.1:6666/hostname -w " #local"
           '
       - name: Mark Runner
