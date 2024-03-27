@@ -86,9 +86,9 @@ jobs:
           podman exec workstation bash -ce '
             oc apply -f mno-template/day1/99-metallb-operator.yaml
             until oc get metallb 2>/dev/null; do sleep 30; done
-            oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
             oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
             sleep 30
+            oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
             oc apply -k mno-template/day1/
             oc get network.operator -o yaml
           '
