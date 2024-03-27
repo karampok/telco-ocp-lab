@@ -22,7 +22,7 @@ POC on OCP v4.1X.Z with complex network setup
 
 ```
 ssh root@lab0
-dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman git jq conntrack tcpdump bind-utils wireguard-tools
+dnf -y install libvirt libvirt-daemon-driver-qemu qemu-kvm podman-2:4.6.1-5.el9 git jq conntrack tcpdump bind-utils wireguard-tools
 systemctl enable --now libvirtd
 systemctl enable --now podman.socket
 systemctl disable firewalld && systemctl stop firewalld
@@ -73,7 +73,7 @@ make install
 
 ```
 # in ci runner
-dnf install  podman-2:4.6.0-3.el9
+dnf install  podman-2:4.6.0-3.el9 #if not DNS fails
 #disable ipv6
 # nmcli connection modify enp1s0 ipv6.method "disabled"
 # cat /proc/sys/net/ipv6/conf/enp1s0/disable_ipv6
