@@ -12,7 +12,7 @@ metadata:
             "namespace": "default"
           }
         ]
-  name: withmacvlan-bridge-m1-a
+  name: withmacvlan-bride-w0
   namespace": default
 spec:
   nodeSelector:
@@ -63,7 +63,7 @@ metadata:
   namespace": default
 spec:
   nodeSelector:
-    kubernetes.io/hostname: m1.5gc.eric.vlab
+    kubernetes.io/hostname: m1
   containers:
     - name: withmacvlan-c
       image: quay.io/karampok/snife:latest
@@ -106,11 +106,11 @@ metadata:
             "namespace": "default"
           }
         ]
-  name: withmacvlan-bridge-m2
+  name: withmacvlan-bridge-m1
   namespace": default
 spec:
   nodeSelector:
-    kubernetes.io/hostname: m2.5gc.eric.vlab
+    kubernetes.io/hostname: m1
   containers:
     - name: withmacvlan-c
       image: quay.io/karampok/snife:latest

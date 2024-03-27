@@ -16,7 +16,7 @@ metadata:
   namespace": default
 spec:
   nodeSelector:
-    kubernetes.io/hostname: m1.5gc.eric.vlab
+    kubernetes.io/hostname: m1
   containers:
     - name: withmacvlan-c-one
       image: quay.io/karampok/snife:latest
@@ -63,7 +63,7 @@ metadata:
   namespace": default
 spec:
   nodeSelector:
-    kubernetes.io/hostname: m1.5gc.eric.vlab
+    kubernetes.io/hostname: m1
   containers:
     - name: withmacvlan-c
       image: quay.io/karampok/snife:latest
@@ -110,7 +110,7 @@ metadata:
   namespace": default
 spec:
   nodeSelector:
-    kubernetes.io/hostname: m2.5gc.eric.vlab
+    kubernetes.io/hostname: m2
   containers:
     - name: withmacvlan-c
       image: quay.io/karampok/snife:latest
