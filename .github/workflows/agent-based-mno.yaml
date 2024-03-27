@@ -108,7 +108,7 @@ jobs:
             curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
             # curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
           '
-          podman exec green bash -cex '
+          podman exec red bash -cex '
             echo "from red client to access the service in red segment (static)"
             curl --retry 5 -s http://6.6.6.1:6666/hostname -w " #local"
           '
