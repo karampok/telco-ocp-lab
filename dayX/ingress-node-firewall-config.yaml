@@ -16,10 +16,14 @@ metadata:
 spec:
   ingress:
     - sourceCIDRs:
-        - 12.12.12.254/24
+        - 12.12.12.254/32
       rules:
-        - action: Allow
+        - action: Deny
           order: 20
+          protocolConfig:
+            icmp:
+              icmpType: 8
+            protocol: ICMP
 #     - destCIDRS:
 #         - 5.5.5.1/32
 #       rules:
@@ -31,7 +35,7 @@ spec:
 #         - action: Deny
 #           order: 40
   interfaces:
-    - eth1
+    - bond0
   nodeSelector:
     matchLabels:
       kubernetes.io/hostname: w0

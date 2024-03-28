@@ -22,7 +22,7 @@ jobs:
         run: |
           echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
           echo '${{ secrets.WG_AUTH }}' > .wg-auth
-          echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.CI_SSH_KEY }}" > .id_rsa && chmod 600 .id_rsa
           ./telco-ocp-lab --setup --dry-run=false -a -auto-timeout 0s
           ./telco-ocp-lab --ipforwarding --dry-run=false -a -auto-timeout 0s
       - name: Reserve Runner
