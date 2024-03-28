@@ -22,15 +22,21 @@ networking:
   clusterNetwork:
     - cidr: 10.128.0.0/14
       hostPrefix: 23
+    - cidr: fd02::/48
+      hostPrefix: 64
   machineNetwork:
     - cidr: 10.10.10.0/24
+    - cidr: 2600:52:52:52::0/64
   serviceNetwork:
     - 172.30.0.0/16
+    - fd03::/112
 platform:
   baremetal:
     apiVips:
       - 10.10.10.125
+      - 2600:52:52:52::125
     ingressVips:
       - 10.10.10.126
+      - 2600:52:52:52::126
 pullSecret: 'PULLSECRET'
 sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICGjoGIRGSfiJ8Tv+Qd6S36xuGmeIuFL8w75shdhxy5l ci@only.com'
