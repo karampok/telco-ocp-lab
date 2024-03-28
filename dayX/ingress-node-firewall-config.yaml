@@ -20,22 +20,22 @@ spec:
       rules:
         - action: Allow
           order: 20
-    - destCIDRS:
-        - 5.5.5.1/32
-      rules:
-        - action: Allow
-          order: 30
-    - sourceCIDRs:
-        - 0.0.0.0/0
-      rules:
-        - action: Deny
-          order: 40
+#     - destCIDRS:
+#         - 5.5.5.1/32
+#       rules:
+#         - action: Allow
+#           order: 30
+#     - sourceCIDRs:
+#         - 0.0.0.0/0
+#       rules:
+#         - action: Deny
+#           order: 40
   interfaces:
     - eth1
   nodeSelector:
     matchLabels:
       kubernetes.io/hostname: w0
----
+# ---
 # apiVersion: ingressnodefirewall.openshift.io/v1alpha1
 # kind: IngressNodeFirewall
 # metadata:
