@@ -1,0 +1,30 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 99-worker-enable-restricted-forwarding-controlplane
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - contents:
+          source: data:text/plain;charset=utf-8;base64,bmV0LmlwdjQuY29uZi5ib25kMC8xMS5mb3J3YXJkaW5nID0gMQpuZXQuaXB2NC5jb25mLmJvbmQwLzEyLmZvcndhcmRpbmcgPSAxCg==
+        filesystem: root
+        mode: 0420
+        path: /etc/sysctl.d/restricted-forwarding.conf
+    systemd:
+      units:
+      - contents: |
+          [Unit]
+          After=network.target
+          [Service]
+          Type=oneshot
+          ExecStart=iptables -P FORWARD DROP
+          [Install]
+          WantedBy=multi-user.target
+        enabled: true
+        name: one-shot-forward-drop.service
