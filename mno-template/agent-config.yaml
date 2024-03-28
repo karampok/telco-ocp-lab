@@ -273,7 +273,12 @@ hosts:
             dhcp: false
             enabled: true
           ipv6:
-            enabled: false
+            enabled: true
+            autoconf: true
+            dhcp: true
+            auto-dns: false
+            auto-gateway: true
+            auto-routes: true
         - name: bond0.11
           type: vlan
           state: up
@@ -340,7 +345,12 @@ hosts:
             dhcp: false
             enabled: true
           ipv6:
-            enabled: false
+            enabled: true
+            autoconf: true
+            dhcp: true
+            auto-dns: false
+            auto-gateway: true
+            auto-routes: true
         - name: bond0.11
           type: vlan
           state: up
