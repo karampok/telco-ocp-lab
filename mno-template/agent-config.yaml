@@ -36,7 +36,6 @@ hosts:
           vlan:
             base-iface: bond0
             id: 10
-            reorder-headers: true
           ipv4:
             address:
               - ip: 10.10.10.116
@@ -125,7 +124,6 @@ hosts:
           vlan:
             base-iface: bond0
             id: 10
-            reorder-headers: true
           ipv4:
             address:
               - ip: 10.10.10.117
@@ -197,7 +195,6 @@ hosts:
           vlan:
             base-iface: bond0
             id: 10
-            reorder-headers: true
           ipv4:
             address:
               - ip: 10.10.10.118
@@ -269,7 +266,6 @@ hosts:
   #         vlan:
   #           base-iface: bond0
   #           id: 10
-  #           reorder-headers: true
   #         ipv4:
   #           address:
   #             - ip: 10.10.10.119
@@ -341,7 +337,6 @@ hosts:
   #         vlan:
   #           base-iface: bond0
   #           id: 10
-  #           reorder-headers: true
   #         ipv4:
   #           address:
   #             - ip: 10.10.10.120
