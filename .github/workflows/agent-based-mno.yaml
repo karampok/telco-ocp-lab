@@ -45,7 +45,6 @@ jobs:
               --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
 
             openshift-install version
-            DISABLED_HOST_VALIDATIONS=belongs-to-majority-group
 
             folder=/share/mno
             cp -r mno-template "${folder}"
