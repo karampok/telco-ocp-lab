@@ -238,145 +238,145 @@ hosts:
             enabled: false
       dns-resolver: *dns
       routes: *routes
-  # - hostname: w0
-  #   role: worker
-  #   rootDeviceHints:
-  #     deviceName: "/dev/vda"
-  #   interfaces:
-  #     - name: ens3
-  #       macAddress: de:ad:be:ff:11:90
-  #     - name: ens4
-  #       macAddress: de:ad:be:ff:11:91
-  #   networkConfig:
-  #     interfaces:
-  #       - name: bond0
-  #         type: bond
-  #         state: up
-  #         mtu: 1500
-  #         link-aggregation:
-  #           mode: active-backup
-  #           options:
-  #             miimon: '140'
-  #           port:
-  #             - ens3
-  #             - ens4
-  #       - name: bond0.10
-  #         type: vlan
-  #         state: up
-  #         vlan:
-  #           base-iface: bond0
-  #           id: 10
-  #         ipv4:
-  #           address:
-  #             - ip: 10.10.10.119
-  #               prefix-length: 24
-  #           dhcp: false
-  #           enabled: true
-  #         ipv6:
-  #           enabled: true
-  #           autoconf: true
-  #           dhcp: true
-  #           auto-dns: false
-  #           auto-gateway: true
-  #           auto-routes: true
-  #       - name: bond0.11
-  #         type: vlan
-  #         state: up
-  #         vlan:
-  #           base-iface: bond0
-  #           id: 11
-  #         ipv4:
-  #           enabled: true
-  #           address:
-  #             - ip: 11.11.11.119
-  #               prefix-length: 24
-  #           dhcp: false
-  #         ipv6:
-  #           enabled: false
-  #       - name: bond0.12
-  #         type: vlan
-  #         state: up
-  #         vlan:
-  #           base-iface: bond0
-  #           id: 12
-  #         ipv4:
-  #           enabled: true
-  #           address:
-  #             - ip: 12.12.12.119
-  #               prefix-length: 24
-  #           dhcp: false
-  #         ipv6:
-  #           enabled: false
-  #     dns-resolver: *dns
-  #     routes: *routes
-  # - hostname: w1
-  #   role: worker
-  #   rootDeviceHints:
-  #     deviceName: "/dev/vda"
-  #   interfaces:
-  #     - name: ens3
-  #       macAddress: de:ad:be:ff:11:85
-  #     - name: ens4
-  #       macAddress: de:ad:be:ff:11:86
-  #   networkConfig:
-  #     interfaces:
-  #       - name: bond0
-  #         type: bond
-  #         state: up
-  #         mtu: 1500
-  #         link-aggregation:
-  #           mode: active-backup
-  #           options:
-  #             miimon: '140'
-  #           port:
-  #             - ens3
-  #             - ens4
-  #       - name: bond0.10
-  #         type: vlan
-  #         state: up
-  #         vlan:
-  #           base-iface: bond0
-  #           id: 10
-  #         ipv4:
-  #           address:
-  #             - ip: 10.10.10.120
-  #               prefix-length: 24
-  #           dhcp: false
-  #           enabled: true
-  #         ipv6:
-  #           enabled: true
-  #           autoconf: true
-  #           dhcp: true
-  #           auto-dns: false
-  #           auto-gateway: true
-  #           auto-routes: true
-  #       - name: bond0.11
-  #         type: vlan
-  #         state: up
-  #         vlan:
-  #           base-iface: bond0
-  #           id: 11
-  #         ipv4:
-  #           enabled: true
-  #           address:
-  #             - ip: 11.11.11.120
-  #               prefix-length: 24
-  #           dhcp: false
-  #         ipv6:
-  #           enabled: false
-  #       - name: bond0.12
-  #         type: vlan
-  #         state: up
-  #         vlan:
-  #           base-iface: bond0
-  #           id: 12
-  #         ipv4:
-  #           enabled: true
-  #           address:
-  #             - ip: 12.12.12.120
-  #               prefix-length: 24
-  #           dhcp: false
-  #         ipv6:
-  #           enabled: false
-  #     dns-resolver: *dns
-  #     routes: *routes
+  - hostname: w0
+    role: worker
+    rootDeviceHints:
+      deviceName: "/dev/vda"
+    interfaces:
+      - name: ens3
+        macAddress: de:ad:be:ff:11:90
+      - name: ens4
+        macAddress: de:ad:be:ff:11:91
+    networkConfig:
+      interfaces:
+        - name: bond0
+          type: bond
+          state: up
+          mtu: 1500
+          link-aggregation:
+            mode: active-backup
+            options:
+              miimon: '140'
+            port:
+              - ens3
+              - ens4
+        - name: bond0.10
+          type: vlan
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 10
+          ipv4:
+            address:
+              - ip: 10.10.10.119
+                prefix-length: 24
+            dhcp: false
+            enabled: true
+          ipv6:
+            enabled: true
+            autoconf: true
+            dhcp: true
+            auto-dns: false
+            auto-gateway: true
+            auto-routes: true
+        - name: bond0.11
+          type: vlan
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 11
+          ipv4:
+            enabled: true
+            address:
+              - ip: 11.11.11.119
+                prefix-length: 24
+            dhcp: false
+          ipv6:
+            enabled: false
+        - name: bond0.12
+          type: vlan
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 12
+          ipv4:
+            enabled: true
+            address:
+              - ip: 12.12.12.119
+                prefix-length: 24
+            dhcp: false
+          ipv6:
+            enabled: false
+      dns-resolver: *dns
+      routes: *routes
+  - hostname: w1
+    role: worker
+    rootDeviceHints:
+      deviceName: "/dev/vda"
+    interfaces:
+      - name: ens3
+        macAddress: de:ad:be:ff:11:85
+      - name: ens4
+        macAddress: de:ad:be:ff:11:86
+    networkConfig:
+      interfaces:
+        - name: bond0
+          type: bond
+          state: up
+          mtu: 1500
+          link-aggregation:
+            mode: active-backup
+            options:
+              miimon: '140'
+            port:
+              - ens3
+              - ens4
+        - name: bond0.10
+          type: vlan
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 10
+          ipv4:
+            address:
+              - ip: 10.10.10.120
+                prefix-length: 24
+            dhcp: false
+            enabled: true
+          ipv6:
+            enabled: true
+            autoconf: true
+            dhcp: true
+            auto-dns: false
+            auto-gateway: true
+            auto-routes: true
+        - name: bond0.11
+          type: vlan
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 11
+          ipv4:
+            enabled: true
+            address:
+              - ip: 11.11.11.120
+                prefix-length: 24
+            dhcp: false
+          ipv6:
+            enabled: false
+        - name: bond0.12
+          type: vlan
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 12
+          ipv4:
+            enabled: true
+            address:
+              - ip: 12.12.12.120
+                prefix-length: 24
+            dhcp: false
+          ipv6:
+            enabled: false
+      dns-resolver: *dns
+      routes: *routes
