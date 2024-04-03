@@ -13,4 +13,4 @@ done
 CLUSTER_ID=$(curl "$url" | jq '.[0].id' | tr -d '"')
 curl -X PUT -H "Content-Type: application/json" \
          -d '{"host-validation-ids": "[\"belongs-to-majority-group\"]"}' \
-         "$URL"/"$CLUSTER_ID"/ignored-validations
+         "$url"/"$CLUSTER_ID"/ignored-validations
