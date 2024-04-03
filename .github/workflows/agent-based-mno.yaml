@@ -69,6 +69,7 @@ jobs:
             mkdir -p ~/.kube && cp "${folder}"/auth/kubeconfig ~/.kube/config
 
             export KUBECONFIG=/share/mno/auth/kubeconfig
+            ./bin/patch-no-validation-ai.sh #https://issues.redhat.com/browse/OCPBUGS-31631
             openshift-install agent wait-for install-complete --log-level info --dir /share/mno
 
             oc get clusterversion && oc get co
