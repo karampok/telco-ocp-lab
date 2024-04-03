@@ -123,7 +123,7 @@ jobs:
       - name: Mark Runner
         run: |
           podman exec workstation bash -ce '
-            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken +green
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
           '
   on-fail:
     name: Release Runner
