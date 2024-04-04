@@ -76,8 +76,16 @@ jobs:
           '
           echo "wget http://10.0.0.1:9000/mno/auth/kubeconfig -O ~/.kube/${{ runner.name }}.yaml"
           echo "curl -s http://10.0.0.1:9000/mno/auth/kubeadmin-\password | xsel --input --clipboard"
+      - name: Patch Cluster CRs
+        timeout-minutes: 10
+        run: |
+          podman exec workstation bash -ce '
+            oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
+            oc patch OperatorHub cluster --type merge --patch-file mno-template/day1/operatorhub-patch.yaml
+            oc patch configs.imageregistry cluster --type=merge --patch-file mno-template/day1/image-registry-patch.yaml
+          '
   stage2:
-    name: Provision Cluster
+    name: Deploy Metallb
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1]
     if: needs.stage1.result == 'success'
@@ -87,16 +95,12 @@ jobs:
         timeout-minutes: 10
         run: |
           podman exec workstation bash -ce '
-            oc apply -f mno-template/day1/99-metallb-operator.yaml
-            until oc get metallb 2>/dev/null; do sleep 30; done
-            oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
-            oc apply -f mno-template/day1/registry-pvc.yaml
-            oc patch configs.imageregistry cluster --type=merge --patch-file mno-template/day1/image-registry-patch.yaml
-            sleep 30
-            oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
-            sleep 30
-            oc apply -k mno-template/day1/
-            oc get network.operator -o yaml
+            # oc apply -f mno-template/day1/99-metallb-operator.yaml
+            # until oc get metallb 2>/dev/null; do sleep 30; done
+            # sleep 30
+            # oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
+            # sleep 30
+            # oc apply -k mno-template/day1/
           '
   stage3:
     name: Test Metallb
@@ -107,24 +111,34 @@ jobs:
       - name: SmokeTest Metallb setup
         run: |
           podman exec workstation bash -ce '
-            oc apply -f dayX/green-net.yaml
-            oc apply -f dayX/red-net.yaml
-
-            oc wait --for=condition=ready pod -l app=red --timeout=320s
-            oc wait --for=condition=ready pod -l app=green --timeout=320s
-          '
-          podman exec green bash -cex '
-            echo "from green client to access the service in green segment (static routes)"
-            curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
-            # curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
-          '
-          podman exec red bash -cex '
-            echo "from red client to access the service in red segment (static routes)"
-            curl --retry 5 -s http://6.6.6.1:6666/hostname -w " #local"
+          #   oc apply -f dayX/green-net.yaml
+          #   oc apply -f dayX/red-net.yaml
+          #
+          #   oc wait --for=condition=ready pod -l app=red --timeout=320s
+          #   oc wait --for=condition=ready pod -l app=green --timeout=320s
+          # '
+          # podman exec green bash -cex '
+          #   echo "from green client to access the service in green segment (static routes)"
+          #   curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
+          #   # curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
+          # '
+          # podman exec red bash -cex '
+          #   echo "from red client to access the service in red segment (static routes)"
+          #   curl --retry 5 -s http://6.6.6.1:6666/hostname -w " #local"
           '
       - name: Mark Runner
         run: |
           podman exec workstation bash -ce '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
+  on-success:
+    name: Release Runner
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage3]
+    if: ${{ success() }}
+    steps:
+      - name: Readd Label
+        run: |
+          podman exec workstation bash -c '
             GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
           '
   on-fail:
