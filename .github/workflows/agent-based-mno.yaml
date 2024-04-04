@@ -90,6 +90,8 @@ jobs:
             oc apply -f mno-template/day1/99-metallb-operator.yaml
             until oc get metallb 2>/dev/null; do sleep 30; done
             oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
+            oc apply -f mno-template/day1/registry-pvc.yaml
+            oc patch configs.imageregistry cluster --type=merge --patch-file mno-template/day1/image-registry-patch.yaml
             sleep 30
             oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
             sleep 30
