@@ -116,7 +116,7 @@ jobs:
           #
           #   oc wait --for=condition=ready pod -l app=red --timeout=320s
           #   oc wait --for=condition=ready pod -l app=green --timeout=320s
-          # '
+          '
           # podman exec green bash -cex '
           #   echo "from green client to access the service in green segment (static routes)"
           #   curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
@@ -125,13 +125,9 @@ jobs:
           # podman exec red bash -cex '
           #   echo "from red client to access the service in red segment (static routes)"
           #   curl --retry 5 -s http://6.6.6.1:6666/hostname -w " #local"
-          '
-      - name: Mark Runner
-        run: |
-          podman exec workstation bash -ce '
-            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
+          # '
   on-success:
-    name: Release Runner
+    name: On Success
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1, stage3]
     if: ${{ success() }}
@@ -142,7 +138,7 @@ jobs:
             GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
           '
   on-fail:
-    name: Release Runner
+    name: On Failure
     runs-on: ${{needs.stage0.outputs.RUNNER}}
     needs: [stage0, stage1, stage3]
     if: ${{ failure() }}
