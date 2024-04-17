@@ -40,7 +40,7 @@ jobs:
         timeout-minutes: 120
         run: |
           podman exec workstation bash -ce '
-            export OCP_RELEASE=quay.io/openshift-release-dev/ocp-release:4.15.3-x86_64
+            export OCP_RELEASE=quay.io/openshift-release-dev/ocp-release:4.15.9-x86_64
             oc adm release extract --registry-config .pull-secret.json \
               --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
 
@@ -82,6 +82,7 @@ jobs:
           podman exec workstation bash -ce '
             oc patch network.operator cluster --type=merge --patch-file mno-template/day1/network-operator-patch.yaml
             oc patch OperatorHub cluster --type merge --patch-file mno-template/day1/operatorhub-patch.yaml
+            oc patch configs.imageregistry cluster --type=merge --patch-file mno-template/day1/image-registry-patch.yaml
             oc patch configs.imageregistry cluster --type=merge --patch-file mno-template/day1/image-registry-patch.yaml
           '
   stage2:
