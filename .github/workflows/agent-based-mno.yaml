@@ -40,7 +40,9 @@ jobs:
         timeout-minutes: 120
         run: |
           podman exec workstation bash -ce '
-            export OCP_RELEASE=quay.io/openshift-release-dev/ocp-release:4.16.0-ec.5-x86_64
+            # export OCP_RELEASE=quay.io/openshift-release-dev/ocp-release:4.16.0-ec.5-x86_64
+            export OCP_RELEASE=quay.io/openshift-release-dev/ocp-release:4.15.10-x86_64
+
             oc adm release extract --tools $OCP_RELEASE --registry-config=.pull-secret.json
             tar xzf openshift-install-linux-*tar.gz --directory=/usr/local/bin openshift-install
 
