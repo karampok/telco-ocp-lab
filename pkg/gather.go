@@ -5,9 +5,9 @@ import . "github.com/saschagrunert/demo"
 func SetupInfra() *Run {
 	r := NewRun("Setup Virtual Infra")
 	r.BreakPoint()
-	r.Step(S("Build L2 fabric"), nil)
-	for _, cmd := range cmds01 {
-		r.Step(nil, S(cmd))
+	r.Step(S("Build L2 fabric"), S(bridges))
+	if true {
+		return r
 	}
 
 	r.BreakPoint()

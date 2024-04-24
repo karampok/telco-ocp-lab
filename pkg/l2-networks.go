@@ -1,29 +1,14 @@
 package pkg
 
-func sudo(s string) string {
-	return "sudo " + s
-}
-
-func orTrue(s string) string {
-	return s + " || true"
-}
-
-var cmds01 = []string{
-	`ip link add name access type bridge
-ip link add name baremetal type bridge
-ip link add name green-net type bridge
-ip link add name red-net type bridge
-ip link add name bmc type bridge
-ip link add name dataplane type bridge
-ip link set mtu 9000 dev dataplane
-ip link set mtu 9000 dev baremetal
-ip link set dev baremetal up
-ip link set dev access up
-ip link set dev green-net up
-ip link set dev red-net up
-ip link set dev bmc up
-ip link set dev dataplane up`,
-}
+var bridges = `ip link add name sw0 type bridge
+ip link set mtu 9000 dev sw0
+ip link set dev sw0 up
+ip link add name sw1 type bridge
+ip link set mtu 9000 dev sw1
+ip link set dev sw1 up
+ip link add name ixp-net type bridge
+ip link set mtu 9000 dev ixp-net
+ip link set dev ixp-net up`
 
 var cmd02 = `mkdir -p /etc/cni/net.d
 cp ./opt/cni.d/{access,baremetal,green-net,red-net,bmc}.conflist /etc/cni/net.d/
