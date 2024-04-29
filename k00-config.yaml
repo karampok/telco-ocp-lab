@@ -6,4 +6,8 @@ kind: Cluster
 nodes:
   - role: control-plane
   - role: worker
-    #  - role: worker
+    labels:
+      metallb-speaker: ""
+  # - role: worker
+  #   labels:
+  #     metallb-speaker: ""

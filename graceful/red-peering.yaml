@@ -1,0 +1,48 @@
+---
+apiVersion: metallb.io/v1beta1
+kind: BFDProfile
+metadata:
+  name: red
+  namespace: metallb-system
+spec:
+  detectMultiplier: 3
+  echoMode: false
+  passiveMode: false
+---
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: red
+  namespace: metallb-system
+spec:
+  peerAddress: 12.12.12.1
+  peerASN: 8012
+  myASN: 7003
+  holdTime: 60s
+  gracefulRestart: true
+  bfdProfile: red
+  nodeSelectors:
+    - matchLabels:
+        metallb-speaker: ""
+---
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: red
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - red
+  peers:
+    - red
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: red
+  namespace: metallb-system
+spec:
+  autoAssign: false
+  addresses:
+    - 6.6.6.1/32
+    - 6.6.6.2/32

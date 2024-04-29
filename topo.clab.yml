@@ -1,8 +1,8 @@
 ---
 name: vlab
 mgmt:
-  network: custom_mgmt                # management network name
-  ipv4-subnet: 172.100.100.0/24       # ipv4 range
+  network: mgmtnet
+  ipv4-subnet: 172.100.100.0/24
   ipv6-subnet: ''
 
 topology:
@@ -15,7 +15,7 @@ topology:
         - opt/frr-zero/daemons:/etc/frr/daemons
         - opt/frr-zero/frr.conf:/etc/frr/frr.conf
         - opt/frr-zero/vtysh.conf:/etc/frr/vtysh.conf
-    r11:
+    gw1:
       kind: linux
       image: quay.io/frrouting/frr:9.0.2
       network-mode: none
@@ -23,6 +23,25 @@ topology:
         - opt/frr-one/daemons:/etc/frr/daemons
         - opt/frr-one/frr.conf:/etc/frr/frr.conf
         - opt/frr-one/vtysh.conf:/etc/frr/vtysh.conf
+      exec:
+        - ip link set dev eth1 address aa:aa:aa:aa:aa:00
+        - ip link add link eth1 name eth1.blue type vlan id 10
+        - ip link add link eth1 name eth1.green type vlan id 11
+        - ip link add link eth1 name eth1.red type vlan id 12
+        - ip link add green type vrf table 110
+        - ip link add red type vrf table 120
+        - ip link set eth1.green master green
+        - ip link set eth1.red master red
+        - ip link set dev green up
+        - ip link set dev red up
+    sidecar-gw1:
+      kind: linux
+      network-mode: container:gw1
+      image: quay.io/karampok/snife:latest
+      startup-delay: 10
+      exec: 
+        - |
+           echo "while true;do curl -sf http://6.6.6.1:5555/hostname --connect-timeout 1  -o /dev/null || date +%s.%3N ;done" > run
     ixp-net:
       kind: bridge
     sw0:
@@ -43,35 +62,37 @@ topology:
       network-mode: none
       startup-config: k00-config.yaml
 
-    k00-control-plane:
-      kind: ext-container
-      network-mode: none
-      exec:
-        - ip addr add dev clab 10.10.1.101/24
     k00-worker:
       kind: ext-container
       network-mode: none
       exec:
-        - ip addr add dev clab 10.10.1.102/24
+        - ip link set dev clab address de:ad:be:ff:11:01
+        - ip link add link clab name blue type vlan id 10
+        - ip link add link clab name green type vlan id 11
+        - ip link add link clab name red type vlan id 12
+        - ip addr add dev blue 10.10.10.102/24
+        - ip addr add dev green 11.11.11.102/24
+        - ip addr add dev red 12.12.12.102/24
+        - ip link set dev blue up
+        - ip link set dev green up
+        - ip link set dev red up
     # k00-worker2:
     #   kind: ext-container
     #   network-mode: none
     #   exec:
-    #     - ip addr add dev clab 10.10.1.103/24
-    h10:
-      kind: linux
-      image: quay.io/karampok/snife:latest
-      network-mode: none
-      exec:
-        - ip addr add 10.10.1.10/24 dev eth0
-        - ip route add default via 10.10.1.1
+    #     - ip link set dev clab address de:ad:be:ff:11:02
+    #     - ip link add link clab name blue type vlan id 10
+    #     - ip link add link clab name green type vlan id 11
+    #     - ip addr add dev blue 10.10.10.103/24
+    #     - ip addr add dev green 11.11.11.103/24
+    #     - ip link set dev green up
+    #     - ip link set dev blue up
+
   links:
     - endpoints: ["h00:eth0", "sw0:sw0-port2"]
     - endpoints: ["r01:eth1", "sw0:sw0-port0"]
     - endpoints: ["r01:eth0", "ixp-net:ixp-port0"]
-    - endpoints: ["r11:eth0", "ixp-net:ixp-port1"]
-    - endpoints: ["r11:eth1", "sw1:sw1-port1"]
-    - endpoints: ["h10:eth0", "sw1:sw1-port2"]
-    - endpoints: ["k00-control-plane:clab", "sw1:sw1-port101"]
+    - endpoints: ["gw1:eth0", "ixp-net:ixp-port1"]
+    - endpoints: ["gw1:eth1", "sw1:sw1-port1"]
     - endpoints: ["k00-worker:clab", "sw1:sw1-port102"]
-      #   - endpoints: ["k00-worker2:clab", "sw1:sw1-port103"]
+      #    - endpoints: ["k00-worker2:clab", "sw1:sw1-port103"]
