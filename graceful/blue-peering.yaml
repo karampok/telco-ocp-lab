@@ -9,6 +9,7 @@ spec:
   peerASN: 65001
   myASN: 7003
   holdTime: 60s
+  gracefulRestart: true
   nodeSelectors:
     - matchLabels:
         metallb-speaker: ""

@@ -13,7 +13,7 @@
 #   passiveMode: false
 #   minimumTtl: 254
 ---
-apiVersion: metallb.io/v1beta1
+apiVersion: metallb.io/v1beta2
 kind: BGPPeer
 metadata:
   name: green
@@ -22,8 +22,14 @@ spec:
   peerAddress: 10.10.1.1
   peerASN: 65001
   myASN: 7003
-  # holdTime: "180s"
-  # bfdProfile: bfd-profile
+  holdTime: 60s
+  gracefulRestart: true
+  nodeSelectors:
+    - matchLabels:
+        metallb-speaker: ""
+    # - matchExpressions:
+    #   - key: node-role.kubernetes.io/control-plane
+    #     operator: DoesNotExist
 ---
 apiVersion: v1
 kind: ConfigMap
