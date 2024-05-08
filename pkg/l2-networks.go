@@ -1,36 +1,21 @@
 package pkg
 
-var bridges = `ip link add name sw0 type bridge
-ip link set mtu 9000 dev sw0
-ip link set dev sw0 up
+var bridges = `ip link add name dataplane type bridge
+ip link set dev dataplane up
 ip link add name sw1 type bridge
-ip link set mtu 9000 dev sw1
 ip link set dev sw1 up
 ip link add name ixp-net type bridge
-ip link set mtu 9000 dev ixp-net
 ip link set dev ixp-net up`
 
-var cmd02 = `mkdir -p /etc/cni/net.d
-cp ./opt/cni.d/{access,baremetal,green-net,red-net,bmc}.conflist /etc/cni/net.d/
-# podman network ls (minimal CNI, no ipam, gateway or anything)`
-
-var cmd03 = `cat > /tmp/baremetal.xml <<EOM
+var cmd03 = `cat > /tmp/sw1.xml <<EOM
 <network>
-  <name>baremetal</name>
+  <name>sw1</name>
   <forward mode="bridge"/>
-  <bridge name="baremetal"/>
+  <bridge name="sw1"/>
 </network>
 EOM
-virsh net-create /tmp/baremetal.xml
-cat > /tmp/bmc.xml <<EOM
-<network>
-  <name>bmc</name>
-  <forward mode="bridge"/>
-  <bridge name="bmc"/>
-</network>
-EOM
-virsh net-create /tmp/bmc.xml
-cat > /tmp/dataplane.xml <<EOM
+virsh net-create /tmp/sw1.xml
+rm /tmp/sw1.xml
 <network>
   <name>dataplane</name>
   <forward mode="bridge"/>
@@ -38,33 +23,14 @@ cat > /tmp/dataplane.xml <<EOM
 </network>
 EOM
 virsh net-create /tmp/dataplane.xml
-cat > /tmp/access.xml <<EOM
-<network>
-  <name>access</name>
-  <forward mode="bridge"/>
-  <bridge name="access"/>
-</network>
-EOM
-virsh net-create /tmp/access.xml
+rm /tmp/sw1.xml
+
 #virsh net-list`
 
 var cleanupL2 = []string{
-	"ip link delete access",
-	`iptables -F
-iptables -X
-iptables -t nat -F
-iptables -t mangle -F
-iptables -X -t nat
-ip link del dev cni-podman0
-ip link del dev virbr0`,
-	"ip link delete baremetal",
-	"ip link delete green-net",
-	"ip link delete red-net",
-	"ip link delete bmc",
+	"ip link delete sw1",
 	"ip link delete dataplane",
-	"rm /etc/cni/net.d/*",
-	"virsh net-destroy baremetal",
-	"virsh net-destroy access",
+	"ip link delete ixp-net",
+	"virsh net-destroy sw1",
 	"virsh net-destroy dataplane",
-	"rm /tmp/*.xml",
 }

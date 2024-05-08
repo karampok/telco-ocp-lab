@@ -1,3 +1,5 @@
+clab-vlab
+*.bak
 .pull-secret.json
 .github-argo
 pull-secret.yaml

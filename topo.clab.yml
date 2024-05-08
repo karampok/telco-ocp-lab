@@ -7,14 +7,25 @@ mgmt:
 
 topology:
   nodes:
+    ixp-net:
+      kind: bridge
+    sw1:
+      kind: bridge
     r01:
       kind: linux
       image: quay.io/frrouting/frr:9.0.2
-      network-mode: none
       binds:
         - opt/frr-zero/daemons:/etc/frr/daemons
         - opt/frr-zero/frr.conf:/etc/frr/frr.conf
         - opt/frr-zero/vtysh.conf:/etc/frr/vtysh.conf
+      exec:
+        # - ip addr add 192.168.0.166/24 dev upstream
+        # - ip route add default via 192.168.0.254
+        - iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
+    sidecar-r01:
+      kind: linux
+      network-mode: container:r01
+      image: quay.io/karampok/snife:latest
     gw1:
       kind: linux
       image: quay.io/frrouting/frr:9.0.2
@@ -39,60 +50,34 @@ topology:
       network-mode: container:gw1
       image: quay.io/karampok/snife:latest
       startup-delay: 10
-      exec: 
+      exec:
         - |
            echo "while true;do curl -sf http://6.6.6.1:5555/hostname --connect-timeout 1  -o /dev/null || date +%s.%3N ;done" > run
-    ixp-net:
-      kind: bridge
-    sw0:
-      kind: bridge
-    sw1:
-      kind: bridge
-    h00:
+    dns:
       kind: linux
-      image: quay.io/karampok/snife:latest
+      image: quay.io/karampok/tools:dnsmasq
       network-mode: none
       exec:
-        - ip addr add 10.10.0.10/24 dev eth0
-        - ip route add default via 10.10.0.1
+        - ip addr add 10.10.20.10/24 dev eth1
+        - ip route add default via 10.10.20.254
+        - ip route add 10.10.10.0/24 via 10.10.20.1
+      binds:
+        - opt/coredns:/etc/coredns
+      # TODO: add healthcheck
+    infra:
+      kind: linux
+      image: quay.io/karampok/infra:latest
+      exec:
+        - ip addr add 10.10.20.200/24 dev eth1
+        - ip route add default via 10.10.20.254
+        - ip route add 10.10.10.0/24 via 10.10.20.1
       ports:
-        - 55555:43555/udp
-    k00:
-      kind: k8s-kind
-      network-mode: none
-      startup-config: k00-config.yaml
-
-    k00-worker:
-      kind: ext-container
-      network-mode: none
-      exec:
-        - ip link set dev clab address de:ad:be:ff:11:01
-        - ip link add link clab name blue type vlan id 10
-        - ip link add link clab name green type vlan id 11
-        - ip link add link clab name red type vlan id 12
-        - ip addr add dev blue 10.10.10.102/24
-        - ip addr add dev green 11.11.11.102/24
-        - ip addr add dev red 12.12.12.102/24
-        - ip link set dev blue up
-        - ip link set dev green up
-        - ip link set dev red up
-    # k00-worker2:
-    #   kind: ext-container
-    #   network-mode: none
-    #   exec:
-    #     - ip link set dev clab address de:ad:be:ff:11:02
-    #     - ip link add link clab name blue type vlan id 10
-    #     - ip link add link clab name green type vlan id 11
-    #     - ip addr add dev blue 10.10.10.103/24
-    #     - ip addr add dev green 11.11.11.103/24
-    #     - ip link set dev green up
-    #     - ip link set dev blue up
+        - 51820:51820/udp
 
   links:
-    - endpoints: ["h00:eth0", "sw0:sw0-port2"]
-    - endpoints: ["r01:eth1", "sw0:sw0-port0"]
-    - endpoints: ["r01:eth0", "ixp-net:ixp-port0"]
+    - endpoints: ["r01:eth1", "ixp-net:ixp-port0"]
+      # - endpoints: ["r01:upstream", "host:r01-up"] #"macvlan:bond0"]
+    - endpoints: ["dns:eth1", "ixp-net:ixp-port10"]
+    - endpoints: ["infra:eth1", "ixp-net:ixp-port200"]
     - endpoints: ["gw1:eth0", "ixp-net:ixp-port1"]
     - endpoints: ["gw1:eth1", "sw1:sw1-port1"]
-    - endpoints: ["k00-worker:clab", "sw1:sw1-port102"]
-      #    - endpoints: ["k00-worker2:clab", "sw1:sw1-port103"]

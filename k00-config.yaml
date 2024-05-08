@@ -8,6 +8,6 @@ nodes:
   - role: worker
     labels:
       metallb-speaker: ""
-  # - role: worker
-  #   labels:
-  #     metallb-speaker: ""
+  - role: worker
+    labels:
+      metallb-speaker: ""
