@@ -1,7 +1,5 @@
 package pkg
 
-var vbmh = `kcli create plan -f vbmh-kcli-plan.yaml vbmh`
-
 var sushy = `podman run --name sushy --rm -d --privileged --hostname bmc-sushy \
 -v ./opt/sushy:/etc/sushy:Z -v /var/run/libvirt:/var/run/libvirt:rw --net=bmc:interface_name=eth0 \
  --dns 10.10.20.10 \

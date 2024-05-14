@@ -2,55 +2,39 @@ package pkg
 
 import . "github.com/saschagrunert/demo"
 
+var cleanup = []string{
+	"ip link delete sw1",
+	"ip link delete dataplane",
+	"ip link delete ixp-net",
+	"ip link delete bmc",
+	"virsh net-destroy sw1",
+	"virsh net-destroy dataplane",
+}
+
 func SetupInfra() *Run {
 	r := NewRun("Setup Virtual Infra")
-	r.BreakPoint()
 	r.Step(S("Build L2 fabric"), S(bridges))
 
-	r.BreakPoint()
-	r.Step(S("Enable libvirt to attach vms"), nil)
+	r.Step(S("Enable bridges in libvirt"), nil)
 	r.Step(nil, S(cmd03))
 
-	//	r.Step(S("Configure GW-zero with upstream"), S(gw00))
-
-	r.BreakPoint()
 	c := "containerlab deploy"
 	r.Step(S("Containerlab"), S(c))
-	//r.Step(S("Setup workstation"), S(workstation))
+	cleanup = append(cleanup, "containerlab destroy")
 
-	// r.BreakPoint()
-	// r.Step(S("Setup GW-one (L3 Gateway) on baremetal,access net"), S(gw1))
-	// r.Step(S("Configure GW-one with vlan"), S(gw10))
-	//
-	// r.BreakPoint()
-	// r.Step(S("Setup GW-two (L3 Gateway) on baremetal,access,green net"), S(gw2))
-	// r.Step(S("Configure GW-two with vlan"), S(gw20))
-	// r.Step(S("Setup green VRF in router"), S(gw21))
-	// r.Step(S("Setup red VRF in router"), S(gw22))
+	vbmh := `kcli create plan -f vbmh-kcli-plan.yaml vbmh`
+	r.Step(S("Create baremetal with kcli"), S(vbmh))
+	cleanup = append(cleanup, "kcli delete -y plan vbmh")
 	//
 	// r.BreakPoint()
 	// r.Step(S("Setup green client on green net "), S(green))
 	// r.Step(S("Setup red client on red net "), S(red))
 	// r.Step(S("Setup macnet host on baremetal net "), S(macnet))
-	//
-	// r.BreakPoint()
-	// r.Step(S("Setup DNS (CoreDNS) service"), S(dns))
-	// r.Step(S("Configure routing for DNS"), S(dns01))
-	//
-	// r.BreakPoint()
 	// r.Step(S("Setup proxy"), S(proxy))
 	// r.Step(S("Configure routing for proxy"), S(proxy01))
-	//
-	//	r.Step(S("proxy/dns needs connectivity"), nil)
-	// not using my image, I can do
-	// r.Step(S("podman run --net=container:dns --rm --privileged -it quay.io/karampok/snife /bin/bash"), nil)
-
-	// r.BreakPoint()
 	// r.Step(S("Setup DHCPv4"), S(dhcpv4))
 	// r.Step(S("Setup DHCPv6"), S(dhcpv6))
 	//
-	// r.BreakPoint()
-	// r.Step(S("Create baremetal with kcli"), S(vbmh))
 	//
 	// r.BreakPoint()
 	// r.Step(S("Create bmc with Sushy"), S(sushy))

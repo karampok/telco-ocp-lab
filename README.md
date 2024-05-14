@@ -28,6 +28,7 @@ systemctl enable --now podman.socket
 systemctl disable firewalld && systemctl stop firewalld
 hostnamectl set-hostname lab0
 
+echo ip_tables > /etc/modules-load.d/ip_tables.conf
 curl https://raw.githubusercontent.com/karmab/kcli/main/install.sh | sudo bash
 kcli create pool -p /var/lib/libvirt/images default
 

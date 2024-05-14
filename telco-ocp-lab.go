@@ -2,28 +2,41 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
+	"os/user"
 	"path/filepath"
 
 	"github.com/karampok/telco-ocp-lab/pkg"
 	"github.com/saschagrunert/demo"
 )
 
-//go:embed opt/*
-var optFS embed.FS
+//go:embed config/*
+var configFS embed.FS
+
+//go:embed infra/*
+var infraFS embed.FS
+
+//go:embed topo.clab.yml
+var cclab []byte
 
 //go:embed vbmh-kcli-plan.yaml
 var kplan []byte
 
 func main() {
+	if !isRoot() {
+		fmt.Println("clab needs root")
+		os.Exit(1)
+	}
 	d := demo.New()
+
 	d.Name = "telco-ocp-lab"
 	d.Description = "Setup virtual infra for multi-interface cluster"
 
-	d.Add(pkg.Clean(), "clean", "clean system")
 	d.Add(pkg.SetupInfra(), "setup", "setup virtual infra")
+	d.Add(pkg.Clean(), "clean", "clean system")
 	d.Add(pkg.RunIPForwardingDemo(), "ipforwarding", "reproduce ipforwarding demo")
 	d.Add(pkg.RunBGPGracefulRestart(), "BGP-GR", "demo BGP w,w/o GR (Graceful restart)")
 	d.Add(pkg.RunBGPGracefulRestartWithBFD(), "BGP-GR-BFD", "demo BGP w,w/o GR (Graceful restart), BFD")
@@ -36,32 +49,48 @@ func main() {
 }
 
 func extractConfig() error {
+	clab := "topo.clab.yaml"
+	_, err := os.Stat(clab)
+	if os.IsNotExist(err) {
+		if err := os.WriteFile(clab, cclab, 0o644); err != nil {
+			return err
+		}
+	}
+
 	plan := "vbmh-kcli-plan.yaml"
-	_, err := os.Stat(plan)
+	_, err = os.Stat(plan)
 	if os.IsNotExist(err) {
 		if err := os.WriteFile(plan, kplan, 0o644); err != nil {
 			return err
 		}
 	}
 
-	files, err := getAllFilenames(&optFS)
-	if err != nil {
-		return err
-	}
-	for _, f := range files {
-		src, err := optFS.Open(f)
+	extractDir := func(efs *embed.FS) error {
+		files, err := getAllFilenames(efs)
 		if err != nil {
 			return err
 		}
-		if err := os.MkdirAll(filepath.Dir(f), 0o755); err != nil {
-			return err
-		}
+		for _, f := range files {
+			src, err := efs.Open(f)
+			if err != nil {
+				return err
+			}
+			if err := os.MkdirAll(filepath.Dir(f), 0o755); err != nil {
+				return err
+			}
 
-		dst, err := os.OpenFile(f, os.O_WRONLY|os.O_CREATE, 0o644)
-		if err != nil {
-			return err
+			dst, err := os.OpenFile(f, os.O_WRONLY|os.O_CREATE, 0o644)
+			if err != nil {
+				return err
+			}
+			if _, err = io.Copy(dst, src); err != nil {
+				return err
+			}
 		}
-		if _, err = io.Copy(dst, src); err != nil {
+		return nil
+	}
+	for _, fs := range []*embed.FS{&configFS, &infraFS} {
+		if err := extractDir(fs); err != nil {
 			return err
 		}
 	}
@@ -84,4 +113,12 @@ func getAllFilenames(efs *embed.FS) (files []string, err error) {
 	}
 
 	return files, nil
+}
+
+func isRoot() bool {
+	currentUser, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+	return currentUser.Username == "root"
 }

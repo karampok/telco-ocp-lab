@@ -1,0 +1,12 @@
+.:53 {
+  rewrite stop type AAAA A
+  forward . /etc/resolv.conf {
+         prefer_udp
+  }
+}
+
+5gc.telco.vlab {
+  file /etc/coredns/zones/5gc.telco.vlab.db
+  log
+  errors
+}

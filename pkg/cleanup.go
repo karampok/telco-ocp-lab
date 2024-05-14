@@ -6,9 +6,7 @@ import (
 
 func Clean() *Run {
 	r := NewRun("Clean")
-	//r.StepCanFail(S("Clean VMS"), S(cleanup04))
-	r.Step(S("Clean L2"), nil)
-	for _, cmd := range cleanupL2 {
+	for _, cmd := range cleanup {
 		r.StepCanFail(nil, S(cmd))
 	}
 

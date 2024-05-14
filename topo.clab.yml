@@ -7,6 +7,8 @@ mgmt:
 
 topology:
   nodes:
+    bmc:
+      kind: bridge
     ixp-net:
       kind: bridge
     sw1:
@@ -15,9 +17,9 @@ topology:
       kind: linux
       image: quay.io/frrouting/frr:9.0.2
       binds:
-        - opt/frr-zero/daemons:/etc/frr/daemons
-        - opt/frr-zero/frr.conf:/etc/frr/frr.conf
-        - opt/frr-zero/vtysh.conf:/etc/frr/vtysh.conf
+        - config/frr-zero/daemons:/etc/frr/daemons
+        - config/frr-zero/frr.conf:/etc/frr/frr.conf
+        - config/frr-zero/vtysh.conf:/etc/frr/vtysh.conf
       exec:
         # - ip addr add 192.168.0.166/24 dev upstream
         # - ip route add default via 192.168.0.254
@@ -31,9 +33,9 @@ topology:
       image: quay.io/frrouting/frr:9.0.2
       network-mode: none
       binds:
-        - opt/frr-one/daemons:/etc/frr/daemons
-        - opt/frr-one/frr.conf:/etc/frr/frr.conf
-        - opt/frr-one/vtysh.conf:/etc/frr/vtysh.conf
+        - config/frr-one/daemons:/etc/frr/daemons
+        - config/frr-one/frr.conf:/etc/frr/frr.conf
+        - config/frr-one/vtysh.conf:/etc/frr/vtysh.conf
       exec:
         - ip link set dev eth1 address aa:aa:aa:aa:aa:00
         - ip link add link eth1 name eth1.blue type vlan id 10
@@ -62,22 +64,40 @@ topology:
         - ip route add default via 10.10.20.254
         - ip route add 10.10.10.0/24 via 10.10.20.1
       binds:
-        - opt/coredns:/etc/coredns
-      # TODO: add healthcheck
+        - config/coredns:/etc/coredns
+    sushy:
+      kind: linux
+      image: quay.io/karampok/sushy-emulator:latest
+      network-mode: none
+      exec:
+        - ip addr add 192.168.100.100/24 dev eth1
+      binds:
+        - config/sushy/:/etc/sushy
+        - /var/run/libvirt:/var/run/libvirt:rw
+      cmd: /usr/local/bin/sushy-emulator --config /etc/sushy/emulator.conf --debug
+
     infra:
       kind: linux
       image: quay.io/karampok/infra:latest
       exec:
         - ip addr add 10.10.20.200/24 dev eth1
-        - ip route add default via 10.10.20.254
+        - ip addr add 192.168.100.200/24 dev bmc
         - ip route add 10.10.10.0/24 via 10.10.20.1
+        # - ip route add default via 10.10.20.254
+      binds:
+        - infra/:/workdir
+        - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
       ports:
         - 51820:51820/udp
+      env:
+        PUBLICIP: 10.1.98.12
 
   links:
     - endpoints: ["r01:eth1", "ixp-net:ixp-port0"]
       # - endpoints: ["r01:upstream", "host:r01-up"] #"macvlan:bond0"]
     - endpoints: ["dns:eth1", "ixp-net:ixp-port10"]
     - endpoints: ["infra:eth1", "ixp-net:ixp-port200"]
+    - endpoints: ["infra:bmc", "bmc:infra"]
+    - endpoints: ["sushy:eth1", "bmc:sushy"]
     - endpoints: ["gw1:eth0", "ixp-net:ixp-port1"]
     - endpoints: ["gw1:eth1", "sw1:sw1-port1"]

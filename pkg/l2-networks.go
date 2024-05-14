@@ -4,6 +4,8 @@ var bridges = `ip link add name dataplane type bridge
 ip link set dev dataplane up
 ip link add name sw1 type bridge
 ip link set dev sw1 up
+ip link add name bmc type bridge
+ip link set dev bmc up
 ip link add name ixp-net type bridge
 ip link set dev ixp-net up`
 
@@ -16,6 +18,7 @@ var cmd03 = `cat > /tmp/sw1.xml <<EOM
 EOM
 virsh net-create /tmp/sw1.xml
 rm /tmp/sw1.xml
+cat > /tmp/dataplane.xml <<EOM
 <network>
   <name>dataplane</name>
   <forward mode="bridge"/>
@@ -23,14 +26,6 @@ rm /tmp/sw1.xml
 </network>
 EOM
 virsh net-create /tmp/dataplane.xml
-rm /tmp/sw1.xml
+rm /tmp/dataplane.xml
 
 #virsh net-list`
-
-var cleanupL2 = []string{
-	"ip link delete sw1",
-	"ip link delete dataplane",
-	"ip link delete ixp-net",
-	"virsh net-destroy sw1",
-	"virsh net-destroy dataplane",
-}
