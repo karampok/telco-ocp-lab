@@ -21,6 +21,7 @@ func SetupInfra() *Run {
 	c := "containerlab deploy"
 	r.Step(S("Containerlab"), S(c))
 	cleanup = append(cleanup, "containerlab destroy")
+	cleanup = append(cleanup, "rm -rf clab-vlab/")
 
 	vbmh := `kcli create plan -f vbmh-kcli-plan.yaml vbmh`
 	r.Step(S("Create baremetal with kcli"), S(vbmh))

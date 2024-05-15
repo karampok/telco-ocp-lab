@@ -57,7 +57,7 @@ topology:
            echo "while true;do curl -sf http://6.6.6.1:5555/hostname --connect-timeout 1  -o /dev/null || date +%s.%3N ;done" > run
     dns:
       kind: linux
-      image: quay.io/karampok/tools:dnsmasq
+      image: quay.io/openshift/origin-coredns:latest
       network-mode: none
       exec:
         - ip addr add 10.10.20.10/24 dev eth1
@@ -65,6 +65,7 @@ topology:
         - ip route add 10.10.10.0/24 via 10.10.20.1
       binds:
         - config/coredns:/etc/coredns
+      entrypoint: /usr/bin/coredns -conf /etc/coredns/Corefile
     sushy:
       kind: linux
       image: quay.io/karampok/sushy-emulator:latest
@@ -83,6 +84,9 @@ topology:
         - ip addr add 10.10.20.200/24 dev eth1
         - ip addr add 192.168.100.200/24 dev bmc
         - ip route add 10.10.10.0/24 via 10.10.20.1
+        - sysctl -w "net.ipv4.ip_forward=1"
+        - iptables -t nat -A PREROUTING -p udp --dport 51820 -j DNAT --to 10.10.20.200
+        - echo "nameserver 10.10.20.10" > /etc/resolv.conf
         # - ip route add default via 10.10.20.254
       binds:
         - infra/:/workdir
