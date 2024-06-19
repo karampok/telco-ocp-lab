@@ -1,6 +1,6 @@
 module github.com/karampok/telco-ocp-lab
 
-go 1.22.1
+go 1.22.4
 
 require github.com/saschagrunert/demo v0.0.0-20240315151054-3601aaa9f4ba
 

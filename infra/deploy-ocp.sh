@@ -3,7 +3,7 @@ set -euoE pipefail
 
 PULL_SECRET=${PULL_SECRET:-.pull-secret.json}
 
-OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.16.0-rc.1-x86_64"}
+OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.16.0-rc.6-x86_64"}
 oc adm release extract --registry-config "${PULL_SECRET}" \
   --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
 openshift-install version
@@ -28,3 +28,9 @@ done
 
 mkdir -p ~/.kube && cp "${folder}"/auth/kubeconfig ~/.kube/config
 openshift-install agent wait-for install-complete --log-level info --dir /share/${name}
+
+# Local registry is needed
+# https://docs.openshift.com/container-platform/4.15/registry/configuring_registry_storage/configuring-registry-storage-baremetal.html
+oc patch configs.imageregistry.operator.openshift.io cluster  --patch-file ${folder}/day1/image-registry-patch.yaml --type merge
+# twice to remove any topologySpreadConstraints: []
+oc patch configs.imageregistry.operator.openshift.io cluster  --patch-file ${folder}/day1/image-registry-patch.yaml --type merge
