@@ -37,9 +37,9 @@ tmux send-keys -t Good.1 "tcpdump -i any -nnn port 2311" C-m
 tmux send-keys -t Good.0 "curl http://5.5.5.1:5555/hostname --local-port 2311" C-m
 
 tmux new-window -n Nodes; tmux split-window -h -t Nodes; tmux split-window -h -t Nodes; tmux select-layout -t Nodes even-vertical; 
-tmux send-keys -t Nodes.0 "podman-remote -c lab0  exec -it red-in /bin/bash" C-m
-tmux send-keys -t Nodes.0 "ip route add 203.100.100.0/24 via 12.12.12.119" C-m
-tmux send-keys -t Nodes.0 "ping -c 1 203.100.100.100"
+tmux send-keys -t Nodes.0 "docker exec -it clab-vlab-sidecar-gw1 /bin/bash" C-m
+tmux send-keys -t Nodes.0 "ip route add vrf red 203.100.100.0/24 via 12.12.12.119" C-m
+tmux send-keys -t Nodes.0 "ip vrf exec red ping -c 1 203.100.100.100"
 tmux send-keys -t Nodes.0 "nc -u 5.5.5.5 8888 -p 2424"
 tmux send-keys -t Nodes.1 "oc debug node/w0 --image quay.io/karampok/snife:latest" C-m
 tmux send-keys -t Nodes.1 "chroot /host" C-m C-m C-m
