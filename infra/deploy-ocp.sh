@@ -29,8 +29,13 @@ done
 mkdir -p ~/.kube && cp "${folder}"/auth/kubeconfig ~/.kube/config
 openshift-install agent wait-for install-complete --log-level info --dir /share/${name}
 
+
+cat << EOF
+oc patch network.operator cluster --type=merge --patch-file day1/network-operator-patch.yaml
+oc patch OperatorHub cluster --type merge --patch-file day1/operatorhub-patch.yaml
 # Local registry is needed
 # https://docs.openshift.com/container-platform/4.15/registry/configuring_registry_storage/configuring-registry-storage-baremetal.html
-echo oc patch configs.imageregistry.operator.openshift.io cluster --patch-file day1/image-registry-patch.yaml --type merge
+oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
 # twice to remove any topologySpreadConstraints: []
-echo oc patch configs.imageregistry.operator.openshift.io cluster --patch-file day1/image-registry-patch.yaml --type merge
+oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
+EOF
