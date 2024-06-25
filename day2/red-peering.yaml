@@ -21,9 +21,6 @@ spec:
   holdTime: 60s
   enableGracefulRestart: true
   bfdProfile: red
-  nodeSelectors:
-    - matchLabels:
-        metallb-speaker: ""
 ---
 apiVersion: metallb.io/v1beta1
 kind: BGPAdvertisement
@@ -45,4 +42,3 @@ spec:
   autoAssign: false
   addresses:
     - 6.6.6.1/32
-    - 6.6.6.2/32

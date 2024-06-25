@@ -10,9 +10,9 @@ spec:
   myASN: 7003
   holdTime: 60s
   enableGracefulRestart: true
-  nodeSelectors:
-    - matchLabels:
-        metallb-speaker: ""
+  # nodeSelectors:
+  #   - matchLabels:
+  #       metallb-speaker: ""
 ---
 apiVersion: metallb.io/v1beta1
 kind: BGPAdvertisement
