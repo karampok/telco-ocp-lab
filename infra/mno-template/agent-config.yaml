@@ -5,7 +5,7 @@ metadata:
   name: 5gc
 additionalNTPSources:
   - pool.ntp.org
-rendezvousIP: 10.10.10.116
+rendezvousIP: 10.10.10.100
 hosts:
   - hostname: m0
     role: master
@@ -38,7 +38,7 @@ hosts:
             id: 10
           ipv4:
             address:
-              - ip: 10.10.10.116
+              - ip: 10.10.10.100
                 prefix-length: 24
             dhcp: false
             enabled: true
@@ -58,7 +58,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 11.11.11.116
+              - ip: 11.11.11.100
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -72,7 +72,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 12.12.12.116
+              - ip: 12.12.12.100
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -126,7 +126,7 @@ hosts:
             id: 10
           ipv4:
             address:
-              - ip: 10.10.10.117
+              - ip: 10.10.10.101
                 prefix-length: 24
             dhcp: false
             enabled: true
@@ -146,7 +146,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 11.11.11.117
+              - ip: 11.11.11.101
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -160,7 +160,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 12.12.12.117
+              - ip: 12.12.12.101
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -197,7 +197,7 @@ hosts:
             id: 10
           ipv4:
             address:
-              - ip: 10.10.10.118
+              - ip: 10.10.10.102
                 prefix-length: 24
             dhcp: false
             enabled: true
@@ -217,7 +217,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 11.11.11.118
+              - ip: 11.11.11.102
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -231,7 +231,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 12.12.12.118
+              - ip: 12.12.12.102
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -268,7 +268,7 @@ hosts:
             id: 10
           ipv4:
             address:
-              - ip: 10.10.10.119
+              - ip: 10.10.10.103
                 prefix-length: 24
             dhcp: false
             enabled: true
@@ -288,7 +288,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 11.11.11.119
+              - ip: 11.11.11.103
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -302,7 +302,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 12.12.12.119
+              - ip: 12.12.12.103
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -339,7 +339,7 @@ hosts:
             id: 10
           ipv4:
             address:
-              - ip: 10.10.10.120
+              - ip: 10.10.10.104
                 prefix-length: 24
             dhcp: false
             enabled: true
@@ -359,7 +359,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 11.11.11.120
+              - ip: 11.11.11.104
                 prefix-length: 24
             dhcp: false
           ipv6:
@@ -373,7 +373,7 @@ hosts:
           ipv4:
             enabled: true
             address:
-              - ip: 12.12.12.120
+              - ip: 12.12.12.104
                 prefix-length: 24
             dhcp: false
           ipv6:

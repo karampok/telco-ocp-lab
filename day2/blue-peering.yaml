@@ -1,0 +1,37 @@
+---
+apiVersion: metallb.io/v1beta2
+kind: BGPPeer
+metadata:
+  name: blue
+  namespace: metallb-system
+spec:
+  peerAddress: 10.10.10.1
+  peerASN: 65001
+  myASN: 7003
+  holdTime: 60s
+  enableGracefulRestart: true
+  nodeSelectors:
+    - matchLabels:
+        metallb-speaker: ""
+---
+apiVersion: metallb.io/v1beta1
+kind: BGPAdvertisement
+metadata:
+  name: blue
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - blue
+  peers:
+    - blue
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: blue
+  namespace: metallb-system
+spec:
+  autoAssign: false
+  addresses:
+    - 4.4.4.1/32
+    - 4.4.4.2/32

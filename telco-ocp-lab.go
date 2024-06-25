@@ -2,11 +2,9 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"io"
 	"io/fs"
 	"os"
-	"os/user"
 	"path/filepath"
 
 	"github.com/karampok/telco-ocp-lab/pkg"
@@ -19,17 +17,13 @@ var configFS embed.FS
 //go:embed infra/*
 var infraFS embed.FS
 
-//go:embed topo.clab.yml
+//go:embed topo.clab.yaml
 var cclab []byte
 
 //go:embed vbmh-kcli-plan.yaml
 var kplan []byte
 
 func main() {
-	if !isRoot() {
-		fmt.Println("clab needs root")
-		os.Exit(1)
-	}
 	d := demo.New()
 
 	d.Name = "telco-ocp-lab"
@@ -103,9 +97,9 @@ func getAllFilenames(efs *embed.FS) (files []string, err error) {
 			return nil
 		}
 
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			files = append(files, path)
-		}
+		//		if _, err := os.Stat(path); os.IsNotExist(err) {
+		files = append(files, path)
+		//		}
 
 		return nil
 	}); err != nil {
@@ -113,12 +107,4 @@ func getAllFilenames(efs *embed.FS) (files []string, err error) {
 	}
 
 	return files, nil
-}
-
-func isRoot() bool {
-	currentUser, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-	return currentUser.Username == "root"
 }

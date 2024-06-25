@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 set -euoE pipefail
 
-AI_URL=${1:-"10.10.10.116:8090"}
+AI_URL=${1:-"10.10.10.100:8090"}
 url="http://$AI_URL/api/assisted-install/v2/clusters/"
 until ret=$(curl -s -o /dev/null -w "%{http_code}" "$url"); do
   if [ "$ret" -eq 200 ]; then

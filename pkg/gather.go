@@ -1,6 +1,8 @@
 package pkg
 
-import . "github.com/saschagrunert/demo"
+import (
+	. "github.com/saschagrunert/demo"
+)
 
 var cleanup = []string{
 	"ip link delete sw1",
@@ -12,13 +14,16 @@ var cleanup = []string{
 }
 
 func SetupInfra() *Run {
+
 	r := NewRun("Setup Virtual Infra")
+	c := "[ $(id -u) -ne 0 ] && echo 'clab needs root' && exit 1 "
+	r.Step(S("Containerlab"), S(c))
 	r.Step(S("Build L2 fabric"), S(bridges))
 
 	r.Step(S("Enable bridges in libvirt"), nil)
 	r.Step(nil, S(cmd03))
 
-	c := "containerlab deploy"
+	c = "containerlab deploy"
 	r.Step(S("Containerlab"), S(c))
 	cleanup = append(cleanup, "containerlab destroy")
 	cleanup = append(cleanup, "rm -rf clab-vlab/")

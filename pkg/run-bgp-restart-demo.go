@@ -4,17 +4,22 @@ import (
 	. "github.com/saschagrunert/demo"
 )
 
+// var x = `
+// tmux setenv KUBECONFIG /home/kka/.kube/lab0.yaml
+// tmux setenv DOCKER_HOST tcp://10.1.104.10:2375
+// `
+
 func RunBGPGracefulRestart() *Run {
 	r := NewRun("Run BPG graceful restart demo")
 
-	c := `kubectl apply -f graceful/blue-peering.yaml
-	 kubectl apply -f graceful/green-peering.yaml
-	 kubectl apply -f graceful/red-peering.yaml`
+	c := `kubectl apply -f day2/blue-peering.yaml
+	 kubectl apply -f day2/green-peering.yaml
+	 kubectl apply -f day2/red-peering.yaml`
 	r.Step(S("Setup peering"), S(c))
 
-	d := `kubectl apply -f graceful/blue-pod-one.yaml
-	 kubectl apply -f graceful/green-pod-one.yaml
-	 kubectl apply -f graceful/red-pod-one.yaml`
+	d := `kubectl apply -f day2/blue-pod-one.yaml
+	 kubectl apply -f day2/green-pod-one.yaml
+	 kubectl apply -f day2/red-pod-one.yaml`
 	r.Step(S("Deploy workloads"), S(d))
 
 	c = `kubectl get pods -o wide; kubectl get svc`
@@ -59,10 +64,10 @@ tmux send-keys -t gateway.3 "kubectl set image daemonset/speaker frr=quay.io/frr
 func RunBGPGracefulRestartWithBFD() *Run {
 	r := NewRun("Run BPG graceful restart with BFD demo")
 
-	c := `kubectl apply -f graceful/red-peering.yaml`
+	c := `kubectl apply -f day2/red-peering.yaml`
 	r.Step(S("Setup peering"), S(c))
 
-	d := `kubectl apply -f graceful/red-pod-two.yaml`
+	d := `kubectl apply -f day2/red-pod-two.yaml`
 	r.Step(S("Deploy workloads"), S(d))
 
 	c = `tmux new-window -n clients
