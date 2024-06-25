@@ -17,6 +17,12 @@ var configFS embed.FS
 //go:embed infra/*
 var infraFS embed.FS
 
+//go:embed day1/*
+var day1FS embed.FS
+
+//go:embed day2/*
+var day2FS embed.FS
+
 //go:embed topo.clab.yaml
 var cclab []byte
 
@@ -83,7 +89,7 @@ func extractConfig() error {
 		}
 		return nil
 	}
-	for _, fs := range []*embed.FS{&configFS, &infraFS} {
+	for _, fs := range []*embed.FS{&configFS, &infraFS, &day1FS, &day2FS} {
 		if err := extractDir(fs); err != nil {
 			return err
 		}

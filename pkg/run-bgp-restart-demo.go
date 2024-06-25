@@ -13,13 +13,13 @@ func RunBGPGracefulRestart() *Run {
 	r := NewRun("Run BPG graceful restart demo")
 
 	c := `kubectl apply -f day2/blue-peering.yaml
-	 kubectl apply -f day2/green-peering.yaml
-	 kubectl apply -f day2/red-peering.yaml`
+kubectl apply -f day2/green-peering.yaml
+kubectl apply -f day2/red-peering.yaml`
 	r.Step(S("Setup peering"), S(c))
 
 	d := `kubectl apply -f day2/blue-pod-one.yaml
-	 kubectl apply -f day2/green-pod-one.yaml
-	 kubectl apply -f day2/red-pod-one.yaml`
+kubectl apply -f day2/green-pod-one.yaml
+kubectl apply -f day2/red-pod-one.yaml`
 	r.Step(S("Deploy workloads"), S(d))
 
 	c = `kubectl get pods -o wide; kubectl get svc`

@@ -96,7 +96,9 @@ topology:
         - sysctl -w "net.ipv4.ip_forward=1"
         - ip route add default via 10.10.20.254
       binds:
-        - infra/:/workdir
+        - infra/:/root/deploy
+        - day1/:/root/day1
+        - day2/:/root/day2
         - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
       ports:
         - 51820:51820/udp
