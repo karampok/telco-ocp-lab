@@ -15,23 +15,23 @@ topology:
       kind: bridge
     r01:
       kind: linux
-      image: quay.io/frrouting/frr:9.0.2
+      image: quay.io/frrouting/frr:9.1.1
       network-mode: none
       binds:
         - config/r01/daemons:/etc/frr/daemons
         - config/r01/frr.conf:/etc/frr/frr.conf
         - config/r01/vtysh.conf:/etc/frr/vtysh.conf
       exec:
-        - ip addr add 10.1.104.46/23 dev upstream
+        - ip addr add 10.1.104.46/23 dev upstream  # dig api.host
         - ip route add default via 10.1.105.254
         - iptables-nft -t nat -I POSTROUTING -o upstream -j MASQUERADE
-    sidecar-r01:
+    r01-sidecar:
       kind: linux
       network-mode: container:r01
       image: quay.io/karampok/snife:latest
     gw1:
       kind: linux
-      image: quay.io/frrouting/frr:9.0.2
+      image: quay.io/frrouting/frr:9.1.1
       network-mode: none
       binds:
         - config/gw1/daemons:/etc/frr/daemons
@@ -48,7 +48,7 @@ topology:
         - ip link set eth1.red master red
         - ip link set dev green up
         - ip link set dev red up
-    sidecar-gw1:
+    gw1-sidecar:
       kind: linux
       network-mode: container:gw1
       image: quay.io/karampok/snife:latest
@@ -96,7 +96,8 @@ topology:
         - ip route add default via 10.10.20.254
         - sysctl -w "net.ipv4.ip_forward=1"
       binds:
-        - infra/:/root/deploy
+        - deploy-ocp.sh:/root/deploy-ocp.sh
+        - mno-template/:/root/mno-template
         - day1/:/root/day1
         - day2/:/root/day2
         - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro

@@ -14,7 +14,7 @@ import (
 //go:embed config/*
 var configFS embed.FS
 
-//go:embed infra/*
+//go:embed mno-template/*
 var infraFS embed.FS
 
 //go:embed day1/*
@@ -28,6 +28,9 @@ var cclab []byte
 
 //go:embed vbmh-kcli-plan.yaml
 var kplan []byte
+
+//go:embed deploy-ocp.sh
+var deployOCP []byte
 
 func main() {
 	d := demo.New()
@@ -61,6 +64,13 @@ func extractConfig() error {
 	_, err = os.Stat(plan)
 	if os.IsNotExist(err) {
 		if err := os.WriteFile(plan, kplan, 0o644); err != nil {
+			return err
+		}
+	}
+	deploy := "deploy-ocp.sh"
+	_, err = os.Stat(deploy)
+	if os.IsNotExist(err) {
+		if err := os.WriteFile(plan, deployOCP, 0o644); err != nil {
 			return err
 		}
 	}
@@ -103,9 +113,9 @@ func getAllFilenames(efs *embed.FS) (files []string, err error) {
 			return nil
 		}
 
-		//		if _, err := os.Stat(path); os.IsNotExist(err) {
-		files = append(files, path)
-		//		}
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			files = append(files, path)
+		}
 
 		return nil
 	}); err != nil {
