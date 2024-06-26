@@ -70,7 +70,7 @@ func extractConfig() error {
 	deploy := "deploy-ocp.sh"
 	_, err = os.Stat(deploy)
 	if os.IsNotExist(err) {
-		if err := os.WriteFile(plan, deployOCP, 0o644); err != nil {
+		if err := os.WriteFile(deploy, deployOCP, 0o744); err != nil {
 			return err
 		}
 	}
