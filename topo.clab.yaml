@@ -93,13 +93,15 @@ topology:
         - ip addr add 10.1.104.28/23 dev vpn
         - ip route add 10.39.192.0/20 via 10.1.105.254
         - ip route add 10.10.10.0/24 via 10.10.20.1
-        - sysctl -w "net.ipv4.ip_forward=1"
         - ip route add default via 10.10.20.254
+        - sysctl -w "net.ipv4.ip_forward=1"
       binds:
         - infra/:/root/deploy
         - day1/:/root/day1
         - day2/:/root/day2
         - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
+        - /root/.pull-secret.json:/root/.pull-secret.json:ro
+        - /root/.wg-auth:/root/.wg-auth:ro
       ports:
         - 51820:51820/udp
       env:
