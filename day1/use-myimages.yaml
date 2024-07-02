@@ -1,0 +1,22 @@
+---
+apiVersion: config.openshift.io/v1
+kind: ImageDigestMirrorSet
+metadata:
+  name: replace-metallb-images
+spec:
+  imageDigestMirrors:
+  - mirrors:
+      - quay.io/karampok/controller
+    source: quay.io/metallb/controller
+    mirrorSourcePolicy: NeverContactSource
+---
+apiVersion: config.openshift.io/v1
+kind: ImageTagMirrorSet
+metadata:
+  name: replace-metallb-images-2
+spec:
+  imageTagMirrors:
+  - mirrors:
+      - quay.io/karampok/controller
+    source: quay.io/metallb/controller
+    mirrorSourcePolicy: NeverContactSource

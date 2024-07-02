@@ -238,7 +238,7 @@ hosts:
             enabled: false
       dns-resolver: *dns
       routes: *routes
-  - hostname: w0
+  - hostname: w1
     role: worker
     rootDeviceHints:
       deviceName: "/dev/vda"
@@ -309,7 +309,7 @@ hosts:
             enabled: false
       dns-resolver: *dns
       routes: *routes
-  - hostname: w1
+  - hostname: w0
     role: worker
     rootDeviceHints:
       deviceName: "/dev/vda"

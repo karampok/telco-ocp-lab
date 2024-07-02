@@ -19,8 +19,11 @@ spec:
   peerASN: 8012
   myASN: 7003
   holdTime: 60s
-  enableGracefulRestart: true
+  enableGracefulRestart: false
   bfdProfile: red
+  nodeSelectors:
+    - matchLabels:
+        node-role.kubernetes.io/worker: ""
 ---
 apiVersion: metallb.io/v1beta1
 kind: BGPAdvertisement

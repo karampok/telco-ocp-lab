@@ -60,41 +60,41 @@ spec:
       targetPort: 8080
   selector:
     app: red-two
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    metallb.universe.tf/address-pool: red
-    metallb.universe.tf/allow-shared-ip: "key-to-share-red-two"
-  name: red-two-svc-iperf-tcp
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
-  allocateLoadBalancerNodePorts: false
-  ports:
-    - name: tcp
-      port: 60000
-      protocol: TCP
-      targetPort: 60000
-  selector:
-    app: red-two
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    metallb.universe.tf/address-pool: red
-    metallb.universe.tf/allow-shared-ip: "key-to-share-red-two"
-  name: red-two-svc-iperf-udp
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
-  allocateLoadBalancerNodePorts: false
-  ports:
-    - name: udp
-      port: 60000
-      protocol: UDP
-      targetPort: 60000
-  selector:
-    app: red-two
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     metallb.universe.tf/address-pool: red
+#     metallb.universe.tf/allow-shared-ip: "key-to-share-red-two"
+#   name: red-two-svc-iperf-tcp
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Cluster
+#   allocateLoadBalancerNodePorts: false
+#   ports:
+#     - name: tcp
+#       port: 60000
+#       protocol: TCP
+#       targetPort: 60000
+#   selector:
+#     app: red-two
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     metallb.universe.tf/address-pool: red
+#     metallb.universe.tf/allow-shared-ip: "key-to-share-red-two"
+#   name: red-two-svc-iperf-udp
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Cluster
+#   allocateLoadBalancerNodePorts: false
+#   ports:
+#     - name: udp
+#       port: 60000
+#       protocol: UDP
+#       targetPort: 60000
+#   selector:
+#     app: red-two
