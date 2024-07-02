@@ -13,6 +13,8 @@ spec:
       labels:
         app: red
     spec:
+      # nodeSelector:
+      #   kubernetes.io/hostname: "w0"
       containers:
         - name: agnhost
           image: quay.io/karampok/snife:latest
@@ -51,7 +53,7 @@ metadata:
   name: red-svc-http
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   allocateLoadBalancerNodePorts: false
   ports:
     - name: http
@@ -60,45 +62,45 @@ spec:
       targetPort: 8080
   selector:
     app: red
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    metallb.universe.tf/address-pool: red
-    metallb.universe.tf/allow-shared-ip: "key-to-share-red"
-  name: red-svc-iperf-tcp
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
-  allocateLoadBalancerNodePorts: false
-  ports:
-    - name: tcp
-      port: 60000
-      protocol: TCP
-      targetPort: 60000
-  selector:
-    app: red
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    metallb.universe.tf/address-pool: red
-    metallb.universe.tf/allow-shared-ip: "key-to-share-red"
-  name: red-svc-iperf-udp
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
-  allocateLoadBalancerNodePorts: false
-  ports:
-    - name: udp
-      port: 60000
-      protocol: UDP
-      targetPort: 60000
-  selector:
-    app: red
-
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     metallb.universe.tf/address-pool: red
+#     metallb.universe.tf/allow-shared-ip: "key-to-share-red"
+#   name: red-svc-iperf-tcp
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Cluster
+#   allocateLoadBalancerNodePorts: false
+#   ports:
+#     - name: tcp
+#       port: 60000
+#       protocol: TCP
+#       targetPort: 60000
+#   selector:
+#     app: red
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     metallb.universe.tf/address-pool: red
+#     metallb.universe.tf/allow-shared-ip: "key-to-share-red"
+#   name: red-svc-iperf-udp
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Cluster
+#   allocateLoadBalancerNodePorts: false
+#   ports:
+#     - name: udp
+#       port: 60000
+#       protocol: UDP
+#       targetPort: 60000
+#   selector:
+#     app: red
+#
 # show bgp vrf red ipv4 summary
 # from red
 # alias urlencode="python3 -c \"import sys, urllib.parse; print(urllib.parse.quote(''.join(sys.stdin.readlines())))\""

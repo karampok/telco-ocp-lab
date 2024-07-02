@@ -42,7 +42,6 @@ func main() {
 	d.Add(pkg.Clean(), "clean", "clean system")
 	d.Add(pkg.RunIPForwardingDemo(), "ipforwarding", "reproduce ipforwarding demo")
 	d.Add(pkg.RunBGPGracefulRestart(), "BGP-GR", "demo BGP w,w/o GR (Graceful restart)")
-	d.Add(pkg.RunBGPGracefulRestartWithBFD(), "BGP-GR-BFD", "demo BGP w,w/o GR (Graceful restart), BFD")
 
 	if err := extractConfig(); err != nil {
 		os.Exit(1)

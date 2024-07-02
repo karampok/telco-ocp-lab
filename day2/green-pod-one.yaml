@@ -13,6 +13,8 @@ spec:
       labels:
         app: green
     spec:
+      # nodeSelector:
+      #   kubernetes.io/hostname: "w0"
       containers:
         - name: agnhost
           image: quay.io/karampok/snife:latest
@@ -51,7 +53,7 @@ metadata:
   name: green-svc-http
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   allocateLoadBalancerNodePorts: false
   ports:
     - name: http
@@ -70,7 +72,7 @@ metadata:
   name: green-svc-iperf-tcp
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: Cluster
   allocateLoadBalancerNodePorts: false
   ports:
     - name: tcp
@@ -79,26 +81,26 @@ spec:
       targetPort: 60000
   selector:
     app: green
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    metallb.universe.tf/address-pool: green
-    metallb.universe.tf/allow-shared-ip: "key-to-share"
-  name: green-svc-iperf-udp
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
-  allocateLoadBalancerNodePorts: false
-  ports:
-    - name: udp
-      port: 60000
-      protocol: UDP
-      targetPort: 60000
-  selector:
-    app: green
-
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     metallb.universe.tf/address-pool: green
+#     metallb.universe.tf/allow-shared-ip: "key-to-share"
+#   name: green-svc-iperf-udp
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Cluster
+#   allocateLoadBalancerNodePorts: false
+#   ports:
+#     - name: udp
+#       port: 60000
+#       protocol: UDP
+#       targetPort: 60000
+#   selector:
+#     app: green
+#
 # show bgp vrf green ipv4 summary
 # from green
 # alias urlencode="python3 -c \"import sys, urllib.parse; print(urllib.parse.quote(''.join(sys.stdin.readlines())))\""
