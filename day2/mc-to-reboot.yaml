@@ -1,0 +1,23 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: just-to-reboot
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    systemd:
+      units:
+      - contents: |
+          [Unit]
+          After=network.target
+          [Service]
+          Type=oneshot
+          ExecStart=/usr/sbin/ip link add dummy0 type dummy
+          [Install]
+          WantedBy=multi-user.target
+        enabled: true
+        name: one-shot-forward-drop.service

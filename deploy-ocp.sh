@@ -3,7 +3,7 @@ set -euoE pipefail
 
 PULL_SECRET=${PULL_SECRET:-/root/.pull-secret.json}
 
-OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.16.0-rc.9-x86_64"}
+OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.16.1-x86_64"}
 oc adm release extract --registry-config "${PULL_SECRET}" \
   --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
 openshift-install version
@@ -16,7 +16,7 @@ sed -i "s/PULLSECRET/$(jq '.' -c "$PULL_SECRET")/g" "${folder}"/install-config.y
 
 openshift-install agent create image --log-level info --dir "${folder}"
 
-source "${folder}"/sushy.sh
+source "${folder}"/redfish-actions/sushy.sh
 while IFS= read -r node; do
   power_off "$node"
   media_eject "$node"
