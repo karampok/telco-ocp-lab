@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: green
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: green
@@ -49,8 +49,8 @@ kind: Service
 metadata:
   annotations:
     metallb.universe.tf/address-pool: green
-    metallb.universe.tf/allow-shared-ip: "key-to-share"
-  name: green-svc-http
+    metallb.universe.tf/loadBalancerIPs: 5.5.5.1
+  name: green-svc-http-cluster
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Cluster
@@ -68,19 +68,38 @@ kind: Service
 metadata:
   annotations:
     metallb.universe.tf/address-pool: green
-    metallb.universe.tf/allow-shared-ip: "key-to-share"
-  name: green-svc-iperf-tcp
+    metallb.universe.tf/loadBalancerIPs: 5.5.5.2
+    #metallb.universe.tf/allow-shared-ip: "key-to-share"
+  name: green-svc-http-local
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Cluster
+  externalTrafficPolicy: Local
   allocateLoadBalancerNodePorts: false
   ports:
-    - name: tcp
-      port: 60000
+    - name: http
+      port: 5555
       protocol: TCP
-      targetPort: 60000
+      targetPort: 8080
   selector:
     app: green
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   annotations:
+#     metallb.universe.tf/address-pool: green
+#     metallb.universe.tf/allow-shared-ip: "key-to-share"
+#   name: green-svc-iperf-tcp
+# spec:
+#   type: LoadBalancer
+#   externalTrafficPolicy: Cluster
+#   allocateLoadBalancerNodePorts: false
+#   ports:
+#     - name: tcp
+#       port: 60000
+#       protocol: TCP
+#       targetPort: 60000
+#   selector:
+#     app: green
 # ---
 # apiVersion: v1
 # kind: Service

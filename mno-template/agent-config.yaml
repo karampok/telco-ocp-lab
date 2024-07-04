@@ -238,15 +238,15 @@ hosts:
             enabled: false
       dns-resolver: *dns
       routes: *routes
-  - hostname: w1
+  - hostname: w0
     role: worker
     rootDeviceHints:
       deviceName: "/dev/vda"
     interfaces:
       - name: ens3
-        macAddress: de:ad:be:ff:11:90
+        macAddress: de:ad:be:ff:11:85
       - name: ens4
-        macAddress: de:ad:be:ff:11:91
+        macAddress: de:ad:be:ff:11:86
     networkConfig:
       interfaces:
         - name: bond0
@@ -309,15 +309,15 @@ hosts:
             enabled: false
       dns-resolver: *dns
       routes: *routes
-  - hostname: w0
+  - hostname: w1
     role: worker
     rootDeviceHints:
       deviceName: "/dev/vda"
     interfaces:
       - name: ens3
-        macAddress: de:ad:be:ff:11:85
+        macAddress: de:ad:be:ff:11:90
       - name: ens4
-        macAddress: de:ad:be:ff:11:86
+        macAddress: de:ad:be:ff:11:91
     networkConfig:
       interfaces:
         - name: bond0

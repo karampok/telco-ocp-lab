@@ -48,6 +48,7 @@ topology:
         - ip link set eth1.red master red
         - ip link set dev green up
         - ip link set dev red up
+        #     - echo 1 > /proc/sys/net/ipv4/fib_multipath_hash_policy
     gw1-sidecar:
       kind: linux
       network-mode: container:gw1
