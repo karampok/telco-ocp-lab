@@ -13,6 +13,16 @@ spec:
       labels:
         app: red
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - red
+              topologyKey: "kubernetes.io/hostname"
       # nodeSelector:
       #   kubernetes.io/hostname: "w0"
       containers:

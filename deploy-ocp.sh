@@ -3,7 +3,7 @@ set -euoE pipefail
 
 PULL_SECRET=${PULL_SECRET:-/root/.pull-secret.json}
 
-OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.16.1-x86_64"}
+OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.17.1-x86_64"}
 oc adm release extract --registry-config "${PULL_SECRET}" \
   --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
 openshift-install version
