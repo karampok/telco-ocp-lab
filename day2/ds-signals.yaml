@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: signals
+  labels:
+      app: signals
+spec:
+  selector:
+    matchLabels:
+      app: signals
+  template:
+    metadata:
+      labels:
+        app: signals
+    spec:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: signals
+          image: quay.io/karampok/snife:latest
+          command: ["/bin/bash", "-c", "trap 'echo Received signal: HUP' HUP; \
+                                  trap 'echo Received signal: INT' INT; \
+                                  trap 'echo Received signal: QUIT' QUIT; \
+                                  trap 'echo Received signal: ILL' ILL; \
+                                  trap 'echo Received signal: ABRT' ABRT; \
+                                  trap 'echo Received signal: FPE' FPE; \
+                                  trap 'echo Received signal: KILL' KILL; \
+                                  trap 'echo Received signal: SEGV' SEGV; \
+                                  trap 'echo Received signal: PIPE' PIPE; \
+                                  trap 'echo Received signal: ALRM' ALRM; \
+                                  trap 'echo Received signal: TERM; cat /usr/share/message' TERM; \
+                                  trap 'echo Received signal: USR1' USR1; \
+                                  trap 'echo Received signal: USR2' USR2; \
+                                  trap 'echo Received signal: CONT' CONT; \
+                                  trap 'echo Received signal: STOP' STOP; \
+                                  trap 'echo Received signal: TSTP' TSTP; \
+                                  trap 'echo Received signal: TTIN' TTIN; \
+                                  trap 'echo Received signal: TTOU' TTOU; \
+                                  echo 'Script started. Waiting for signals...'; \
+                                  while true; do sleep 1; done"]
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "echo postStart >> /usr/share/message"]
+            preStop:
+              exec:
+                command: ["/bin/sh","-c","env >> /usr/share/message"]
