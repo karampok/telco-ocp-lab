@@ -1,0 +1,114 @@
+---
+run-name: clab-ocp-${{ github.ref_name }}-${{ github.event_name }}
+name: clab-ocp
+on:  # yamllint disable-line rule:truthy
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  stage0:
+    name: Setup HV
+    runs-on: [green]
+    outputs:
+      RUNNER: ${{ runner.name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clean Virtual Infra
+        run: |
+          ./telco-ocp-lab --clean --dry-run=false -a -auto-timeout 0s --continue-on-error
+      - name: Setup Virtual Infra - ${{ runner.name }}
+        run: |
+          echo '${{ secrets.PULL_SECRET }}' > .pull-secret.json
+          echo '${{ secrets.WG_AUTH }}' > .wg-auth
+          echo "${{ secrets.CI_SSH_KEY }}" > .id_rsa && chmod 600 .id_rsa
+          ./telco-ocp-lab --setup --dry-run=false -a -auto-timeout 0s
+      - name: Reserve Runner
+        run: |
+          docker exec clab-vlab-infra bash -ce '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} -green +taken -ready
+          '
+  stage1:
+    name: Deploy MNO - ${{needs.stage0.outputs.RUNNER}}
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0]
+    if: needs.stage0.result == 'success'
+    steps:
+      - name: Deploy MNO using agent-based
+        timeout-minutes: 120
+        run: |
+          docker exec clab-vlab-infra bash -ce '
+            ./deploy-ocp.sh
+            oc get clusterversion && oc get co
+          '
+          echo "wget http://10.0.0.1:9000/mno/auth/kubeconfig -O ~/.kube/${{ runner.name }}.yaml"
+          echo "curl -s http://10.0.0.1:9000/mno/auth/kubeadmin-\password | xsel --input --clipboard"
+      - name: Patch Cluster CRs
+        timeout-minutes: 10
+        run: |
+          docker exec clab-vlab-infra bash -ce '
+            oc patch network.operator cluster --type=merge --patch-file day1/network-operator-patch.yaml
+            oc patch OperatorHub cluster --type merge --patch-file day1/operatorhub-patch.yaml
+            oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
+            sleep 30
+            oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
+          '
+  stage2:
+    name: Deploy Metallb
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1]
+    if: needs.stage1.result == 'success'
+    timeout-minutes: 20
+    steps:
+      - name: Install Metallb/Sriov
+        timeout-minutes: 10
+        run: |
+          docker exec clab-vlab-infra bash -ce '
+            # oc apply -f mno-template/day1/99-metallb-operator.yaml
+            # until oc get metallb 2>/dev/null; do sleep 30; done
+            # sleep 30
+            # oc -n metallb-system wait deploy metallb-operator-webhook-server --for=condition=available
+            # sleep 30
+            # oc apply -k mno-template/day1/
+          '
+  stage3:
+    name: Test Metallb
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage2]
+    if: needs.stage2.result == 'success'
+    steps:
+      - name: SmokeTest Metallb setup
+        run: |
+          docker exec clab-vlab-infra bash -ce '
+          #   oc apply -f dayX/green-net.yaml
+          #   oc wait --for=condition=ready pod -l app=green --timeout=320s
+          '
+          # docker exec green bash -cex '
+          #   echo "from green client to access the service in green segment (static routes)"
+          #   curl --retry 5 -s http://5.5.5.1:5555/hostname -w " #local"
+          #   # curl --retry 5 -s http://5.5.5.2/hostname -w " #cluster"
+          # '
+  on-success:
+    name: On Success
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage3]
+    if: ${{ success() }}
+    steps:
+      - name: Readd Label
+        run: |
+          docker exec clab-vlab-infra bash -c '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +ready -taken
+          '
+  on-fail:
+    name: On Failure
+    runs-on: ${{needs.stage0.outputs.RUNNER}}
+    needs: [stage0, stage1, stage3]
+    if: ${{ failure() }}
+    steps:
+      - name: Readd Label
+        run: |
+          docker exec clab-vlab-infra bash -c '
+            GITHUB_TOKEN='${{ secrets.GH_TOKEN }}' ./bin/label-runner.sh ${{ runner.name }} +green -taken
+          '

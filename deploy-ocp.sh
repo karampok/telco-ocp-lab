@@ -36,4 +36,5 @@ oc patch OperatorHub cluster --type merge --patch-file day1/operatorhub-patch.ya
 oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
 # twice to remove any topologySpreadConstraints: []
 oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
+oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
 EOF
