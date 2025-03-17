@@ -48,15 +48,21 @@ topology:
         - ip link set eth1.red master red
         - ip link set dev green up
         - ip link set dev red up
+        - ip link set eth2 master green
+        - ip add add 200.200.200.1/24 dev eth2
+        - ip link set dev eth2 up
         #     - echo 1 > /proc/sys/net/ipv4/fib_multipath_hash_policy
-    gw1-sidecar:
+    green-client:
       kind: linux
-      network-mode: container:gw1
       image: quay.io/karampok/snife:latest
-      startup-delay: 10
+      network-mode: none
+      dns:
+        servers:
+          - 10.10.20.10
       exec:
-        - |
-           echo "while true;do curl -sf http://6.6.6.1:5555/hostname --connect-timeout 1  -o /dev/null || date +%s.%3N ;done" > run
+        - ip addr add 200.200.200.10/24 dev eth0
+        - ip route add default via 200.200.200.1
+        - ip addr add 10.10.20.155/24 dev eth155
     dns:
       kind: linux
       image: quay.io/openshift/origin-coredns:latest
@@ -119,3 +125,5 @@ topology:
     - endpoints: ["sushy:eth1", "bmc:sushy"]
     - endpoints: ["gw1:eth0", "ixp-net:ixp-port1"]
     - endpoints: ["gw1:eth1", "sw1:sw1-port1"]
+    - endpoints: ["gw1:eth2", "green-client:eth0"]
+    - endpoints: ["ixp-net:ixp-port155", "green-client:eth155"]

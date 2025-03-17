@@ -3,12 +3,12 @@ set -euoE pipefail
 
 PULL_SECRET=${PULL_SECRET:-/root/.pull-secret.json}
 
-OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.17.0-rc.6-x86_64"}
+OCP_RELEASE=${1:-"quay.io/openshift-release-dev/ocp-release:4.18.5-x86_64"}
 oc adm release extract --registry-config "${PULL_SECRET}" \
   --command=openshift-install --to "/usr/local/bin/" "$OCP_RELEASE"
 openshift-install version
 
-name=${1:-mno}  #mno,sno,5gc
+name=${1:-mno} #mno,sno,5gc
 folder=${folder:-"/share/${name}"}
 cp -r "${name}"-template "${folder}"
 
@@ -23,12 +23,12 @@ while IFS= read -r node; do
   media_insert "$node" "${HTTP_SERVER:-http://192.168.100.200:9000}"/"${name}"/agent.x86_64.iso
   boot_once "$node"
   power_on "$node"
-done < "${folder}/bmc-hosts"
+done <"${folder}/bmc-hosts"
 
 mkdir -p ~/.kube && cp "${folder}"/auth/kubeconfig ~/.kube/config
 openshift-install agent wait-for install-complete --log-level info --dir /share/${name}
 
-cat << EOF
+cat <<EOF
 oc patch network.operator cluster -p '{"spec":{"defaultNetwork":{"ovnKubernetesConfig":{"gatewayConfig":{"routingViaHost": true}}}}}' --type=merge
 oc patch network.operator cluster --type=merge --patch-file day1/network-operator-patch.yaml
 oc patch OperatorHub cluster --type merge --patch-file day1/operatorhub-patch.yaml
@@ -38,4 +38,5 @@ oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-regi
 # twice to remove any topologySpreadConstraints: []
 oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
 oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+oc patch Scheduler cluster --type=merge --patch '{ "spec": { "mastersSchedulable": true } }'
 EOF
