@@ -1,14 +1,4 @@
 ---
-apiVersion: metallb.io/v1beta1
-kind: BFDProfile
-metadata:
-  name: green
-  namespace: metallb-system
-spec:
-  detectMultiplier: 3
-  echoMode: false
-  passiveMode: false
----
 apiVersion: metallb.io/v1beta2
 kind: BGPPeer
 metadata:
@@ -20,7 +10,6 @@ spec:
   myASN: 7003
   holdTime: 60s
   enableGracefulRestart: true
-  bfdProfile: green
   nodeSelectors:
     - matchLabels:
         node-role.kubernetes.io/worker: ""
@@ -46,3 +35,55 @@ spec:
   addresses:
     - 5.5.5.1/32
     - 5.5.5.2/32
+    - 2001:db8:0:0:0:0:5:1/128
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blueZZ
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blueZZ
+  template:
+    metadata:
+      labels:
+        app: blueZZ
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: "w0"
+      containers:
+        - name: server
+          image: registry.k8s.io/e2e-test-images/agnhost:2.40
+          command:
+            - /agnhost
+            - netexec
+            - --http-port=8080
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/address-pool: blueZZ
+  name: blueZZ-local-ipv6
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
+  ipFamilyPolicy: PreferDualStack
+  allocateLoadBalancerNodePorts: false
+  ports:
+    - name: http
+      port: 5555
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: green6

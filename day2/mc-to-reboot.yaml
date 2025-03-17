@@ -1,3 +1,28 @@
+# ---
+# apiVersion: machineconfiguration.openshift.io/v1
+# kind: MachineConfigPool
+# metadata:
+#   name: w0-pool
+# spec:
+#   machineConfigSelector:
+#     matchLabels:
+#       custom-w0: w0-config
+#       machineconfiguration.openshift.io/role: worker
+#   nodeSelector:
+#     matchLabels:
+#       kubernetes.io/hostname: w0
+# ---
+# apiVersion: machineconfiguration.openshift.io/v1
+# kind: KubeletConfig
+# metadata:
+#   name: set-shutdown-graceperiod
+# spec:
+#   machineConfigPoolSelector:
+#     matchLabels:
+#       pools.operator.machineconfiguration.openshift.io/worker: ""
+#   kubeletConfig:
+#     shutdownGracePeriod: "30m"
+#     shutdownGracePeriodCriticalPods: "10m"
 ---
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
@@ -11,13 +36,13 @@ spec:
       version: 3.2.0
     systemd:
       units:
-      - contents: |
-          [Unit]
-          After=network.target
-          [Service]
-          Type=oneshot
-          ExecStart=/usr/sbin/ip link add dummy0 type dummy
-          [Install]
-          WantedBy=multi-user.target
-        enabled: true
-        name: one-shot-forward-drop.service
+        - contents: |
+            [Unit]
+            After=network.target
+            [Service]
+            Type=oneshot
+            ExecStart=/usr/sbin/ip link add dummy0 type dummy
+            [Install]
+            WantedBy=multi-user.target
+          enabled: true
+          name: one-shot-reboot-a.service

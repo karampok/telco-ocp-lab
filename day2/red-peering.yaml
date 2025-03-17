@@ -1,14 +1,4 @@
 ---
-apiVersion: metallb.io/v1beta1
-kind: BFDProfile
-metadata:
-  name: red
-  namespace: metallb-system
-spec:
-  detectMultiplier: 3
-  echoMode: false
-  passiveMode: false
----
 apiVersion: metallb.io/v1beta2
 kind: BGPPeer
 metadata:
@@ -20,7 +10,6 @@ spec:
   myASN: 7003
   holdTime: 60s
   enableGracefulRestart: false
-  bfdProfile: red
   nodeSelectors:
     - matchLabels:
         node-role.kubernetes.io/worker: ""

@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: green
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: green
@@ -23,8 +23,8 @@ spec:
                     values:
                       - green
               topologyKey: "kubernetes.io/hostname"
-      # nodeSelector:
-      #   kubernetes.io/hostname: "w0"
+      nodeSelector:
+        kubernetes.io/hostname: w0
       containers:
         - name: agnhost
           image: quay.io/karampok/snife:latest
