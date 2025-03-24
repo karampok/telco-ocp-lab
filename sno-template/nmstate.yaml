@@ -1,0 +1,58 @@
+hostname:
+  running: ibi
+  config: ""
+dns-resolver:
+  running:
+    server:
+      - 192.168.127.1
+    search:
+      - ibo1.redhat.com
+  config: {}
+route-rules:
+  config: []
+routes:
+  running:
+    - destination: 0.0.0.0/0
+      next-hop-interface: enp1s0
+      next-hop-address: 192.168.127.1
+      metric: 100
+      table-id: 254
+  config: []
+interfaces:
+  - name: enp1s0
+    type: ethernet
+    profile-name: Wired connection 1
+    driver: virtio_net
+    state: up
+    identifier: name
+    mac-address: FA:BA:DA:1B:11:B1
+    mtu: 1500
+    min-mtu: 68
+    max-mtu: 65535
+    wait-ip: any
+    ipv4:
+      enabled: true
+      dhcp: true
+      address:
+        - ip: 192.168.127.74
+          prefix-length: 24
+          valid-life-time: 3298sec
+          preferred-life-time: 3298sec
+      auto-dns: true
+      auto-gateway: true
+      auto-routes: true
+      auto-route-table-id: 0
+      dhcp-send-hostname: true
+    ipv6:
+      enabled: true
+      dhcp: true
+      autoconf: true
+      address:
+        - ip: fe80::5a46:5dca:e804:4c73
+          prefix-length: 64
+      auto-dns: true
+      auto-gateway: true
+      auto-routes: true
+      auto-route-table-id: 0
+      addr-gen-mode: stable-privacy
+      dhcp-send-hostname: true

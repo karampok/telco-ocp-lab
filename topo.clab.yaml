@@ -3,7 +3,7 @@ name: vlab
 mgmt:
   network: mgmtnet
   ipv4-subnet: 172.100.100.0/24
-  ipv6-subnet: ''
+  ipv6-subnet: ""
 
 topology:
   nodes:
@@ -22,12 +22,16 @@ topology:
         - config/r01/frr.conf:/etc/frr/frr.conf
         - config/r01/vtysh.conf:/etc/frr/vtysh.conf
       exec:
-        - ip addr add 10.1.104.46/23 dev upstream  # dig api.host
-        - ip route add default via 10.1.105.254
+        - ip addr add 10.1.104.44/23 dev upstream # dig api.host
+        - ip route add default via 10.1.105.254 # TODO per lab
         - iptables-nft -t nat -I POSTROUTING -o upstream -j MASQUERADE
     r01-sidecar:
       kind: linux
       network-mode: container:r01
+      image: quay.io/karampok/snife:latest
+    gw1-sidecar:
+      kind: linux
+      network-mode: container:gw1
       image: quay.io/karampok/snife:latest
     gw1:
       kind: linux
@@ -39,7 +43,8 @@ topology:
         - config/gw1/vtysh.conf:/etc/frr/vtysh.conf
       exec:
         - ip link set dev eth1 address aa:aa:aa:aa:aa:00
-        - ip link add link eth1 name eth1.blue type vlan id 10
+        - ip add add 10.10.10.1/24 dev eth1
+        #- ip link add link eth1 name eth1.blue type vlan id 10
         - ip link add link eth1 name eth1.green type vlan id 11
         - ip link add link eth1 name eth1.red type vlan id 12
         - ip link add green type vrf table 110
@@ -84,7 +89,18 @@ topology:
         - config/sushy/:/etc/sushy
         - /var/run/libvirt:/var/run/libvirt:rw
       cmd: /usr/local/bin/sushy-emulator --config /etc/sushy/emulator.conf --debug
-
+    dhcpv4:
+      kind: linux
+      image: quay.io/karampok/tools:dnsmasq
+      network-mode: none
+      binds:
+        - config/dhcpv4:/opt/dnsmasq
+      exec:
+        #- ip link add link eth0 name eth0.10 type vlan id 10
+        - ip addr add 10.10.10.10/24 dev eth0
+        - ip link set dev eth0 up
+        - ip route add default via 10.10.10.1
+      entrypoint: dnsmasq -d
     infra:
       kind: linux
       image: quay.io/karampok/infra:latest
@@ -97,7 +113,7 @@ topology:
       exec:
         - ip addr add 10.10.20.200/24 dev eth1
         - ip addr add 192.168.100.200/24 dev bmc
-        - ip addr add 10.1.104.28/23 dev vpn
+        - ip addr add 10.1.104.26/23 dev vpn # publicIP
         - ip route add 10.39.192.0/20 via 10.1.105.254
         - ip route add 10.10.10.0/24 via 10.10.20.1
         - ip route add default via 10.10.20.254
@@ -105,25 +121,27 @@ topology:
       binds:
         - deploy-ocp.sh:/root/deploy-ocp.sh
         - mno-template/:/root/mno-template
+        - sno-template/:/root/sno-template
         - day1/:/root/day1
         - day2/:/root/day2
         - /root/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
         - /root/.pull-secret.json:/root/.pull-secret.json:ro
-        - /root/.wg-auth:/root/.wg-auth:ro
+        - /root/.wg-auth:/root/.wg-auth:rw
       ports:
         - 51820:51820/udp
       env:
-        PUBLICIP: 10.1.104.28 # dig +short api.y.telco5g.eng.y.z.com
+        PUBLICIP: 10.1.104.26 # dig +short api.y.telco5g.eng.y.z.com
 
   links:
     - endpoints: ["r01:eth1", "ixp-net:ixp-port0"]
-    - endpoints: ["r01:upstream", "macvlan:eno12399"]
+    - endpoints: ["r01:upstream", "macvlan:eno12399np0"]
+    - endpoints: ["infra:vpn", "macvlan:eno12399np0"] #ip --json route get 8.8.8.8 |jq -r .[0].dev
     - endpoints: ["dns:eth1", "ixp-net:ixp-port10"]
     - endpoints: ["infra:eth1", "ixp-net:ixp-port200"]
     - endpoints: ["infra:bmc", "bmc:infra"]
-    - endpoints: ["infra:vpn", "macvlan:eno12399"] #ip --json route get 8.8.8.8 |jq -r .[0].dev
     - endpoints: ["sushy:eth1", "bmc:sushy"]
     - endpoints: ["gw1:eth0", "ixp-net:ixp-port1"]
     - endpoints: ["gw1:eth1", "sw1:sw1-port1"]
+    - endpoints: ["dhcpv4:eth0", "sw1:sw1-port2"]
     - endpoints: ["gw1:eth2", "green-client:eth0"]
     - endpoints: ["ixp-net:ixp-port155", "green-client:eth155"]
