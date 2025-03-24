@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+baseDomain: telco.vlab
+# proxy:
+#  httpProxy: http://10.10.20.10:3128
+#  httpsProxy: http://10.10.20.10:3128
+#  noProxy: .eric.vlab,10.10.20.10/24,192.168.100.0/24
+compute:
+  - architecture: amd64
+    hyperthreading: Enabled
+    name: worker
+    replicas: 0
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: 1
+metadata:
+  name: sno
+networking:
+  networkType: OVNKubernetes
+  clusterNetwork:
+    - cidr: 10.128.0.0/14
+      hostPrefix: 23
+  machineNetwork:
+    - cidr: 10.10.10.0/24
+  serviceNetwork:
+    - 172.30.0.0/16
+platform:
+  none: {}
+pullSecret: 'PULLSECRET'
+sshKey: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICGjoGIRGSfiJ8Tv+Qd6S36xuGmeIuFL8w75shdhxy5l ci@only.com'

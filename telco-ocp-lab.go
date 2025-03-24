@@ -15,7 +15,10 @@ import (
 var configFS embed.FS
 
 //go:embed mno-template/*
-var infraFS embed.FS
+var infraFSMNO embed.FS
+
+//go:embed sno-template/*
+var infraFSSNO embed.FS
 
 //go:embed day1/*
 var day1FS embed.FS
@@ -98,7 +101,7 @@ func extractConfig() error {
 		}
 		return nil
 	}
-	for _, fs := range []*embed.FS{&configFS, &infraFS, &day1FS, &day2FS} {
+	for _, fs := range []*embed.FS{&configFS, &infraFSMNO, &infraFSSNO, &day1FS, &day2FS} {
 		if err := extractDir(fs); err != nil {
 			return err
 		}
