@@ -1,3 +1,4 @@
+---
 apiVersion: v1beta1
 kind: ImageBasedConfig
 metadata:
@@ -12,21 +13,10 @@ networkConfig:
       state: up
       mac-address: AA:BB:CC:DD:EE:01
       ipv4:
-        address:
-          - ip: 10.10.10.100
-            prefix-length: 24
-        dhcp: false
         enabled: true
+        address:
+          #   - ip: 10.10.10.225
+          #   prefix-length: 24
+        dhcp: true
       ipv6:
         enabled: false
-  routes:
-    config:
-      - destination: 0.0.0.0/0
-        next-hop-address: 10.10.10.1
-        next-hop-interface: enp1s0
-        metric: 100
-        table-id: 254
-  dns-resolver:
-    config:
-      server:
-        - 10.10.20.10

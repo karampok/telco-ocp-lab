@@ -7,49 +7,19 @@ seedImage: quay.io/openshift-kni/image-based-seeds:4.18
 seedVersion: 4.18.6
 installationDisk: "/dev/vda"
 extraPartitionLabel: var-lib-containers
-pullSecret: 'PULLSECRET'
+pullSecret: "PULLSECRET"
 sshKey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICGjoGIRGSfiJ8Tv+Qd6S36xuGmeIuFL8w75shdhxy5l ci@only.com"
 networkConfig:
   interfaces:
-    - name: bond0
-      type: bond
+    - name: enp1s0
+      type: ethernet
       state: up
-      mtu: 1500
-      link-aggregation:
-        mode: active-backup
-        options:
-          miimon: 100
-          primary: ens3
-        port:
-          - ens3
-          - ens4
-    - name: bond0.10
-      type: vlan
-      state: up
-      vlan:
-        base-iface: bond0
-        id: 10
+      mac-address: AA:BB:CC:DD:EE:01
       ipv4:
-        address:
-          - ip: 10.10.10.100
-            prefix-length: 24
-        dhcp: false
         enabled: true
-      ipv6:
-        enabled: true
-        autoconf: true
+        # address:
+        #   - ip: 10.10.10.225
+        #     prefix-length: 24
         dhcp: true
-        auto-dns: false
-        auto-gateway: true
-        auto-routes: true
-  routes:
-    config:
-      - destination: 0.0.0.0/0
-        next-hop-address: 10.10.10.1
-        metric: 100
-        next-hop-interface: bond0.10
-        table-id: 254
-  dns-resolver:
-    config:
-      server:
-        - 10.10.20.10
+      ipv6:
+        enabled: false

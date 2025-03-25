@@ -1,0 +1,36 @@
+---
+apiVersion: v1alpha1
+metadata:
+  name: sno
+rendezvousIP: 10.10.10.225
+hosts:
+  - hostname: sno
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/vda"
+    interfaces:
+      - name: ens3
+        macAddress: AA:BB:CC:DD:EE:01
+    networkConfig:
+      interfaces:
+        - name: ens3
+          type: ethernet
+          state: up
+          ipv4:
+            enabled: true
+            # address:
+            #   - ip: 10.10.10.225
+            #     prefix-length: 24
+            dhcp: true
+          ipv6:
+            enabled: false
+      # dns-resolver:
+      #   config:
+      #     server:
+      #       - 10.10.20.10
+      # routes:
+      #   config:
+      #     - destination: 0.0.0.0/0
+      #       next-hop-address: 10.10.10.1
+      #       next-hop-interface: ens3
+      #       table-id: 254
