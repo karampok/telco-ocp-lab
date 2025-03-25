@@ -6,6 +6,9 @@ mgmt:
   ipv6-subnet: ""
 
 topology:
+  defaults:
+    env:
+      IP1: "10.1.104.44/23"
   nodes:
     bmc:
       kind: bridge
@@ -96,11 +99,9 @@ topology:
       binds:
         - config/dhcpv4:/opt/dnsmasq
       exec:
-        #- ip link add link eth0 name eth0.10 type vlan id 10
         - ip addr add 10.10.10.10/24 dev eth0
         - ip link set dev eth0 up
-        - ip route add default via 10.10.10.1
-      entrypoint: dnsmasq -d
+      entrypoint: dnsmasq -d --conf-file=/opt/dnsmasq/dnsmasq.conf
     infra:
       kind: linux
       image: quay.io/karampok/infra:latest

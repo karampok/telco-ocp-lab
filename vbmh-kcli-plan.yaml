@@ -10,8 +10,6 @@ sno:
   nets:
     - name: sw1
       mac: aa:bb:cc:dd:ee:01
-    - name: sw1
-      mac: aa:bb:cc:dd:ee:02
 # 5gc-m0:
 #   machine: q35
 #   numcpus: 12

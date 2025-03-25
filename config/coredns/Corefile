@@ -10,3 +10,9 @@
   log
   errors
 }
+
+sno.telco.vlab {
+  file /etc/coredns/zones/sno.telco.vlab.db
+  log
+  errors
+}
