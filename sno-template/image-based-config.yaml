@@ -4,6 +4,8 @@ kind: ImageBasedConfig
 metadata:
   name: sno-imagebased-config
   namespace: cluster0
+additionalNTPSources:
+  - 0.rhel.pool.ntp.org
 hostname: sno
 releaseRegistry: quay.io
 networkConfig:
@@ -15,8 +17,18 @@ networkConfig:
       ipv4:
         enabled: true
         address:
-          #   - ip: 10.10.10.225
-          #   prefix-length: 24
-        dhcp: true
+          - ip: 10.10.10.225
+            prefix-length: 24
+        dhcp: false
       ipv6:
         enabled: false
+  dns-resolver:
+    config:
+      server:
+        - 10.10.20.10
+  routes:
+    config:
+      - destination: 0.0.0.0/0
+        next-hop-address: 10.10.10.1
+        next-hop-interface: enp1s0
+        table-id: 254

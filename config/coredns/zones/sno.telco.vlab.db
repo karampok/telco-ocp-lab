@@ -12,5 +12,5 @@ $TTL 3600
 
 @   IN  NS  ns1.sno.telco.vlab.
 
-api IN  A   10.10.20.225
-*.apps IN  A   10.10.20.225
+api IN  A   10.10.10.225
+*.apps IN  A   10.10.10.225

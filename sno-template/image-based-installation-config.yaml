@@ -7,7 +7,7 @@ seedImage: quay.io/openshift-kni/image-based-seeds:4.18
 seedVersion: 4.18.6
 installationDisk: "/dev/vda"
 extraPartitionLabel: var-lib-containers
-pullSecret: "PULLSECRET"
+pullSecret: 'PULLSECRET'
 sshKey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICGjoGIRGSfiJ8Tv+Qd6S36xuGmeIuFL8w75shdhxy5l ci@only.com"
 networkConfig:
   interfaces:
@@ -17,9 +17,19 @@ networkConfig:
       mac-address: AA:BB:CC:DD:EE:01
       ipv4:
         enabled: true
-        # address:
-        #   - ip: 10.10.10.225
-        #     prefix-length: 24
-        dhcp: true
+        address:
+          - ip: 10.10.10.225
+            prefix-length: 24
+        dhcp: false
       ipv6:
         enabled: false
+  dns-resolver:
+    config:
+      server:
+        - 10.10.20.10
+  routes:
+    config:
+      - destination: 0.0.0.0/0
+        next-hop-address: 10.10.10.1
+        next-hop-interface: enp1s0
+        table-id: 254
