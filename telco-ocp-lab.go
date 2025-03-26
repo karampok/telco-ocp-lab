@@ -35,6 +35,9 @@ var kplan []byte
 //go:embed deploy-ocp.sh
 var deployOCP []byte
 
+//go:embed deploy-ibi.sh
+var deployIBI []byte
+
 func main() {
 	d := demo.New()
 
@@ -73,6 +76,13 @@ func extractConfig() error {
 	_, err = os.Stat(deploy)
 	if os.IsNotExist(err) {
 		if err := os.WriteFile(deploy, deployOCP, 0o744); err != nil {
+			return err
+		}
+	}
+	deploy = "deploy-ibi.sh"
+	_, err = os.Stat(deploy)
+	if os.IsNotExist(err) {
+		if err := os.WriteFile(deploy, deployIBI, 0o744); err != nil {
 			return err
 		}
 	}

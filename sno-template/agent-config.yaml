@@ -18,19 +18,19 @@ hosts:
           state: up
           ipv4:
             enabled: true
-            # address:
-            #   - ip: 10.10.10.225
-            #     prefix-length: 24
-            dhcp: true
+            address:
+              - ip: 10.10.10.225
+                prefix-length: 24
+            dhcp: false
           ipv6:
             enabled: false
-      # dns-resolver:
-      #   config:
-      #     server:
-      #       - 10.10.20.10
-      # routes:
-      #   config:
-      #     - destination: 0.0.0.0/0
-      #       next-hop-address: 10.10.10.1
-      #       next-hop-interface: ens3
-      #       table-id: 254
+      dns-resolver:
+        config:
+          server:
+            - 10.10.20.10
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.10.10.1
+            next-hop-interface: ens3
+            table-id: 254
