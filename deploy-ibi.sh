@@ -10,6 +10,7 @@ oc adm release extract --registry-config "${PULL_SECRET}" \
   --command=openshift-install --to "${HOME}/.local/bin/" "$OCP_RELEASE"
 openshift-install version
 
+echo
 date
 
 name=${1:-sno} #mno,sno,5gc
@@ -22,6 +23,7 @@ sed -i "s/PULLSECRET/$(jq '.' -c "$PULL_SECRET")/g" "${folder}"/install-config.y
 # needs ImageBasedInstallationConfig
 openshift-install image-based create image --log-level info --dir "${folder}"
 
+echo
 date
 
 source "${folder}"/redfish-actions/sushy.sh
@@ -39,6 +41,7 @@ until ssh -o StrictHostKeyChecking=no -i ~/.ssh/github-actions core@10.10.10.225
   sleep 30
 done
 
+echo
 echo
 date
 
