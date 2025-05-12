@@ -47,7 +47,8 @@ func main() {
 	d.Add(pkg.SetupInfra(), "setup", "setup virtual infra")
 	d.Add(pkg.Clean(), "clean", "clean system")
 	d.Add(pkg.RunIPForwardingDemo(), "ipforwarding", "reproduce ipforwarding demo")
-	d.Add(pkg.RunBGPGracefulRestart(), "BGP-GR", "demo BGP w,w/o GR (Graceful restart)")
+	d.Add(pkg.RunBGPGracefulRestart(), "bgp-gr", "demo BGP w,w/o GR (Graceful restart)")
+	d.Add(pkg.RunBGPUnnumber(), "bgp-unnumbered", "demo BGP Unnumbered Peering")
 
 	if err := extractConfig(); err != nil {
 		os.Exit(1)

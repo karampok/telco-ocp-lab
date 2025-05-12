@@ -71,12 +71,9 @@ hosts:
             id: 12
           ipv4:
             enabled: true
-            address:
-              - ip: 12.12.12.100
-                prefix-length: 24
             dhcp: false
           ipv6:
-            enabled: false
+            enabled: true
       dns-resolver: &dns
         config:
           server:
@@ -92,10 +89,6 @@ hosts:
             metric: 400
             next-hop-address: 11.11.11.254
             next-hop-interface: bond0.11
-          - destination: 12.100.100.0/24
-            metric: 400
-            next-hop-address: 12.12.12.254
-            next-hop-interface: bond0.12
   - hostname: m1
     role: master
     rootDeviceHints:
@@ -159,12 +152,9 @@ hosts:
             id: 12
           ipv4:
             enabled: true
-            address:
-              - ip: 12.12.12.101
-                prefix-length: 24
             dhcp: false
           ipv6:
-            enabled: false
+            enabled: true
       dns-resolver: *dns
       routes: *routes
   - hostname: m2
@@ -230,12 +220,9 @@ hosts:
             id: 12
           ipv4:
             enabled: true
-            address:
-              - ip: 12.12.12.102
-                prefix-length: 24
             dhcp: false
           ipv6:
-            enabled: false
+            enabled: true
       dns-resolver: *dns
       routes: *routes
   - hostname: w0
@@ -301,12 +288,9 @@ hosts:
             id: 12
           ipv4:
             enabled: true
-            address:
-              - ip: 12.12.12.103
-                prefix-length: 24
             dhcp: false
           ipv6:
-            enabled: false
+            enabled: true
       dns-resolver: *dns
       routes: *routes
   - hostname: w1
@@ -372,11 +356,8 @@ hosts:
             id: 12
           ipv4:
             enabled: true
-            address:
-              - ip: 12.12.12.104
-                prefix-length: 24
             dhcp: false
           ipv6:
-            enabled: false
+            enabled: true
       dns-resolver: *dns
       routes: *routes

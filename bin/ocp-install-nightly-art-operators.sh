@@ -22,28 +22,28 @@ function wait_for_all_nodes_ready() {
 
     sleep 1
   done
-}	
+}
 
-brew_credentials=$(curl --negotiate -u : https://employee-token-manager.registry.redhat.com/v1/tokens -s) #make sure you created a token before (https://source.redhat.com/groups/public/teamnado/wiki/brew_registry)
+brew_credentials=$(curl --negotiate -u : https://employee-token-manager.registry.redhat.com/v1/tokens -s -k) #make sure you created a token before (https://source.redhat.com/groups/public/teamnado/wiki/brew_registry)
 if [[ "${brew_credentials}" == "null" ]]; then
   echo "No Brew token found. Trying to create a token..."
   # Brew token does not exist. Create one
-  brew_credentials=$(curl --negotiate -u : -X POST -H 'Content-Type: application/json' --data '{"description":"openshift 4 testing"}' https://employee-token-manager.registry.redhat.com/v1/tokens -s)
+  brew_credentials=$(curl --negotiate -u : -X POST -H 'Content-Type: application/json' --data '{"description":"openshift 4 testing"}' https://employee-token-manager.registry.redhat.com/v1/tokens -s -k)
   if [[ -z "$brew_credentials" ]] || [[ "$brew_credentials" == "null" ]]; then
-    echo "Could not create a Brew token for you. Please visit https://source.redhat.com/groups/public/teamnado/wiki/brew_registry for more information about creating the Brew token manually." 
+    echo "Could not create a Brew token for you. Please visit https://source.redhat.com/groups/public/teamnado/wiki/brew_registry for more information about creating the Brew token manually."
     exit 1
   fi
   echo "Brew token created"
   brew_credentials="["${brew_credentials}"]" # convert to json array
 fi
 
-brew_username=$(echo $brew_credentials | jq -r ".[0].credentials.username")
-brew_password=$(echo $brew_credentials | jq -r ".[0].credentials.password")
+brew_username=$(echo "$brew_credentials" | jq -r ".[0].credentials.username")
+brew_password=$(echo "$brew_credentials" | jq -r ".[0].credentials.password")
 
 cluster_version=$(oc get clusterversion version -o jsonpath='{.status.desired.version}' | cut -d '.' -f 1,2)
 
 oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources","value": true}]'
-oc get secret/pull-secret -n openshift-config -o json | jq -r '.data.".dockerconfigjson"' | base64 -d > authfile
+oc get secret/pull-secret -n openshift-config -o json | jq -r '.data.".dockerconfigjson"' | base64 -d >authfile
 if ! podman login --authfile authfile --username "${brew_username}" --password "${brew_password}" brew.registry.redhat.io; then
   rm authfile # make sure the authfile is deleted in case of an error
   exit 1

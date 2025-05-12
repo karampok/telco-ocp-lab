@@ -8,7 +8,7 @@ mgmt:
 topology:
   defaults:
     env:
-      IP1: "10.1.104.44/23"
+      IP1: "10.1.104.46/23"
   nodes:
     bmc:
       kind: bridge
@@ -25,7 +25,7 @@ topology:
         - config/r01/frr.conf:/etc/frr/frr.conf
         - config/r01/vtysh.conf:/etc/frr/vtysh.conf
       exec:
-        - ip addr add 10.1.104.44/23 dev upstream # dig api.host
+        - ip addr add 10.1.104.46/23 dev upstream # dig api.host
         - ip route add default via 10.1.105.254 # TODO per lab
         - iptables-nft -t nat -I POSTROUTING -o upstream -j MASQUERADE
     r01-sidecar:
@@ -46,8 +46,7 @@ topology:
         - config/gw1/vtysh.conf:/etc/frr/vtysh.conf
       exec:
         - ip link set dev eth1 address aa:aa:aa:aa:aa:00
-        - ip add add 10.10.10.1/24 dev eth1
-        #- ip link add link eth1 name eth1.blue type vlan id 10
+        - ip link add link eth1 name eth1.blue type vlan id 10
         - ip link add link eth1 name eth1.green type vlan id 11
         - ip link add link eth1 name eth1.red type vlan id 12
         - ip link add green type vrf table 110
@@ -56,9 +55,12 @@ topology:
         - ip link set eth1.red master red
         - ip link set dev green up
         - ip link set dev red up
+        - ip link set dev eth1.red up
         - ip link set eth2 master green
-        - ip add add 200.200.200.1/24 dev eth2
+        - ip add add 100.100.100.1/24 dev eth3
+        - ip link set eth3 master red
         - ip link set dev eth2 up
+        - ip add add 200.200.200.1/24 dev eth2
         #     - echo 1 > /proc/sys/net/ipv4/fib_multipath_hash_policy
     green-client:
       kind: linux
@@ -71,6 +73,16 @@ topology:
         - ip addr add 200.200.200.10/24 dev eth0
         - ip route add default via 200.200.200.1
         - ip addr add 10.10.20.155/24 dev eth155
+    red-client:
+      kind: linux
+      image: quay.io/karampok/snife:latest
+      network-mode: none
+      dns:
+        servers:
+          - 10.10.20.10
+      exec:
+        - ip addr add 100.100.100.10/24 dev eth0
+        - ip route add default via 100.100.100.1
     dns:
       kind: linux
       image: quay.io/openshift/origin-coredns:latest
@@ -114,7 +126,7 @@ topology:
       exec:
         - ip addr add 10.10.20.200/24 dev eth1
         - ip addr add 192.168.100.200/24 dev bmc
-        - ip addr add 10.1.104.26/23 dev vpn # publicIP
+        - ip addr add 10.1.104.28/23 dev vpn # publicIP
         - ip route add 10.39.192.0/20 via 10.1.105.254
         - ip route add 10.10.10.0/24 via 10.10.20.1
         - ip route add default via 10.10.20.254
@@ -133,12 +145,12 @@ topology:
       ports:
         - 51820:51820/udp
       env:
-        PUBLICIP: 10.1.104.26 # dig +short api.y.telco5g.eng.y.z.com
+        PUBLICIP: 10.1.104.28 # dig +short api.y.telco5g.eng.y.z.com
 
   links:
     - endpoints: ["r01:eth1", "ixp-net:ixp-port0"]
-    - endpoints: ["r01:upstream", "macvlan:eno12399np0"]
-    - endpoints: ["infra:vpn", "macvlan:eno12399np0"] #ip --json route get 8.8.8.8 |jq -r .[0].dev
+    - endpoints: ["r01:upstream", "macvlan:eno12399"]
+    - endpoints: ["infra:vpn", "macvlan:eno12399"] #ip --json route get 8.8.8.8 |jq -r .[0].dev
     - endpoints: ["dns:eth1", "ixp-net:ixp-port10"]
     - endpoints: ["infra:eth1", "ixp-net:ixp-port200"]
     - endpoints: ["infra:bmc", "bmc:infra"]
@@ -146,5 +158,6 @@ topology:
     - endpoints: ["gw1:eth0", "ixp-net:ixp-port1"]
     - endpoints: ["gw1:eth1", "sw1:sw1-port1"]
     - endpoints: ["gw1:eth2", "green-client:eth0"]
+    - endpoints: ["gw1:eth3", "red-client:eth0"]
     - endpoints: ["ixp-net:ixp-port155", "green-client:eth155"]
     #- endpoints: ["dhcpv4:eth0", "sw1:sw1-port2"]

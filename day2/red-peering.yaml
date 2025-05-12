@@ -1,18 +1,33 @@
 ---
+apiVersion: metallb.io/v1beta1
+kind: BFDProfile
+metadata:
+  name: red
+  namespace: metallb-system
+spec:
+  receiveInterval: 2000
+  transmitInterval: 1000
+  detectMultiplier: 3
+  echoInterval: 300
+  echoMode: false
+  passiveMode: false
+  minimumTtl: 254
+---
 apiVersion: metallb.io/v1beta2
 kind: BGPPeer
 metadata:
   name: red
   namespace: metallb-system
 spec:
-  peerAddress: 12.12.12.1
+  interface: bond0.12
   peerASN: 8012
   myASN: 7003
   holdTime: 60s
-  enableGracefulRestart: false
+  bfdProfile: red
   nodeSelectors:
     - matchLabels:
         node-role.kubernetes.io/worker: ""
+        kubernetes.io/hostname: "w1"
 ---
 apiVersion: metallb.io/v1beta1
 kind: BGPAdvertisement
