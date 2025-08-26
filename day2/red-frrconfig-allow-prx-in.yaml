@@ -1,0 +1,29 @@
+apiVersion: frrk8s.metallb.io/v1beta1
+kind: FRRConfiguration
+metadata:
+  name: metallb-w1-allow-prfx-in
+  namespace: openshift-frr-k8s
+spec:
+  bgp:
+    # bfdProfiles:
+    # - detectMultiplier: 3
+    #   echoInterval: 300
+    #   echoMode: false
+    #   minimumTtl: 254
+    #   name: red
+    #   passiveMode: false
+    #   receiveInterval: 2000
+    #   transmitInterval: 1000
+    routers:
+    - asn: 7003
+      neighbors:
+      - asn: 8012
+        interface: bond0.12
+#        bfdProfile: red
+        holdTime: 1m0s
+        keepaliveTime: 20s
+        passwordSecret: {}
+        toReceive:
+          allowed:
+            prefixes:
+              - prefix: 100.100.100.0/24

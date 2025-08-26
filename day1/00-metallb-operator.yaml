@@ -18,6 +18,6 @@ metadata:
 spec:
   channel: stable
   name: metallb-operator
-  #source: redhat-operators
-  source: my-operator-catalog
+  source: redhat-operators
+  #source: my-operator-catalog
   sourceNamespace: openshift-marketplace

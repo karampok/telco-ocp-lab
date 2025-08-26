@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 # This script is an automation of steps 1-7 from
 # https://hackmd.io/0vbbJdZ7RXem69vCWI61ug to install the nightly ART bundle

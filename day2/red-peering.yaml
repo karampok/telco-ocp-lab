@@ -5,8 +5,8 @@ metadata:
   name: red
   namespace: metallb-system
 spec:
-  receiveInterval: 2000
-  transmitInterval: 1000
+  receiveInterval: 20000
+  transmitInterval: 10000
   detectMultiplier: 3
   echoInterval: 300
   echoMode: false

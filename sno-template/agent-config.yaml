@@ -10,12 +10,18 @@ hosts:
       deviceName: "/dev/vda"
     interfaces:
       - name: ens3
-        macAddress: AA:BB:CC:DD:EE:01
+        macAddress: aa:bb:cc:dd:ee:01
     networkConfig:
       interfaces:
         - name: ens3
           type: ethernet
           state: up
+        - name: vlan10
+          type: vlan
+          state: up
+          vlan:
+            base-iface: ens3
+            id: 10
           ipv4:
             enabled: true
             address:
@@ -32,5 +38,5 @@ hosts:
         config:
           - destination: 0.0.0.0/0
             next-hop-address: 10.10.10.1
-            next-hop-interface: ens3
+            next-hop-interface: vlan10
             table-id: 254
