@@ -12,7 +12,7 @@ name=${1:-mno} #mno,sno,5gc
 folder=${folder:-"/share/${name}"}
 cp -r "${name}"-template "${folder}"
 
-sed -i "s/PULLSECRET/$(jq '.' -c "$PULL_SECRET")/g" "${folder}"/install-config.yaml
+sed -i "s|PULLSECRET|$(jq '.' -c "$PULL_SECRET")|g" "${folder}"/install-config.yaml
 
 openshift-install agent create image --log-level info --dir "${folder}"
 
