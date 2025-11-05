@@ -19,5 +19,5 @@ spec:
   channel: stable
   name: metallb-operator
   #source: redhat-operators
-  source: my-operator-catalog
+  source: metallb-konflux
   sourceNamespace: openshift-marketplace

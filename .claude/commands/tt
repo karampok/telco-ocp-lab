@@ -1,0 +1,68 @@
+  MetalLB Instance Summary
+  Cluster: https://api.5gc.telco.vlab:6443
+  Version: 4.21.0-ec.2
+  Operator CSV: metallb-operator.v4.21.0-202511040653
+
+  Operator Pods (metallb-system):
+    metallb-operator-controller-manager-7b5586d6c6-t7j2l    Running  (1/1)
+        registry.redhat.io/openshift4/metallb-rhel9-operator@sha256:1136a4ca...53e118af
+
+    metallb-operator-webhook-server-57d9fddf5b-rl5ph        Running  (1/1)
+      registry.redhat.io/openshift4/metallb-rhel9@sha256:b0bb169e...0effbd8b
+
+  MetalLB Instance Pods (metallb-system):
+    controller-5db9d85fff-jxfvr                             Running  (2/2)
+      registry.redhat.io/openshift4/metallb-rhel9@sha256:b0bb169e...0effbd8b
+      registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:aac09485...44844d11
+
+    speaker-nqht4                                           Running  (2/2)
+      registry.redhat.io/openshift4/metallb-rhel9@sha256:b0bb169e...0effbd8b
+      registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:aac09485...44844d11
+    speaker-wfxd4                                           Running  (2/2)
+
+  FRRK8s Pods (openshift-frr-k8s):
+    frr-k8s-6s424                                           Running  (7/7)
+      quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:e76f0c51...3ecee053
+      quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:34eb149d...5142ccd9
+    frr-k8s-8tqw6                                           Running  (7/7)
+    frr-k8s-hp9b9                                           Running  (7/7)
+    frr-k8s-vdjt4                                           Running  (7/7)
+    frr-k8s-vsqtw                                           Running  (7/7)
+
+  --------------------------------------------------------------------------------
+  Images Used
+  --------------------------------------------------------------------------------
+
+  Operator Images (metallb-system):
+    metallb-operator-controller-manager:
+      registry.redhat.io/openshift4/metallb-rhel9-operator@sha256:1136a4ca...53e118af
+
+    MetalLB Instance Images (metallb-system):
+    controller (2 containers):
+
+    speaker × 2 pods (2 containers each):
+
+  FRRK8s Images (openshift-frr-k8s) - 5 pods × 7 containers each:
+    FRR components:
+
+    Kube RBAC Proxy:
+
+  --------------------------------------------------------------------------------
+  Summary
+  --------------------------------------------------------------------------------
+  Total Pods: 9 (2 operator + 3 MetalLB instance + 1 webhook + 5 FRRK8s daemon + 1 FRRK8s webhook)
+  Total Containers: 50
+
+  Images from registry.redhat.io (IDMS mirrors available):
+    - metallb-rhel9-operator (operator manager)
+    - metallb-rhel9 (webhook, controller, speakers)
+    - ose-kube-rbac-proxy-rhel9 (controller, speakers)
+
+  Images from quay.io/openshift-release-dev (CNO-managed, no IDMS):
+    - ocp-v4.0-art-dev (FRRK8s pods - all containers)
+
+  Status: ✓ FULLY DEPLOYED AND HEALTHY
+  ================================================================================
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+>

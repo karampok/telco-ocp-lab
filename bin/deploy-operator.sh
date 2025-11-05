@@ -96,20 +96,19 @@ spec:
 EOF
 echo "CatalogSource written to $TEMP_DIR/catalogsource.yaml"
 
+# AGENT
 # oc wait --for=jsonpath='{.status.connectionState.lastObservedState}'=READY \
 #     catalogsource "$CATALOG_NAME" -n openshift-marketplace --timeout=300s 2>/dev/null || true
+# oc -n openshift-marketplace get catalogsources.operators.coreos.com metallb-konflux -o yaml
 
-cat > "$TEMP_DIR/namespace.yaml" <<EOF
+cat > "$TEMP_DIR/deploy-${OPERATOR}.yaml" <<EOF
 apiVersion: v1
 kind: Namespace
 metadata:
   name: $OPERATOR_NAMESPACE
   labels:
     pod-security.kubernetes.io/enforce: privileged
-EOF
-echo "Namespace written to $TEMP_DIR/namespace.yaml"
-
-cat > "$TEMP_DIR/operatorgroup.yaml" <<EOF
+---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
@@ -118,10 +117,7 @@ metadata:
 spec:
   targetNamespaces:
   - ${OPERATOR_NAMESPACE}
-EOF
-echo "OperatorGroup written to $TEMP_DIR/operatorgroup.yaml"
-
-cat > "$TEMP_DIR/subscription.yaml" <<EOF
+---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -134,7 +130,7 @@ spec:
   source: ${OPERATOR}-konflux
   sourceNamespace: openshift-marketplace
 EOF
-echo "Subscription written to $TEMP_DIR/subscription.yaml"
+echo "Operator resources written to $TEMP_DIR/deploy-${OPERATOR}.yaml"
 
 # oc wait --for=condition=CatalogSourcesUnhealthy=False subscription "${OPERATOR_NAME}" \
 #     -n "${OPERATOR_NAMESPACE}" --timeout=120s 2>/dev/null || true
