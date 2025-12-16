@@ -39,4 +39,6 @@ oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-regi
 oc patch configs.imageregistry cluster --type=merge --patch-file day1/image-registry-patch.yaml
 oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
 oc patch Scheduler cluster --type=merge --patch '{ "spec": { "mastersSchedulable": true } }'
+
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed","storage":{"emptyDir":{}}}}'
 EOF

@@ -117,6 +117,7 @@ metadata:
 spec:
   targetNamespaces:
   - ${OPERATOR_NAMESPACE}
+  - own-namespace
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription

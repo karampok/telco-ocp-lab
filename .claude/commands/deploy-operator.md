@@ -40,6 +40,8 @@ Before starting deployment, read the operator-specific configuration file:
 
 # Steps
 
+0. Disable `oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources","value": true}]'`
+
 1. Ask the user which operator to deploy if not specified (nmstate, sriov, metallb, pfstatus)
 
 2. Run the deploy-operator.sh script to generate YAML manifests
@@ -213,3 +215,99 @@ Provide clear, structured output showing:
 - Timing information where relevant
 - Commands executed for transparency
 - Final summary with actionable next steps if issues found
+
+# OLM v1 Alternative (OpenShift 4.17+)
+
+This command uses OLM v0 (CatalogSource, Subscription, CSV). OpenShift 4.17+ supports OLM v1 with
+improved security and simplified resources.
+
+## Key Differences
+
+| OLM v0 (Current Script) | OLM v1 (Modern) |
+|-------------------------|-----------------|
+| CatalogSource (namespaced) | ClusterCatalog (cluster-scoped) |
+| OperatorGroup | ServiceAccount with RBAC |
+| Subscription | ClusterExtension |
+| InstallPlan, CSV | Managed automatically |
+| API: operators.coreos.com/v1alpha1 | API: olm.operatorframework.io/v1 |
+
+## OLM v1 Security Model
+
+OLM v1 uses a **least privilege model** requiring explicit ServiceAccount with necessary
+permissions. You control what the operator installation can do via RBAC, unlike OLM v0 where
+OLM itself had broad permissions.
+
+Benefits:
+- Reduced attack surface
+- Explicit permission control
+- Installation fails if ServiceAccount lacks permissions
+- Upgrade fails if new version requires additional permissions (prevents silent escalation)
+
+## OLM v1 Example
+
+```yaml
+# 1. ClusterCatalog (replaces CatalogSource)
+apiVersion: olm.operatorframework.io/v1
+kind: ClusterCatalog
+metadata:
+  name: metallb-konflux
+spec:
+  source:
+    type: Image
+    image:
+      ref: quay.io/redhat-user-workloads/ocp-art-tenant/art-fbc:ocp__4.21__metallb-rhel9-operator
+---
+# 2. Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metallb-system
+---
+# 3. ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: metallb-operator-installer
+  namespace: metallb-system
+---
+# 4. RBAC (cluster-admin for simplicity, use custom ClusterRole in production)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: metallb-operator-installer-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: metallb-operator-installer
+  namespace: metallb-system
+---
+# 5. ClusterExtension (replaces Subscription)
+apiVersion: olm.operatorframework.io/v1
+kind: ClusterExtension
+metadata:
+  name: metallb-operator
+spec:
+  namespace: metallb-system
+  serviceAccount:
+    name: metallb-operator-installer
+  source:
+    sourceType: Catalog
+    catalog:
+      packageName: metallb-operator
+      selector:
+        matchLabels:
+          olm.operatorframework.io/metadata.name: metallb-konflux
+      channel: stable
+```
+
+## References
+
+- [Manage operators as ClusterExtensions with OLM v1](https://developers.redhat.com/articles/2025/06/02/manage-operators-clusterextensions-olm-v1)
+- [Announcing OLM v1](https://www.redhat.com/en/blog/announcing-olm-v1-next-generation-operator-lifecycle-management)
+- [ClusterExtension API](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/operatorhub_apis/clusterextension-olm-operatorframework-io-v1)
+- [OLM v1 Multi-tenant Considerations](https://github.com/operator-framework/operator-controller/discussions/269)
+- [operator-framework-catalogd](https://github.com/openshift/operator-framework-catalogd)
+- [operator-framework-operator-controller](https://github.com/openshift/operator-framework-operator-controller)
