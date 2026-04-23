@@ -1,0 +1,8 @@
+table inet clab
+delete table inet clab
+table inet clab {
+  chain postrouting {
+    type nat hook postrouting priority srcnat - 1; policy accept;
+    ip saddr 10.10.0.0/16 oifname != "vlab-upstream" masquerade;
+  }
+}

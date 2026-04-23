@@ -14,45 +14,6 @@ mgmt:
 
 topology:
   nodes:
-    gw1-sidecar:
-      kind: linux
-      network-mode: container:gw1
-      image: quay.io/karampok/snife:latest
-      exec:
-        - iptables -t nat -I POSTROUTING -o upstream -j MASQUERADE
-        - iptables -t nat -A PREROUTING -i upstream -p udp --dport 51820 -j DNAT --to 10.10.20.200:51820
-    gw1:
-      kind: linux
-      image: quay.io/frrouting/frr:10.6.1
-      network-mode: none
-      binds:
-        - cetc/gw1:/etc/frr
-      exec:
-        - ip addr add 192.168.0.99/24 dev upstream
-        - ip route add default via 192.168.0.254
-        - ip addr add 10.10.20.1/24 dev internal
-        - ip -6 addr add 2600:10:10:20::1/64 dev internal
-        - sysctl -w net.ipv6.conf.all.forwarding=1
-        - ip addr add 10.10.30.1/24 dev bmc
-    infra:
-      kind: linux
-      image: quay.io/karampok/infra:rc
-      network-mode: none
-      dns:
-        search:
-          - telco.vlab
-      exec:
-        - ip addr add 10.10.20.200/24 dev eth1
-        - ip -6 addr add 2600:10:10:20::200/64 dev eth1
-        - ip route add 10.10.10.0/24 via 10.10.20.1
-        - ip route add default via 10.10.20.1
-        - ip -6 route add default via 2600:10:10:20::1
-      binds:
-        - sno-template/:/root/sno-template
-        - ${HOME}/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
-        - ${HOME}/.pull-secret.json:/root/.pull-secret.json:ro
-      env:
-        PUBLICIP: 192.168.0.99
     bmh1:
       kind: linux
       image: quay.io/karampok/vr-bmh:latest
@@ -78,9 +39,84 @@ topology:
         - ip route add default via 10.10.30.1
       binds:
         - /tmp/bmh1-libvirt:/var/run/libvirt
+    gw1-sidecar:
+      kind: linux
+      network-mode: container:gw1
+      image: quay.io/karampok/snife:latest
+    gw1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.6.1
+      network-mode: none
+      binds:
+        - cetc/gw1:/etc/frr
+      stages:
+        create-links:
+          exec:
+            - command: ip addr add 169.254.0.1/30 dev vlab-upstream
+              target: host
+              phase: on-exit
+            - command: ip route add 10.10.0.0/16 via 169.254.0.2
+              target: host
+              phase: on-exit
+            - command: nft -f cetc/clab.nft
+              target: host
+              phase: on-exit
+      exec:
+        - ip addr add 169.254.0.2/30 dev upstream
+        - ip route add default via 169.254.0.1
+        - ip addr add 10.10.20.1/24 dev internal
+        - ip -6 addr add 2600:10:10:20::1/64 dev internal
+        - sysctl -w net.ipv6.conf.all.forwarding=1
+        - ip addr add 10.10.30.1/24 dev bmc
+    infra:
+      kind: linux
+      image: quay.io/karampok/infra:rc
+      network-mode: none
+      dns:
+        servers:
+          - 10.10.20.10
+        search:
+          - telco.vlab
+      exec:
+        - ip addr add 10.10.20.200/24 dev eth1
+        - ip -6 addr add 2600:10:10:20::200/64 dev eth1
+        - ip route add 10.10.10.0/24 via 10.10.20.1
+        - ip route add default via 10.10.20.1
+        - ip -6 route add default via 2600:10:10:20::1
+      binds:
+        - sno-template/:/root/sno-template
+        - ${HOME}/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
+        - ${HOME}/.pull-secret.json:/root/.pull-secret.json:ro
+    sw-internal:
+      kind: linux
+      image: quay.io/karampok/snife:latest
+      network-mode: none
+      exec:
+        - ip link add br0 type bridge
+        - ip link set eth0 master br0
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set br0 up
+    dns:
+      kind: linux
+      image: coredns/coredns:1.14.3
+      network-mode: none
+      binds:
+        - cetc/dns:/etc/coredns
+      cmd: -conf /etc/coredns/Corefile
+    dns-sidecar:
+      kind: linux
+      image: quay.io/karampok/snife:latest
+      network-mode: container:dns
+      exec:
+        - ip addr add 10.10.20.10/24 dev eth1
+        - ip -6 addr add 2600:10:10:20::10/64 dev eth1
+        - ip route add default via 10.10.20.1
 
   links:
-    - endpoints: ["gw1:upstream", "macvlan:bond0"]
-    - endpoints: ["gw1:internal", "infra:eth1"]
+    - endpoints: ["gw1:upstream", "host:vlab-upstream"]
+    - endpoints: ["gw1:internal", "sw-internal:eth0"]
+    - endpoints: ["sw-internal:eth1", "infra:eth1"]
+    - endpoints: ["sw-internal:eth2", "dns:eth1"]
     - endpoints: ["gw1:bmc", "bmh1:eth0"]
     - endpoints: ["bmh1:bmc", "bmc1:eth0"]
