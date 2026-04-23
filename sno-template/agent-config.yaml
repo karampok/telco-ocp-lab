@@ -10,11 +10,11 @@ hosts:
     rootDeviceHints:
       deviceName: "/dev/vda"
     interfaces:
-      - name: ens3
-        macAddress: aa:bb:cc:dd:ee:01
+      - name: enp1s0
+        macAddress: 4a:a3:29:34:18:df
     networkConfig:
       interfaces:
-        - name: ens3
+        - name: enp1s0
           type: ethernet
           state: up
           ipv4:
@@ -38,9 +38,9 @@ hosts:
         config:
           - destination: 0.0.0.0/0
             next-hop-address: 10.10.10.1
-            next-hop-interface: ens3
+            next-hop-interface: enp1s0
             table-id: 254
           - destination: ::/0
             next-hop-address: 2600:10:10:10::1
-            next-hop-interface: ens3
+            next-hop-interface: enp1s0
             table-id: 254

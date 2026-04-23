@@ -24,8 +24,8 @@ topology:
         - /tmp/bmh1-libvirt:/var/run/libvirt
       env:
         QEMU_DISK_SIZE: "50G"
-        QEMU_MEMORY: "8192"
-        VCPU: "4"
+        QEMU_MEMORY: "16384"
+        VCPU: "8"
         VM_UUID: 11111111-1111-1111-1111-111111111111
       cap-add:
         - NET_ADMIN
@@ -39,10 +39,6 @@ topology:
         - ip route add default via 10.10.10.1
       binds:
         - /tmp/bmh1-libvirt:/var/run/libvirt
-    gw1-sidecar:
-      kind: linux
-      network-mode: container:gw1
-      image: quay.io/karampok/snife:latest
     gw1:
       kind: linux
       image: quay.io/frrouting/frr:10.6.1
@@ -69,13 +65,16 @@ topology:
         - ip route add default via 169.254.0.1
         - ip addr add 10.10.20.1/24 dev internal
         - ip -6 addr add 2600:10:10:20::1/64 dev internal
-        - sysctl -w net.ipv6.conf.all.forwarding=1
         - ip link add br-prov type bridge
         - ip link set bmh1 master br-prov
         - ip link set bmc1 master br-prov
         - ip link set br-prov up
         - ip addr add 10.10.10.1/24 dev br-prov
         - ip -6 addr add 2600:10:10:10::1/64 dev br-prov
+    gw1-sidecar:
+      kind: linux
+      network-mode: container:gw1
+      image: quay.io/karampok/snife:latest
     infra:
       kind: linux
       image: quay.io/karampok/infra:rc

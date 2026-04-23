@@ -17,11 +17,13 @@ sed -i "s|PULLSECRET|$(jq '.' -c "$PULL_SECRET")|g" "${folder}"/install-config.y
 
 openshift-install agent create image --log-level info --dir "${folder}"
 
+echo "ISO: curl -O ${HTTP_SERVER:-http://10.10.20.200:9000}/${name}/agent.x86_64.iso"
+
 source "${HOME}/sushy.sh"
 while IFS= read -r node; do
   power_off "$node"
   media_eject "$node"
-  media_insert "$node" "${HTTP_SERVER:-http://192.168.100.200:9000}"/"${name}"/agent.x86_64.iso
+  media_insert "$node" "${HTTP_SERVER:-http://10.10.20.200:9000}"/"${name}"/agent.x86_64.iso
   boot_once "$node"
   power_on "$node"
 done <"${folder}/bmc-hosts"
