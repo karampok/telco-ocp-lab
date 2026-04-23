@@ -61,6 +61,9 @@ topology:
             - command: nft -f cetc/clab.nft
               target: host
               phase: on-exit
+            - command: sh -c "resolvectl dns vlab-upstream 10.10.20.10; resolvectl domain vlab-upstream ~telco.vlab; resolvectl dnsovertls vlab-upstream no"
+              target: host
+              phase: on-exit
       exec:
         - ip addr add 169.254.0.2/30 dev upstream
         - ip route add default via 169.254.0.1
