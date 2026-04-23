@@ -33,10 +33,10 @@ topology:
     bmc1:
       kind: linux
       image: quay.io/karampok/sushy-emulator:simpleupdate
-      network-mode: none
+      network-mode: container:bmh1
       exec:
-        - ip addr add 10.10.30.100/24 dev eth0
-        - ip route add default via 10.10.30.1
+        - ip addr add 10.10.10.9/24 dev bmc
+        - ip route add default via 10.10.10.1
       binds:
         - /tmp/bmh1-libvirt:/var/run/libvirt
     gw1-sidecar:
@@ -70,7 +70,12 @@ topology:
         - ip addr add 10.10.20.1/24 dev internal
         - ip -6 addr add 2600:10:10:20::1/64 dev internal
         - sysctl -w net.ipv6.conf.all.forwarding=1
-        - ip addr add 10.10.30.1/24 dev bmc
+        - ip link add br-prov type bridge
+        - ip link set bmh1 master br-prov
+        - ip link set bmc1 master br-prov
+        - ip link set br-prov up
+        - ip addr add 10.10.10.1/24 dev br-prov
+        - ip -6 addr add 2600:10:10:10::1/64 dev br-prov
     infra:
       kind: linux
       image: quay.io/karampok/infra:rc
@@ -88,6 +93,8 @@ topology:
         - ip -6 route add default via 2600:10:10:20::1
       binds:
         - sno-template/:/root/sno-template
+        - deploy-ocp.sh:/root/deploy-ocp.sh
+        - sushy.sh:/root/sushy.sh
         - ${HOME}/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
         - ${HOME}/.pull-secret.json:/root/.pull-secret.json:ro
     sw-internal:
@@ -121,5 +128,5 @@ topology:
     - endpoints: ["gw1:internal", "sw-internal:eth0"]
     - endpoints: ["sw-internal:eth1", "infra:eth1"]
     - endpoints: ["sw-internal:eth2", "dns:eth1"]
-    - endpoints: ["gw1:bmc", "bmh1:eth0"]
-    - endpoints: ["bmh1:bmc", "bmc1:eth0"]
+    - endpoints: ["gw1:bmh1", "bmh1:eth10"]
+    - endpoints: ["gw1:bmc1", "bmh1:bmc"]
