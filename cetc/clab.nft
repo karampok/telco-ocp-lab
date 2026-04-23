@@ -1,6 +1,10 @@
 table inet clab
 delete table inet clab
 table inet clab {
+  chain prerouting {
+    type nat hook prerouting priority dstnat; policy accept;
+    udp dport 51820 iifname != "vlab-upstream" dnat to 10.10.20.200
+  }
   chain postrouting {
     type nat hook postrouting priority srcnat - 1; policy accept;
     ip saddr 10.10.0.0/16 oifname != "vlab-upstream" masquerade;
