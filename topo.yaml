@@ -1,10 +1,4 @@
-# Required vars:
-#  ip --json route get 8.8.8.8 | jq -r '.[].dev' # which is the access interface
-#  ip --json route get 8.8.8.8 | jq -r '.[].prefsrc' # server IP, to connect the vpn
-#  lab upstream an ip we can assign to the upstream (traffic exiting lab is masq to that)
-#  ip --json route get 8.8.8.8 | jq -r '.[].gateway'
-
-
+# PUBLICIP=$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') sudo -E clab deploy --topo topo.yaml
 ---
 name: vlab
 mgmt:
@@ -90,6 +84,8 @@ topology:
         - ip route add 10.10.10.0/24 via 10.10.20.1
         - ip route add default via 10.10.20.1
         - ip -6 route add default via 2600:10:10:20::1
+      env:
+        PUBLICIP: ${PUBLICIP}  # ip --json route get 8.8.8.8 | jq -r '.[].prefsrc'
       binds:
         - sno-template/:/root/sno-template
         - deploy-ocp.sh:/root/deploy-ocp.sh
