@@ -66,10 +66,6 @@ topology:
         - ip link set br-prov up
         - ip addr add 10.10.10.1/24 dev br-prov
         - ip -6 addr add 2600:10:10:10::1/64 dev br-prov
-    gw1-sidecar:
-      kind: linux
-      network-mode: container:gw1
-      image: quay.io/karampok/snife:latest
     infra:
       kind: linux
       image: quay.io/karampok/infra:rc
