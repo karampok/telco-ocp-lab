@@ -17,7 +17,7 @@ topology:
         - /dev/kvm:/dev/kvm
         - /tmp/bmh1-libvirt:/var/run/libvirt
       env:
-        QEMU_DISK_SIZE: "50G"
+        QEMU_DISK_SIZE: "120G"
         QEMU_MEMORY: "16384"
         VCPU: "8"
         VM_UUID: 11111111-1111-1111-1111-111111111111
@@ -28,9 +28,13 @@ topology:
       kind: linux
       image: quay.io/karampok/sushy-emulator:simpleupdate
       network-mode: container:bmh1
-      exec:
-        - ip addr add 10.10.10.9/24 dev bmc
-        - ip route add default via 10.10.10.1
+      stages:
+        create-links:
+          exec:
+            - command: ip addr add 10.10.10.9/24 dev bmc
+              phase: on-exit
+            - command: ip route add default via 10.10.10.1
+              phase: on-exit
       binds:
         - /tmp/bmh1-libvirt:/var/run/libvirt
     gw1:
@@ -49,9 +53,6 @@ topology:
               target: host
               phase: on-exit
             - command: nft -f cetc/clab.nft
-              target: host
-              phase: on-exit
-            - command: sh -c "resolvectl dns vlab-upstream 10.10.20.10; resolvectl domain vlab-upstream ~telco.vlab; resolvectl dnsovertls vlab-upstream no"
               target: host
               phase: on-exit
       exec:
@@ -92,6 +93,7 @@ topology:
         - sushy.sh:/root/sushy.sh
         - ${HOME}/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
         - ${HOME}/.pull-secret.json:/root/.pull-secret.json:ro
+        - ${HOME}/.wg-auth:/root/.wg-auth:ro
     sw-internal:
       kind: linux
       image: quay.io/karampok/snife:latest
@@ -124,4 +126,4 @@ topology:
     - endpoints: ["sw-internal:eth1", "infra:eth1"]
     - endpoints: ["sw-internal:eth2", "dns:eth1"]
     - endpoints: ["gw1:bmh1", "bmh1:eth10"]
-    - endpoints: ["gw1:bmc1", "bmh1:bmc"]
+    - endpoints: ["gw1:bmc1", "bmc1:bmc"]
