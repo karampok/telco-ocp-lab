@@ -16,10 +16,16 @@ media_eject() {
 }
 
 boot_once() {
-    curl -k -s --noproxy "*" --globoff -L -w "%{http_code} %{url_effective}\\n" \
+  # sushy-emulator hardcodes BootSourceOverrideEnabled=Continuous; simulate Once by reverting to Hdd after 60s
+  curl -k -s --noproxy "*" --globoff -L \
     -H "Content-Type: application/json" -H "Accept: application/json" \
-    -d '{"Boot": {"BootSourceOverrideTarget": "Cd", "BootSourceOverrideEnabled": "Once"}}' \
-    -X PATCH "$1"
+    -d '{"Boot": {"BootSourceOverrideTarget": "Cd"}}' \
+    -X PATCH "$1" > /dev/null
+  ( sleep 60 && curl -k -s --noproxy "*" --globoff -L \
+    -H "Content-Type: application/json" -H "Accept: application/json" \
+    -d '{"Boot": {"BootSourceOverrideTarget": "Hdd"}}' \
+    -X PATCH "$1" > /dev/null ) &
+  disown $!
 }
 
 power_on(){

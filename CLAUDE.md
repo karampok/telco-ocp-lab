@@ -53,6 +53,38 @@ resolvectl query api.sno.telco.vlab
 
 OCP install config is constructed from `sno-template/` (`baseDomain: telco.vlab`, cluster name `sno`). CoreDNS (`cetc/dns/zones/`) must match: `api.<cluster>.<baseDomain>` and `*.apps.<cluster>.<baseDomain>`.
 
+## OCP Deployment
+
+Trigger from inside infra container:
+```bash
+docker exec -it clab-vlab-infra bash
+./deploy-ocp.sh sno
+```
+
+Monitor install progress:
+```bash
+openshift-install agent wait-for install-complete --log-level info --dir /share/sno
+```
+
+Fetch kubeconfig after first node reboot (over WireGuard, sno or mno):
+```bash
+curl -s http://10.0.0.1:9000/sno/auth/kubeconfig > ~/.kube/lab0.yaml
+export KUBECONFIG=~/.kube/lab0.yaml
+oc get clusteroperators -w
+```
+
+SSH to rendezvous node during install (requires WireGuard or direct lab access):
+```bash
+ssh -i ~/.ssh/f14ssh/github-actions core@10.10.10.225
+
+journalctl -u assisted-service.service -f    # bootstrap phase
+journalctl -u assisted-installer.service -f  # install phase
+journalctl -u apply-host-config.service -f   # nmstate/network config applied
+sudo crictl ps                               # running containers on node
+sudo crictl logs <id>                        # container logs
+sudo nmcli                                   # network state
+```
+
 ## Debugging
 
 VPN (WireGuard) status — check infra logs:
