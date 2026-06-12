@@ -1,0 +1,76 @@
+name: demo
+
+topology:
+  nodes:
+    gateway:
+      kind: linux
+      image: quay.io/karampok/snife:latest
+      network-mode: none
+      stages:
+        create-links:
+          exec:
+            - command: ip addr add 10.0.99.1/30 dev gw-upstream
+              target: host
+              phase: on-exit
+            - command: ip route add 10.10.10.0/24 via 10.0.99.2
+              target: host
+              phase: on-exit
+            - command: iptables -P FORWARD ACCEPT
+              target: host
+              phase: on-exit
+            - command: nft -f config/clab.nft
+              target: host
+              phase: on-exit
+      exec:
+        - ip addr add 10.10.10.1/24 dev eth1
+        - ip link set eth1 up
+        - ip addr add 10.0.99.2/30 dev upstream
+        - ip route add default via 10.0.99.1
+        - nft add table inet nat
+        - nft add chain inet nat postrouting '{ type nat hook postrouting priority srcnat; }'
+        - nft add rule inet nat postrouting oifname "upstream" masquerade
+    nodeA:
+      kind: linux
+      image: quay.io/karampok/snife:latest
+      network-mode: none
+      exec:
+        - >-
+          bash -c "
+          ip link add bond0 type bond mode 802.3ad &&
+          echo 100 > /sys/class/net/bond0/bonding/miimon &&
+          echo fast > /sys/class/net/bond0/bonding/lacp_rate &&
+          ip link set eth1 down &&
+          ip link set eth1 master bond0 &&
+          ip link set eth2 down &&
+          ip link set eth2 master bond0 &&
+          ip link set bond0 up &&
+          ip link set eth1 up &&
+          ip link set eth2 up &&
+          ip addr add 10.10.10.2/24 dev bond0 &&
+          ip route add default via 10.10.10.1
+          "
+    switch:
+      kind: linux
+      image: ghcr.io/srl-labs/network-multitool:v0.6.0
+      network-mode: none
+      exec:
+        - ip link add br0 type bridge
+        - ip link set eth0 master br0
+        - ip link add bond0 type bond mode 802.3ad
+        - bash -c "echo 100 > /sys/class/net/bond0/bonding/miimon"
+        - bash -c "echo fast > /sys/class/net/bond0/bonding/lacp_rate"
+        - ip link set eth1 down
+        - ip link set eth1 master bond0
+        - ip link set eth2 down
+        - ip link set eth2 master bond0
+        - ip link set bond0 master br0
+        - ip link set bond0 up
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set br0 up
+
+  links:
+    - endpoints: ["gateway:eth1", "switch:eth0"]
+    - endpoints: ["nodeA:eth1", "switch:eth1"]
+    - endpoints: ["nodeA:eth2", "switch:eth2"]
+    - endpoints: ["gateway:upstream", "host:gw-upstream"]
