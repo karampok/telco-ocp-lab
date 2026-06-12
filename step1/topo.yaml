@@ -1,0 +1,21 @@
+name: demo
+
+topology:
+  nodes:
+    gateway:
+      kind: linux
+      image: quay.io/karampok/snife:latest
+      network-mode: none
+      exec:
+        - ip addr add 10.10.10.1/24 dev eth1
+        - ip link set eth1 up
+    nodeA:
+      kind: linux
+      image: quay.io/karampok/snife:latest
+      network-mode: none
+      exec:
+        - ip addr add 10.10.10.2/24 dev eth1
+        - ip link set eth1 up
+
+  links:
+    - endpoints: ["gateway:eth1", "nodeA:eth1"]

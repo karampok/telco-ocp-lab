@@ -1,2 +1,5 @@
 clab-vlab/
+**/clab-demo/
+**/clab-vm-baremetal/
+**/info.txt
 .ailocal/
