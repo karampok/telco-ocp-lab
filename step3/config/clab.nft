@@ -1,0 +1,20 @@
+#!/usr/sbin/nft -f
+
+table inet clab
+delete table inet clab
+
+table inet clab {
+    chain forward {
+        type filter hook forward priority -1; policy accept;
+        iifname "gw-upstream" accept
+        oifname "gw-upstream" ct state related,established accept
+    }
+
+    chain postrouting {
+        type nat hook postrouting priority 99;
+        ip saddr 10.0.99.0/30 oifname != "gw-upstream" masquerade
+    }
+}
+
+add rule ip filter FORWARD iifname "gw-upstream" accept comment "containerlab-custom"
+add rule ip filter FORWARD oifname "gw-upstream" ct state related,established accept comment "containerlab-custom"
