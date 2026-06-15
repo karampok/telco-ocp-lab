@@ -4,4 +4,7 @@ clab-vlab/
 **/info.txt
 **/.nodeA-libvirt/*
 !**/.nodeA-libvirt/.keep
+**/.cache/
+**/.local/
+**/.openshift_install.log
 .ailocal/

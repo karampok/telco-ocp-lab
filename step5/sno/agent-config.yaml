@@ -1,0 +1,46 @@
+---
+apiVersion: v1alpha1
+metadata:
+  name: sno
+hosts:
+  - hostname: sno
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/vda"
+    interfaces:
+      - name: enp1s0
+        macAddress: 4a:a3:29:34:18:df
+      - name: enp2s0
+        macAddress: b2:3b:9c:90:40:f7
+    networkConfig:
+      interfaces:
+        - name: bond0
+          type: bond
+          state: up
+          link-aggregation:
+            mode: balance-rr
+            port:
+              - enp1s0
+              - enp2s0
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.10.10.225
+                prefix-length: 24
+            dhcp: false
+        - name: enp1s0
+          type: ethernet
+          state: up
+        - name: enp2s0
+          type: ethernet
+          state: up
+      dns-resolver:
+        config:
+          server:
+            - 10.10.10.1
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.10.10.1
+            next-hop-interface: bond0
+            table-id: 254
