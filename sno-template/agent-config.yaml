@@ -18,6 +18,16 @@ hosts:
           type: ethernet
           state: up
           ipv4:
+            enabled: false
+          ipv6:
+            enabled: false
+        - name: enp1s0.100
+          type: vlan
+          state: up
+          vlan:
+            base-iface: enp1s0
+            id: 100
+          ipv4:
             enabled: true
             address:
               - ip: 10.10.10.225
@@ -38,9 +48,9 @@ hosts:
         config:
           - destination: 0.0.0.0/0
             next-hop-address: 10.10.10.1
-            next-hop-interface: enp1s0
+            next-hop-interface: enp1s0.100
             table-id: 254
           - destination: ::/0
             next-hop-address: 2600:10:10:10::1
-            next-hop-interface: enp1s0
+            next-hop-interface: enp1s0.100
             table-id: 254

@@ -85,6 +85,13 @@ sudo crictl logs <id>                        # container logs
 sudo nmcli                                   # network state
 ```
 
+## Remote Docker access
+
+```fish
+set -x DOCKER_HOST ssh://lab1
+docker ps
+```
+
 ## Debugging
 
 VPN (WireGuard) status — check infra logs:

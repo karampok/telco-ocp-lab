@@ -26,14 +26,14 @@ topology:
         - SYS_ADMIN
     bmc1:
       kind: linux
-      image: quay.io/karampok/sushy-emulator:simpleupdate
+      image: quay.io/karampok/sushy-emulator:boot-once
       network-mode: container:bmh1
       stages:
         create-links:
           exec:
-            - command: ip addr add 10.10.10.9/24 dev bmc
+            - command: ip addr add 10.10.0.9/24 dev bmc
               phase: on-exit
-            - command: ip route add default via 10.10.10.1
+            - command: ip route add default via 10.10.0.1
               phase: on-exit
       binds:
         - /tmp/bmh1-libvirt:/var/run/libvirt
@@ -52,6 +52,9 @@ topology:
             - command: ip route add 10.10.0.0/16 via 169.254.0.2
               target: host
               phase: on-exit
+            - command: iptables -P FORWARD ACCEPT
+              target: host
+              phase: on-exit
             - command: nft -f cetc/clab.nft
               target: host
               phase: on-exit
@@ -60,12 +63,11 @@ topology:
         - ip route add default via 169.254.0.1
         - ip addr add 10.10.20.1/24 dev internal
         - ip -6 addr add 2600:10:10:20::1/64 dev internal
-        - ip link add br-prov type bridge
-        - ip link set bmh1 master br-prov
-        - ip link set bmc1 master br-prov
-        - ip link set br-prov up
-        - ip addr add 10.10.10.1/24 dev br-prov
-        - ip -6 addr add 2600:10:10:10::1/64 dev br-prov
+        - ip link add link bmh1 name bmh1.100 type vlan id 100
+        - ip link set bmh1.100 up
+        - ip addr add 10.10.10.1/24 dev bmh1.100
+        - ip -6 addr add 2600:10:10:10::1/64 dev bmh1.100
+        - ip addr add 10.10.0.1/24 dev bmc1
     infra:
       kind: linux
       image: quay.io/karampok/infra:rc
@@ -79,6 +81,7 @@ topology:
         - ip addr add 10.10.20.200/24 dev eth1
         - ip -6 addr add 2600:10:10:20::200/64 dev eth1
         - ip route add 10.10.10.0/24 via 10.10.20.1
+        - ip route add 10.10.0.0/24 via 10.10.20.1
         - ip route add default via 10.10.20.1
         - ip -6 route add default via 2600:10:10:20::1
       env:
