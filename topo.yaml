@@ -46,13 +46,13 @@ topology:
             - command: ip addr add 169.254.0.1/30 dev vlab-upstream
               target: host
               phase: on-exit
-            - command: ip route add 10.10.0.0/16 via 169.254.0.2
+            - command: ip route replace 10.10.0.0/16 via 169.254.0.2
               target: host
               phase: on-exit
             - command: ip -6 addr add 2600:10:10:ff::1/126 dev vlab-upstream
               target: host
               phase: on-exit
-            - command: ip -6 route add 2600:10:10::/48 via 2600:10:10:ff::2
+            - command: ip -6 route replace 2600:10:10::/48 via 2600:10:10:ff::2
               target: host
               phase: on-exit
             - command: iptables -P FORWARD ACCEPT
@@ -89,12 +89,10 @@ topology:
         - ip route add 10.10.0.0/24 via 10.10.20.1
         - ip route add default via 10.10.20.1
         - ip -6 route add default via 2600:10:10:20::1
-        - oc adm release extract --registry-config ${PULL_SECRET} --command=openshift-install --to /usr/local/bin/ ${OCP_RELEASE}
-        - openshift-install version
       env:
         PUBLICIP: ${PUBLICIP}  # ip --json route get 8.8.8.8 | jq -r '.[].prefsrc'
-        OCP_RELEASE: ${OCP_RELEASE:-quay.io/openshift-release-dev/ocp-release:4.22.0-rc.5-x86_64}
-        PULL_SECRET: ${PULL_SECRET:-~/.pull-secret.json}
+        OCP_RELEASE: quay.io/openshift-release-dev/ocp-release:4.22.0-rc.5-x86_64
+        PULL_SECRET: /root/.pull-secret.json
       binds:
         - sno-template/:/root/sno-template
         - deploy-ocp.sh:/root/deploy-ocp.sh

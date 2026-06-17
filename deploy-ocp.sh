@@ -1,6 +1,12 @@
 #! /usr/bin/env bash
 set -euoE pipefail
 
+PULL_SECRET=${PULL_SECRET:-/root/.pull-secret.json}
+
+oc adm release extract --registry-config "${PULL_SECRET}" \
+   --command=openshift-install --to /usr/local/bin/ "${OCP_RELEASE}"
+openshift-install version
+
 name=${1:-sno} #mno,sno,5gc
 folder=${folder:-"/tmp/${name}"}
 cp -r "${name}"-template "${folder}"
@@ -9,6 +15,7 @@ sed -i "s|PULLSECRET|$(jq '.' -c "$PULL_SECRET")|g" "${folder}"/install-config.y
 sed -i "s|SSHKEY|$(cat ~/.ssh/authorized_keys)|g" "${folder}"/install-config.yaml
 
 openshift-install agent create image --log-level info --dir "${folder}"
+exit 0
 
 source "${HOME}/sushy.sh"
 while IFS= read -r node; do
