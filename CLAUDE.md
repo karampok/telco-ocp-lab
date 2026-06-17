@@ -1,76 +1,36 @@
-# clab-only — Virtual Telco OCP Lab
+# Virtual Telco OCP Lab using containerlab
 
-Containerlab topology simulating bare-metal SNO (Single Node OpenShift)
-deployment via Redfish
+Containerlab topology which includes bare-metal VMs
+that can be used by assisted installer API or ZTP for deploying OpenShift
 
 ## Host prerequisites
 
-KVM  `/dev/kvm`
-No libvirt on host needed(runs inside `bmh1` container).
-Docker  with network disabled
+* KVM  `/dev/kvm` but no libvirt on host needed(runs inside `bmh1` container).
+* Docker with network disabled
+* oc, containerlab, nmstatectl binary
+* PULL_SECRET=${PULL_SECRET:-~/.pull-secret.json}
+* OCP_RELEASE=${OCP_RELEASE:-"quay.io/openshift-release-dev/ocp-release:4.22.0-rc.5-x86_64"}
 
-Required files on host: - `~/.pull-secret.json`
+## ABI
 
-## Deploy
+Sync (rsync or git clone) repo to host (remote):
 
-Sync (rsync or git clone) repo to host:
-
-```bash
-rsync -av --exclude='clab-vlab/' --exclude='v0/' ./ <remote>:~/clab-only/
-```
-
-As root:
 
 ```bash
-cd ~/clab-only && 
-export PUBLICIP=$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') 
-clab deploy --topo topo.yaml
-```
+# on remote as root
+cp -r sno-template sno
+sed -i "s|PULLSECRET|$(jq '.' -c "$PULL_SECRET")|g" sno/install-config.yaml
 
-## Network
+oc adm release extract --registry-config "${PULL_SECRET}" \
+   --command=openshift-install --to "${HOME}/.local/bin/" "$OCP_RELEASE"
+openshift-install version
 
-Three segments: provisioning (BMC/BMH), internal (infra/dns), and host-uplink. See `topo.yaml` for addresses. Host route to lab networks injected by clab via gw1.
+openshift-install agent create image --log-level info --dir sno
 
-## Cleanup
+PUBLICIP=$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') containerlab deploy --topo topo.yaml
 
-WireGuard (local):
-```bash
-sudo wg-quick down /tmp/lab.conf
-```
-
-Containerlab (must run on remote — host-level cleanup won't work via DOCKER_HOST):
-```bash
-ssh lab0 "cd ~/clab-only && clab destroy --topo topo.yaml"
-```
-
-## Verify
-
-DNS (requires WireGuard up):
-```bash
-resolvectl query api.sno.telco.vlab
-# or: dig @10.10.20.10 api.sno.telco.vlab
-```
-
-OCP install config is constructed from `sno-template/` (`baseDomain: telco.vlab`, cluster name `sno`). CoreDNS (`cetc/dns/zones/`) must match: `api.<cluster>.<baseDomain>` and `*.apps.<cluster>.<baseDomain>`.
-
-## OCP Deployment
-
-Trigger from inside infra container:
-```bash
-docker exec -it clab-vlab-infra bash
-./deploy-ocp.sh sno
-```
-
-Monitor install progress:
-```bash
+# Monitor install progress:
 openshift-install agent wait-for install-complete --log-level info --dir /share/sno
-```
-
-Fetch kubeconfig after first node reboot (over WireGuard, sno or mno):
-```bash
-curl -s http://10.0.0.1:9000/sno/auth/kubeconfig > ~/.kube/lab0.yaml
-export KUBECONFIG=~/.kube/lab0.yaml
-oc get clusteroperators -w
 ```
 
 SSH to rendezvous node during install (requires WireGuard or direct lab access):
@@ -85,12 +45,18 @@ sudo crictl logs <id>                        # container logs
 sudo nmcli                                   # network state
 ```
 
-## Remote Docker access
 
-```fish
-set -x DOCKER_HOST ssh://lab1
-docker ps
-```
+
+## Connect local to cluster
+
+From local machine:
+- access to remote docker containers `DOCKER_HOST ssh://lab1 docker ps`
+- setup wg follow `docker logs clab-vlab-infra`, verify with `ssh -p 2022 root@10.0.0.1`
+- access dns `resolvectl query api.sno.telco.vlab` once wg up
+- ping access ipv4 ipv6 to all IPs from topo.yaml file
+- Fetch kubeconfig `scp lab:/sno/autho/kubeconfig ~/.kube/lab0.yaml` if ABI
+- Fetch kubeconfig `curl -s http://10.0.0.1:9000/sno/auth/kubeconfig > ~/.kube/lab0.yaml` if ZTP
+
 
 ## Multi-lab: creating a second lab instance
 
@@ -124,15 +90,3 @@ The second octet distinguishes labs: lab1=`10`, lab2=`11`, lab3=`12`, etc.
 Where `<N>` = 10 + lab index (lab1=10, lab2=11, lab3=12, ...).
 
 Not changed (safe to keep): VM UUID, mgmt network (dummy, no IPs), container images.
-
-## Debugging
-
-VPN (WireGuard) status — check infra logs:
-```bash
-docker logs clab-vlab-infra
-```
-
-Redfish/BMC console per host — check bmh1 logs:
-```bash
-docker logs clab-vlab-bmh1
-```
