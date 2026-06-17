@@ -15,7 +15,8 @@ topology:
       network-mode: none
       binds:
         - /dev/kvm:/dev/kvm
-        - /tmp/bmh1-libvirt:/var/run/libvirt
+        - ./.bmh1-libvirt:/var/run/libvirt
+        - ./images/agent.x86_64.iso:/cdrom/agent.x86_64.iso:ro
       env:
         QEMU_DISK_SIZE: "120G"
         QEMU_MEMORY: "16384"
@@ -36,7 +37,7 @@ topology:
             - command: ip route add default via 10.10.0.1
               phase: on-exit
       binds:
-        - /tmp/bmh1-libvirt:/var/run/libvirt
+        - ./.bmh1-libvirt:/var/run/libvirt
     gw1:
       kind: linux
       image: quay.io/frrouting/frr:10.6.1

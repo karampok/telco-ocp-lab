@@ -1,2 +1,6 @@
 clab-vlab/
 .ailocal/
+.bmh*-libvirt/*
+!.bmh*-libvirt/.gitkeep
+images/*
+!images/.gitkeep
