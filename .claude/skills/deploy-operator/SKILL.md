@@ -31,6 +31,8 @@ Operator -> FBC tag mapping (VERSION = `oc get clusterversion -o jsonpath='{.sta
 
 VERSION can be overridden to install a different stream (e.g., 4.23 operator on 4.22 cluster). Only the CatalogSource image changes — IDMS repos are the same across versions.
 
+CatalogSource naming: `<OPERATOR>-konflux-v<VERSION>` (e.g., `nmstate-konflux-v4-23`). Include version so multiple streams can coexist and intent is clear from `oc get catalogsource`.
+
 # Pre-flight
 
 1. Check if operator already installed: `oc get csv -n <NS> 2>/dev/null`

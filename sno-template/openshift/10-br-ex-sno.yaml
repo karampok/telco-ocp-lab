@@ -1,0 +1,17 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 10-br-ex-sno
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - path: /etc/nmstate/openshift/cluster.yml
+        mode: 0644
+        overwrite: true
+        contents:
+          source: data:text/plain;charset=utf-8;base64,aW50ZXJmYWNlczoKLSBuYW1lOiBlbnAxczAKICB0eXBlOiBldGhlcm5ldAogIHN0YXRlOiB1cAogIGlwdjQ6CiAgICBlbmFibGVkOiBmYWxzZQogIGlwdjY6CiAgICBlbmFibGVkOiBmYWxzZQotIG5hbWU6IGVucDFzMC4xMDAKICB0eXBlOiB2bGFuCiAgc3RhdGU6IHVwCiAgdmxhbjoKICAgIGJhc2UtaWZhY2U6IGVucDFzMAogICAgaWQ6IDEwMAogIGlwdjQ6CiAgICBlbmFibGVkOiBmYWxzZQogIGlwdjY6CiAgICBlbmFibGVkOiBmYWxzZQotIG5hbWU6IGJyLWV4CiAgdHlwZTogb3ZzLWJyaWRnZQogIHN0YXRlOiB1cAogIGJyaWRnZToKICAgIHBvcnQ6CiAgICAtIG5hbWU6IGVucDFzMC4xMDAKICAgIC0gbmFtZTogYnItZXgKLSBuYW1lOiBici1leAogIHR5cGU6IG92cy1pbnRlcmZhY2UKICBzdGF0ZTogdXAKICBjb3B5LW1hYy1mcm9tOiBlbnAxczAKICBpcHY0OgogICAgZW5hYmxlZDogdHJ1ZQogICAgZGhjcDogZmFsc2UKICAgIGFkZHJlc3M6CiAgICAtIGlwOiAxMC4xMC4xMC4yMjUKICAgICAgcHJlZml4LWxlbmd0aDogMjQKICBpcHY2OgogICAgZW5hYmxlZDogdHJ1ZQogICAgYXV0b2NvbmY6IGZhbHNlCiAgICBkaGNwOiBmYWxzZQogICAgYWRkcmVzczoKICAgIC0gaXA6IDI2MDA6MTA6MTA6MTA6OjIyNQogICAgICBwcmVmaXgtbGVuZ3RoOiA2NApkbnMtcmVzb2x2ZXI6CiAgY29uZmlnOgogICAgc2VydmVyOgogICAgLSAxMC4xMC4yMC4xMApyb3V0ZXM6CiAgY29uZmlnOgogIC0gZGVzdGluYXRpb246IDAuMC4wLjAvMAogICAgbmV4dC1ob3AtYWRkcmVzczogMTAuMTAuMTAuMQogICAgbmV4dC1ob3AtaW50ZXJmYWNlOiBici1leAogIC0gZGVzdGluYXRpb246IDo6LzAKICAgIG5leHQtaG9wLWFkZHJlc3M6IDI2MDA6MTA6MTA6MTA6OjEKICAgIG5leHQtaG9wLWludGVyZmFjZTogYnItZXgK
