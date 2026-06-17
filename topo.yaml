@@ -16,7 +16,7 @@ topology:
       binds:
         - /dev/kvm:/dev/kvm
         - ./.bmh1-libvirt:/var/run/libvirt
-        - ./sno/agent.x86_64.iso:/cdrom/agent.x86_64.iso:ro
+        #- ./sno/agent.x86_64.iso:/cdrom/agent.x86_64.iso:ro
       env:
         QEMU_DISK_SIZE: "120G"
         QEMU_MEMORY: "16384"
@@ -89,15 +89,19 @@ topology:
         - ip route add 10.10.0.0/24 via 10.10.20.1
         - ip route add default via 10.10.20.1
         - ip -6 route add default via 2600:10:10:20::1
+        - oc adm release extract --registry-config ${PULL_SECRET} --command=openshift-install --to /usr/local/bin/ ${OCP_RELEASE}
+        - openshift-install version
       env:
         PUBLICIP: ${PUBLICIP}  # ip --json route get 8.8.8.8 | jq -r '.[].prefsrc'
+        OCP_RELEASE: ${OCP_RELEASE:-quay.io/openshift-release-dev/ocp-release:4.22.0-rc.5-x86_64}
+        PULL_SECRET: ${PULL_SECRET:-~/.pull-secret.json}
       binds:
         - sno-template/:/root/sno-template
         - deploy-ocp.sh:/root/deploy-ocp.sh
         - sushy.sh:/root/sushy.sh
         - ${HOME}/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
         - ${HOME}/.pull-secret.json:/root/.pull-secret.json:ro
-        - ${HOME}/.wg-auth:/root/.wg-auth:ro
+        - ${HOME}/.wg-auth:/root/.wg-auth:rw
     sw-internal:
       kind: linux
       image: quay.io/karampok/snife:latest
