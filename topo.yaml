@@ -43,22 +43,14 @@ topology:
       stages:
         create-links:
           exec:
-            - command: ip addr add 169.254.0.1/30 dev vlab-upstream
-              target: host
-              phase: on-exit
-            - command: ip route add 10.10.0.0/16 via 169.254.0.2
-              target: host
-              phase: on-exit
-            - command: ip -6 addr add 2600:10:10:ff::1/126 dev vlab-upstream
-              target: host
-              phase: on-exit
-            - command: ip -6 route add 2600:10:10::/48 via 2600:10:10:ff::2
-              target: host
-              phase: on-exit
-            - command: iptables -P FORWARD ACCEPT
-              target: host
-              phase: on-exit
-            - command: nft -f cetc/clab.nft
+            - command: >-
+                bash -c '
+                ip addr add 169.254.0.1/30 dev vlab-upstream;
+                ip route add 10.10.0.0/16 via 169.254.0.2;
+                ip -6 addr add 2600:10:10:ff::1/126 dev vlab-upstream;
+                ip -6 route add 2600:10:10::/48 via 2600:10:10:ff::2;
+                iptables -P FORWARD ACCEPT;
+                nft -f cetc/clab.nft'
               target: host
               phase: on-exit
       exec:
