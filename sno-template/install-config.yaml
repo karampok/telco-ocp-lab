@@ -32,5 +32,3 @@ networking:
     - fd02::/112
 platform:
   none: {}
-pullSecret: 'PULLSECRET'
-sshKey: "SSHKEY"
