@@ -22,6 +22,9 @@ topology:
         QEMU_MEMORY: "16384"
         VCPU: "8"
         VM_UUID: 11111111-1111-1111-1111-111111111111
+      exec:
+        - ip addr add 10.10.0.9/24 dev bmc
+        - ip route add default via 10.10.0.1
       cap-add:
         - NET_ADMIN
         - SYS_ADMIN
@@ -29,13 +32,6 @@ topology:
       kind: linux
       image: quay.io/karampok/sushy-emulator:boot-once
       network-mode: container:bmh1
-      stages:
-        create-links:
-          exec:
-            - command: ip addr add 10.10.0.9/24 dev bmc
-              phase: on-exit
-            - command: ip route add default via 10.10.0.1
-              phase: on-exit
       binds:
         - ./.bmh1-libvirt:/var/run/libvirt
     gw1:
@@ -53,6 +49,12 @@ topology:
             - command: ip route add 10.10.0.0/16 via 169.254.0.2
               target: host
               phase: on-exit
+            - command: ip -6 addr add 2600:10:10:ff::1/126 dev vlab-upstream
+              target: host
+              phase: on-exit
+            - command: ip -6 route add 2600:10:10::/48 via 2600:10:10:ff::2
+              target: host
+              phase: on-exit
             - command: iptables -P FORWARD ACCEPT
               target: host
               phase: on-exit
@@ -61,7 +63,9 @@ topology:
               phase: on-exit
       exec:
         - ip addr add 169.254.0.2/30 dev upstream
+        - ip -6 addr add 2600:10:10:ff::2/126 dev upstream
         - ip route add default via 169.254.0.1
+        - ip -6 route add default via 2600:10:10:ff::1
         - ip addr add 10.10.20.1/24 dev internal
         - ip -6 addr add 2600:10:10:20::1/64 dev internal
         - ip link add link bmh1 name bmh1.100 type vlan id 100
@@ -126,4 +130,4 @@ topology:
     - endpoints: ["sw-internal:eth1", "infra:eth1"]
     - endpoints: ["sw-internal:eth2", "dns:eth1"]
     - endpoints: ["gw1:bmh1", "bmh1:eth10"]
-    - endpoints: ["gw1:bmc1", "bmc1:bmc"]
+    - endpoints: ["gw1:bmc1", "bmh1:bmc"]
