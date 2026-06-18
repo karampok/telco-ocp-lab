@@ -107,6 +107,7 @@ topology:
         - ip link set eth0 master br0
         - ip link set eth1 master br0
         - ip link set eth2 master br0
+        - ip link set eth3 master br0
         - ip link set br0 up
     dns:
       kind: linux
@@ -131,4 +132,5 @@ topology:
     - endpoints: ["sw-internal:eth1", "infra:eth1"]
     - endpoints: ["sw-internal:eth2", "dns:eth1"]
     - endpoints: ["gw1:bmh1", "bmh1:eth10"]
+    - endpoints: ["sw-internal:eth3", "bmh1:eth11"]
     - endpoints: ["gw1:bmc1", "bmh1:bmc"]
