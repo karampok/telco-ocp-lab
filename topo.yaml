@@ -8,19 +8,22 @@ mgmt:
 
 topology:
   nodes:
-    bmh1:
+    bmh1: # mac=4a:a3:29:34:18:df, bmc=10.10.10.9, node=10.10.30.225, sno rendezvous
       kind: linux
       image: quay.io/karampok/vr-bmh:latest
       network-mode: none
       binds:
         - /dev/kvm:/dev/kvm
         - .libvirt/bmh1:/var/run/libvirt
+        - ./share/sno/agent.x86_64.iso:/cdrom/agent.x86_64.iso:ro
       env:
         VCPU: "16"
         VM_UUID: 11111111-1111-1111-1111-111111111111
       exec:
-        - ip addr add 10.10.0.9/24 dev bmc
-        - ip route add default via 10.10.0.1
+        - ip link add link bmc name bmc.10 type vlan id 10
+        - ip link set bmc.10 up
+        - ip addr add 10.10.10.9/24 dev bmc.10
+        - ip route add default via 10.10.10.1
       cap-add:
         - NET_ADMIN
         - SYS_ADMIN
@@ -41,8 +44,10 @@ topology:
         VCPU: "16"
         VM_UUID: 22222222-2222-2222-2222-222222222222
       exec:
-        - ip addr add 10.10.0.10/24 dev bmc
-        - ip route add default via 10.10.0.1
+        - ip link add link bmc name bmc.10 type vlan id 10
+        - ip link set bmc.10 up
+        - ip addr add 10.10.10.10/24 dev bmc.10
+        - ip route add default via 10.10.10.1
       cap-add:
         - NET_ADMIN
         - SYS_ADMIN
@@ -63,8 +68,10 @@ topology:
         VCPU: "16"
         VM_UUID: 33333333-3333-3333-3333-333333333333
       exec:
-        - ip addr add 10.10.0.11/24 dev bmc
-        - ip route add default via 10.10.0.1
+        - ip link add link bmc name bmc.10 type vlan id 10
+        - ip link set bmc.10 up
+        - ip addr add 10.10.10.11/24 dev bmc.10
+        - ip route add default via 10.10.10.1
       cap-add:
         - NET_ADMIN
         - SYS_ADMIN
@@ -85,8 +92,10 @@ topology:
         VCPU: "16"
         VM_UUID: 44444444-4444-4444-4444-444444444444
       exec:
-        - ip addr add 10.10.0.12/24 dev bmc
-        - ip route add default via 10.10.0.1
+        - ip link add link bmc name bmc.10 type vlan id 10
+        - ip link set bmc.10 up
+        - ip addr add 10.10.10.12/24 dev bmc.10
+        - ip route add default via 10.10.10.1
       cap-add:
         - NET_ADMIN
         - SYS_ADMIN
@@ -107,8 +116,10 @@ topology:
         VCPU: "16"
         VM_UUID: 55555555-5555-5555-5555-555555555555
       exec:
-        - ip addr add 10.10.0.13/24 dev bmc
-        - ip route add default via 10.10.0.1
+        - ip link add link bmc name bmc.10 type vlan id 10
+        - ip link set bmc.10 up
+        - ip addr add 10.10.10.13/24 dev bmc.10
+        - ip route add default via 10.10.10.1
       cap-add:
         - NET_ADMIN
         - SYS_ADMIN
@@ -150,15 +161,17 @@ topology:
         - ip -6 addr add 2600:10:10:ff::2/126 dev upstream
         - ip route add default via 169.254.0.1
         - ip -6 route add default via 2600:10:10:ff::1
-        - ip addr add 10.10.0.1/24 dev sw
         - ip link add link sw name sw.10 type vlan id 10
         - ip link set sw.10 up
         - ip addr add 10.10.10.1/24 dev sw.10
-        - ip -6 addr add 2600:10:10:10::1/64 dev sw.10
         - ip link add link sw name sw.20 type vlan id 20
         - ip link set sw.20 up
         - ip addr add 10.10.20.1/24 dev sw.20
         - ip -6 addr add 2600:10:10:20::1/64 dev sw.20
+        - ip link add link sw name sw.30 type vlan id 30
+        - ip link set sw.30 up
+        - ip addr add 10.10.30.1/24 dev sw.30
+        - ip -6 addr add 2600:10:10:30::1/64 dev sw.30
     switch:
       kind: linux
       image: quay.io/karampok/snife:latest
@@ -207,6 +220,7 @@ topology:
         - sno-template/:/root/sno-template
         - deploy-ocp.sh:/root/deploy-ocp.sh
         - sushy.sh:/root/sushy.sh
+        - ./share:/share
         - ${HOME}/.ssh/authorized_keys:/root/.ssh/authorized_keys:ro
         - ${HOME}/.pull-secret.json:/root/.pull-secret.json:ro
         - ${HOME}/.wg-auth:/root/.wg-auth:rw
