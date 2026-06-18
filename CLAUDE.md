@@ -11,26 +11,26 @@ that can be used by assisted installer API or ZTP for deploying OpenShift
 * PULL_SECRET=${PULL_SECRET:-~/.pull-secret.json}
 * OCP_RELEASE=${OCP_RELEASE:-"quay.io/openshift-release-dev/ocp-release:4.22.0-rc.5-x86_64"}
 
-## ABI
-
-Sync (rsync or git clone) repo to host (remote):
-
+## Deploy
 
 ```bash
-# on remote as root
-cp -r sno-template sno
-sed -i "s|PULLSECRET|$(jq '.' -c "$PULL_SECRET")|g" sno/install-config.yaml
+# 0. Create release tarball (local machine)
+git archive --format=tar.gz --prefix=telco-vlab/ -o telco-vlab.tar.gz HEAD \
+  topo.yaml deploy-ocp.sh sushy.sh cetc/ sno-template/ .bmh1-libvirt/
+scp telco-vlab.tar.gz lab1:~/
 
-oc adm release extract --registry-config "${PULL_SECRET}" \
-   --command=openshift-install --to "${HOME}/.local/bin/" "$OCP_RELEASE"
-openshift-install version
+# 1. Untar (on lab host)
+tar xzf ~/telco-vlab.tar.gz -C ~/
+cd ~/telco-vlab
 
-openshift-install agent create image --log-level info --dir sno
+# 2. Destroy existing lab if running
+sudo clab destroy --topo topo.yaml 2>/dev/null || true
 
-PUBLICIP=$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') containerlab deploy --topo topo.yaml
+# 3. Deploy containerlab infrastructure
+PUBLICIP=$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') sudo -E clab deploy --topo topo.yaml
 
-# Monitor install progress:
-openshift-install agent wait-for install-complete --log-level info --dir /share/sno
+# 4. Run OCP deployment from infra container
+DOCKER_HOST=ssh://lab1 docker exec clab-vlab-infra ./deploy-ocp.sh
 ```
 
 SSH to rendezvous node during install (requires WireGuard or direct lab access):
