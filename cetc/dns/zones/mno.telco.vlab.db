@@ -1,0 +1,18 @@
+; mno.telco.vlab zone file
+
+$ORIGIN mno.telco.vlab.
+$TTL 3600
+
+@   IN  SOA ns1.mno.telco.vlab. hostmaster.mno.telco.vlab. (
+           2026062401 ; Serial
+           3600       ; Refresh
+           900        ; Retry
+           604800     ; Expire
+           86400 )    ; Minimum TTL
+
+@   IN  NS  ns1.mno.telco.vlab.
+
+api    IN  A     10.10.30.200
+api    IN  AAAA  2600:10:10:30::200
+*.apps IN  A     10.10.30.201
+*.apps IN  AAAA  2600:10:10:30::201

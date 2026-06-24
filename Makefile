@@ -1,4 +1,4 @@
-RELEASE ?= quay.io/openshift-release-dev/ocp-release:4.22.0-rc.5-x86_64
+RELEASE ?= quay.io/openshift-release-dev/ocp-release:4.22.2-x86_64
 NAME ?= sno
 
 .PHONY: iso fetch-bin deploy clean
@@ -9,8 +9,8 @@ fetch-bin:
 			--command=openshift-install --to $(HOME)/.local/bin/ "$(RELEASE)"
 
 deploy:
-	mkdir -p .libvirt/bmh{1,2,3,4,5}
-	PUBLICIP=$$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') sudo -E clab deploy --topo topo.yaml
+	mkdir -p .libvirt/bmh{1,2,3,4,5,6,7,8,9} share
+	PUBLICIP=$$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') clab deploy --topo topo.yaml
 
 clean:
 	sudo -E clab destroy --topo topo.yaml 2>/dev/null || true
