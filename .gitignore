@@ -3,3 +3,8 @@ clab-vlab/
 .libvirt/
 share/*
 !share/.gitkeep
+*.tar.gz
+aftermc.yaml
+beforemc.yaml
+step5/
+v0/

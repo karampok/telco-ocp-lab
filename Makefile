@@ -9,12 +9,12 @@ fetch-bin:
 			--command=openshift-install --to $(HOME)/.local/bin/ "$(RELEASE)"
 
 deploy:
-	mkdir -p .libvirt/bmh{1,2,3,4,5,6,7,8,9} share
+	mkdir -p .libvirt/bmh{1,2,3,4,5} share
 	PUBLICIP=$$(ip --json route get 8.8.8.8 | jq -r '.[].prefsrc') clab deploy --topo topo.yaml
 
 clean:
-	sudo -E clab destroy --topo topo.yaml 2>/dev/null || true
-	sudo rm -rf .libvirt clab-vlab
+	clab destroy --topo topo.yaml 2>/dev/null || true
+	rm -rf .libvirt clab-vlab
 
 iso:
 	cp -r $(NAME)-template ./share/$(NAME)

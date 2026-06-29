@@ -13,7 +13,7 @@ hosts:
       deviceName: "/dev/vda"
     interfaces:
       - name: random
-        macAddress: 86:4f:d6:29:20:46
+        macAddress: 16:ef:73:7f:92:cb
     networkConfig:
       interfaces:
         - name: random
@@ -81,7 +81,7 @@ hosts:
       deviceName: "/dev/vda"
     interfaces:
       - name: random
-        macAddress: 26:47:6c:30:b7:c6
+        macAddress: 8e:a3:23:43:eb:f5
     networkConfig:
       interfaces:
         - name: random
@@ -149,7 +149,7 @@ hosts:
       deviceName: "/dev/vda"
     interfaces:
       - name: random
-        macAddress: 72:08:23:1a:b7:99
+        macAddress: 0e:49:1e:d3:80:b5
     networkConfig:
       interfaces:
         - name: random
@@ -217,7 +217,7 @@ hosts:
       deviceName: "/dev/vda"
     interfaces:
       - name: random
-        macAddress: 46:db:f7:fb:a4:e1
+        macAddress: 76:de:12:94:0b:7c
     networkConfig:
       interfaces:
         - name: random

@@ -11,6 +11,7 @@ topology:
     bmh1: # mac=4a:a3:29:34:18:df, bmc=10.10.10.11, node=10.10.30.225, sno rendezvous
       kind: linux
       image: quay.io/karampok/vr-bmh:latest
+      image-pull-policy: Always
       network-mode: none
       binds:
         - /dev/kvm:/dev/kvm
@@ -29,12 +30,14 @@ topology:
     bmc1:
       kind: linux
       image: quay.io/karampok/sushy-emulator:boot-once
+      image-pull-policy: Always
       network-mode: container:bmh1
       binds:
         - .libvirt/bmh1:/var/run/libvirt
     bmh2:
       kind: linux
       image: quay.io/karampok/vr-bmh:latest
+      image-pull-policy: Always
       network-mode: none
       binds:
         - /dev/kvm:/dev/kvm
@@ -53,12 +56,14 @@ topology:
     bmc2:
       kind: linux
       image: quay.io/karampok/sushy-emulator:boot-once
+      image-pull-policy: Always
       network-mode: container:bmh2
       binds:
         - .libvirt/bmh2:/var/run/libvirt
     bmh3:
       kind: linux
       image: quay.io/karampok/vr-bmh:latest
+      image-pull-policy: Always
       network-mode: none
       binds:
         - /dev/kvm:/dev/kvm
@@ -77,12 +82,14 @@ topology:
     bmc3:
       kind: linux
       image: quay.io/karampok/sushy-emulator:boot-once
+      image-pull-policy: Always
       network-mode: container:bmh3
       binds:
         - .libvirt/bmh3:/var/run/libvirt
     bmh4:
       kind: linux
       image: quay.io/karampok/vr-bmh:latest
+      image-pull-policy: Always
       network-mode: none
       binds:
         - /dev/kvm:/dev/kvm
@@ -101,12 +108,14 @@ topology:
     bmc4:
       kind: linux
       image: quay.io/karampok/sushy-emulator:boot-once
+      image-pull-policy: Always
       network-mode: container:bmh4
       binds:
         - .libvirt/bmh4:/var/run/libvirt
     bmh5:
       kind: linux
       image: quay.io/karampok/vr-bmh:latest
+      image-pull-policy: Always
       network-mode: none
       binds:
         - /dev/kvm:/dev/kvm
@@ -125,105 +134,10 @@ topology:
     bmc5:
       kind: linux
       image: quay.io/karampok/sushy-emulator:boot-once
+      image-pull-policy: Always
       network-mode: container:bmh5
       binds:
         - .libvirt/bmh5:/var/run/libvirt
-    bmh6: # mno-master-0, bmc=10.10.10.16, node=10.10.30.230
-      kind: linux
-      image: quay.io/karampok/vr-bmh:latest
-      network-mode: none
-      binds:
-        - /dev/kvm:/dev/kvm
-        - .libvirt/bmh6:/var/run/libvirt
-      env:
-        VCPU: "16"
-        VM_UUID: 66666666-6666-6666-6666-666666666666
-      exec:
-        - ip link add link bmc name bmc.10 type vlan id 10
-        - ip link set bmc.10 up
-        - ip addr add 10.10.10.16/24 dev bmc.10
-        - ip route add default via 10.10.10.1
-      cap-add:
-        - NET_ADMIN
-        - SYS_ADMIN
-    bmc6:
-      kind: linux
-      image: quay.io/karampok/sushy-emulator:boot-once
-      network-mode: container:bmh6
-      binds:
-        - .libvirt/bmh6:/var/run/libvirt
-    bmh7: # mno-master-1, bmc=10.10.10.17, node=10.10.30.231
-      kind: linux
-      image: quay.io/karampok/vr-bmh:latest
-      network-mode: none
-      binds:
-        - /dev/kvm:/dev/kvm
-        - .libvirt/bmh7:/var/run/libvirt
-      env:
-        VCPU: "16"
-        VM_UUID: 77777777-7777-7777-7777-777777777777
-      exec:
-        - ip link add link bmc name bmc.10 type vlan id 10
-        - ip link set bmc.10 up
-        - ip addr add 10.10.10.17/24 dev bmc.10
-        - ip route add default via 10.10.10.1
-      cap-add:
-        - NET_ADMIN
-        - SYS_ADMIN
-    bmc7:
-      kind: linux
-      image: quay.io/karampok/sushy-emulator:boot-once
-      network-mode: container:bmh7
-      binds:
-        - .libvirt/bmh7:/var/run/libvirt
-    bmh8: # mno-master-2, bmc=10.10.10.18, node=10.10.30.232
-      kind: linux
-      image: quay.io/karampok/vr-bmh:latest
-      network-mode: none
-      binds:
-        - /dev/kvm:/dev/kvm
-        - .libvirt/bmh8:/var/run/libvirt
-      env:
-        VCPU: "16"
-        VM_UUID: 88888888-8888-8888-8888-888888888888
-      exec:
-        - ip link add link bmc name bmc.10 type vlan id 10
-        - ip link set bmc.10 up
-        - ip addr add 10.10.10.18/24 dev bmc.10
-        - ip route add default via 10.10.10.1
-      cap-add:
-        - NET_ADMIN
-        - SYS_ADMIN
-    bmc8:
-      kind: linux
-      image: quay.io/karampok/sushy-emulator:boot-once
-      network-mode: container:bmh8
-      binds:
-        - .libvirt/bmh8:/var/run/libvirt
-    bmh9: # mno-worker-0, bmc=10.10.10.19, node=10.10.30.233
-      kind: linux
-      image: quay.io/karampok/vr-bmh:latest
-      network-mode: none
-      binds:
-        - /dev/kvm:/dev/kvm
-        - .libvirt/bmh9:/var/run/libvirt
-      env:
-        VCPU: "16"
-        VM_UUID: 99999999-9999-9999-9999-999999999999
-      exec:
-        - ip link add link bmc name bmc.10 type vlan id 10
-        - ip link set bmc.10 up
-        - ip addr add 10.10.10.19/24 dev bmc.10
-        - ip route add default via 10.10.10.1
-      cap-add:
-        - NET_ADMIN
-        - SYS_ADMIN
-    bmc9:
-      kind: linux
-      image: quay.io/karampok/sushy-emulator:boot-once
-      network-mode: container:bmh9
-      binds:
-        - .libvirt/bmh9:/var/run/libvirt
     gateway:
       kind: linux
       image: quay.io/frrouting/frr:10.6.1
@@ -273,7 +187,7 @@ topology:
       network-mode: none
       exec:
         - ip link add br0 type bridge
-        - sh -c 'for i in $(seq 0 20); do ip link set eth$i master br0; done'
+        - sh -c 'for i in $(seq 0 12); do ip link set eth$i master br0; done'
         - ip link set br0 up
     dns:
       kind: linux
@@ -338,11 +252,3 @@ topology:
     - endpoints: ["switch:eth10", "bmh4:bmc"]
     - endpoints: ["switch:eth11", "bmh5:eth10"]
     - endpoints: ["switch:eth12", "bmh5:bmc"]
-    - endpoints: ["switch:eth13", "bmh6:eth10"]
-    - endpoints: ["switch:eth14", "bmh6:bmc"]
-    - endpoints: ["switch:eth15", "bmh7:eth10"]
-    - endpoints: ["switch:eth16", "bmh7:bmc"]
-    - endpoints: ["switch:eth17", "bmh8:eth10"]
-    - endpoints: ["switch:eth18", "bmh8:bmc"]
-    - endpoints: ["switch:eth19", "bmh9:eth10"]
-    - endpoints: ["switch:eth20", "bmh9:bmc"]
