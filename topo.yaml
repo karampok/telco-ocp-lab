@@ -179,14 +179,10 @@ topology:
         - ip -6 addr add 2600:10:10:20::1/64 dev sw.20
         - ip link add link sw name sw.30 type vlan id 30
         - ip link add link sw name sw.31 type vlan id 31
-        - ip link add link sw name sw.32 type vlan id 32
         - ip link add br30 type bridge
         - ip link set sw.30 master br30
         - ip link set sw.31 master br30
-        - ip link set sw.32 master br30
         - ip link set sw.30 up
-        - ip link set sw.31 up
-        - ip link set sw.32 up
         - ip link set br30 up
         - ip addr add 10.10.30.1/24 dev br30
         - ip -6 addr add 2600:10:10:30::1/64 dev br30
@@ -209,6 +205,7 @@ topology:
       kind: linux
       image: quay.io/karampok/snife:latest
       network-mode: container:dns
+      startup-delay: 5
       exec:
         - ip link add link eth1 name eth1.20 type vlan id 20
         - ip link set eth1.20 up

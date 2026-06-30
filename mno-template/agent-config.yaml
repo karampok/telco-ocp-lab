@@ -42,25 +42,6 @@ hosts:
                 prefix-length: 64
             dhcp: false
             autoconf: false
-        - name: vlan40
-          type: vlan
-          state: up
-          vlan:
-            base-iface: random
-            id: 40
-          ipv4:
-            enabled: true
-            address:
-              - ip: 10.10.40.230
-                prefix-length: 24
-            dhcp: false
-          ipv6:
-            enabled: true
-            address:
-              - ip: 2600:10:10:40::230
-                prefix-length: 64
-            dhcp: false
-            autoconf: false
       dns-resolver:
         config:
           server:
@@ -107,25 +88,6 @@ hosts:
             enabled: true
             address:
               - ip: 2600:10:10:30::231
-                prefix-length: 64
-            dhcp: false
-            autoconf: false
-        - name: vlan40
-          type: vlan
-          state: up
-          vlan:
-            base-iface: random
-            id: 40
-          ipv4:
-            enabled: true
-            address:
-              - ip: 10.10.40.231
-                prefix-length: 24
-            dhcp: false
-          ipv6:
-            enabled: true
-            address:
-              - ip: 2600:10:10:40::231
                 prefix-length: 64
             dhcp: false
             autoconf: false
@@ -178,25 +140,6 @@ hosts:
                 prefix-length: 64
             dhcp: false
             autoconf: false
-        - name: vlan40
-          type: vlan
-          state: up
-          vlan:
-            base-iface: random
-            id: 40
-          ipv4:
-            enabled: true
-            address:
-              - ip: 10.10.40.232
-                prefix-length: 24
-            dhcp: false
-          ipv6:
-            enabled: true
-            address:
-              - ip: 2600:10:10:40::232
-                prefix-length: 64
-            dhcp: false
-            autoconf: false
       dns-resolver:
         config:
           server:
@@ -243,25 +186,6 @@ hosts:
             enabled: true
             address:
               - ip: 2600:10:10:30::233
-                prefix-length: 64
-            dhcp: false
-            autoconf: false
-        - name: vlan40
-          type: vlan
-          state: up
-          vlan:
-            base-iface: random
-            id: 40
-          ipv4:
-            enabled: true
-            address:
-              - ip: 10.10.40.233
-                prefix-length: 24
-            dhcp: false
-          ipv6:
-            enabled: true
-            address:
-              - ip: 2600:10:10:40::233
                 prefix-length: 64
             dhcp: false
             autoconf: false
