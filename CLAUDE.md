@@ -16,7 +16,7 @@ that can be used by assisted installer API or ZTP for deploying OpenShift
 ```bash
 # 0. Create release tarball (local machine)
 git archive --format=tar.gz --prefix=telco-vlab/ -o telco-vlab.tar.gz HEAD \
-  topo.yaml deploy-ocp.sh sushy.sh cetc/ sno-template/ Makefile
+  topo.yaml deploy-ocp.sh sushy.sh cetc/ sno-template/ mno-template/ Makefile
 scp telco-vlab.tar.gz lab1:~/
 
 # 1. Untar (on lab host)

@@ -187,7 +187,7 @@ topology:
       network-mode: none
       exec:
         - ip link add br0 type bridge
-        - sh -c 'for i in $(seq 0 12); do ip link set eth$i master br0; done'
+        - sh -c 'for i in $(seq 0 17); do ip link set eth$i master br0; done'
         - ip link set br0 up
     dns:
       kind: linux
@@ -253,3 +253,8 @@ topology:
     - endpoints: ["switch:eth10", "bmh4:bmc"]
     - endpoints: ["switch:eth11", "bmh5:eth10"]
     - endpoints: ["switch:eth12", "bmh5:bmc"]
+    - endpoints: ["switch:eth13", "bmh1:eth11"]
+    - endpoints: ["switch:eth14", "bmh2:eth11"]
+    - endpoints: ["switch:eth15", "bmh3:eth11"]
+    - endpoints: ["switch:eth16", "bmh4:eth11"]
+    - endpoints: ["switch:eth17", "bmh5:eth11"]
