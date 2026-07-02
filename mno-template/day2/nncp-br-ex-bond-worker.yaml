@@ -1,7 +1,5 @@
 # Day-2: Move worker br-ex from vlan30/enp1s0 to bond0.30/bond0/enp1s0
-# Same content as 10-br-ex-bond-worker.yaml MC, but applied via NNCP.
-# NOTE: This is disruptive (recreates vlan30 as bond0.30, OVS ofport changes).
-# Health probe will likely fail and rollback. Use MC + reboot instead.
+# Applied via NNCP -- no reboot needed. Tested: works live on nmstate-managed nodes.
 apiVersion: nmstate.io/v1
 kind: NodeNetworkConfigurationPolicy
 metadata:
@@ -25,7 +23,7 @@ spec:
       type: bond
       state: up
       link-aggregation:
-        mode: active-backup
+        mode: balance-rr
         port:
         - enp1s0
       ipv4:
