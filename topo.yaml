@@ -178,14 +178,9 @@ topology:
         - ip addr add 10.10.20.1/24 dev sw.20
         - ip -6 addr add 2600:10:10:20::1/64 dev sw.20
         - ip link add link sw name sw.30 type vlan id 30
-        - ip link add link sw name sw.31 type vlan id 31
-        - ip link add br30 type bridge
-        - ip link set sw.30 master br30
-        - ip link set sw.31 master br30
         - ip link set sw.30 up
-        - ip link set br30 up
-        - ip addr add 10.10.30.1/24 dev br30
-        - ip -6 addr add 2600:10:10:30::1/64 dev br30
+        - ip addr add 10.10.30.1/24 dev sw.30
+        - ip -6 addr add 2600:10:10:30::1/64 dev sw.30
     switch:
       kind: linux
       image: quay.io/karampok/snife:latest

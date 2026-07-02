@@ -1,0 +1,54 @@
+# Day-2 Step 1: Replace configure-ovs.sh with nmstate MC on master-0
+#
+# Same br-ex config as configure-ovs.sh produces (vlan30/enp1s0),
+# but managed by nmstate. Sets `applied` marker, disables configure-ovs.sh.
+# No functional change -- just ownership transfer.
+# After reboot, NNCP can modify br-ex cleanly.
+#
+# Decoded mno-master-2.yml:
+#
+#   interfaces:
+#   - name: enp1s0
+#     type: ethernet
+#     state: up
+#     ipv4: { enabled: false }
+#     ipv6: { enabled: false }
+#   - name: vlan30
+#     type: vlan
+#     state: up
+#     vlan: { base-iface: enp1s0, id: 30 }
+#   - name: br-ex
+#     type: ovs-bridge
+#     state: up
+#     bridge:
+#       options: { mcast-snooping-enable: false }
+#       port: [{ name: vlan30 }, { name: br-ex }]
+#   - name: br-ex
+#     type: ovs-interface
+#     state: up
+#     copy-mac-from: enp1s0
+#     ipv4: { enabled: true, address: [{ ip: 10.10.30.232, prefix-length: 24 }] }
+#     ipv6: { enabled: true, address: [{ ip: 2600:10:10:30::232, prefix-length: 64 }] }
+#   dns-resolver: { config: { server: [10.10.20.10] } }
+#   routes:
+#     config:
+#     - { destination: 0.0.0.0/0, next-hop-address: 10.10.30.1, next-hop-interface: br-ex }
+#     - { destination: ::/0, next-hop-address: 2600:10:10:30::1, next-hop-interface: br-ex }
+#
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: mc-vlan30-master2
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - path: /etc/nmstate/openshift/mno-master-2.yml
+        mode: 0644
+        overwrite: true
+        contents:
+          source: data:text/plain;charset=utf-8;base64,aW50ZXJmYWNlczoKLSBuYW1lOiBlbnAxczAKICB0eXBlOiBldGhlcm5ldAogIHN0YXRlOiB1cAogIGlwdjQ6CiAgICBlbmFibGVkOiBmYWxzZQogIGlwdjY6CiAgICBlbmFibGVkOiBmYWxzZQotIG5hbWU6IHZsYW4zMAogIHR5cGU6IHZsYW4KICBzdGF0ZTogdXAKICB2bGFuOgogICAgYmFzZS1pZmFjZTogZW5wMXMwCiAgICBpZDogMzAKLSBuYW1lOiBici1leAogIHR5cGU6IG92cy1icmlkZ2UKICBzdGF0ZTogdXAKICBicmlkZ2U6CiAgICBvcHRpb25zOgogICAgICBtY2FzdC1zbm9vcGluZy1lbmFibGU6IGZhbHNlCiAgICBwb3J0OgogICAgLSBuYW1lOiB2bGFuMzAKICAgIC0gbmFtZTogYnItZXgKLSBuYW1lOiBici1leAogIHR5cGU6IG92cy1pbnRlcmZhY2UKICBzdGF0ZTogdXAKICBjb3B5LW1hYy1mcm9tOiBlbnAxczAKICBpcHY0OgogICAgZW5hYmxlZDogdHJ1ZQogICAgYWRkcmVzczoKICAgIC0gaXA6IDEwLjEwLjMwLjIzMgogICAgICBwcmVmaXgtbGVuZ3RoOiAyNAogIGlwdjY6CiAgICBlbmFibGVkOiB0cnVlCiAgICBhZGRyZXNzOgogICAgLSBpcDogMjYwMDoxMDoxMDozMDo6MjMyCiAgICAgIHByZWZpeC1sZW5ndGg6IDY0CmRucy1yZXNvbHZlcjoKICBjb25maWc6CiAgICBzZXJ2ZXI6CiAgICAtIDEwLjEwLjIwLjEwCnJvdXRlczoKICBjb25maWc6CiAgLSBkZXN0aW5hdGlvbjogMC4wLjAuMC8wCiAgICBuZXh0LWhvcC1hZGRyZXNzOiAxMC4xMC4zMC4xCiAgICBuZXh0LWhvcC1pbnRlcmZhY2U6IGJyLWV4CiAgLSBkZXN0aW5hdGlvbjogOjovMAogICAgbmV4dC1ob3AtYWRkcmVzczogMjYwMDoxMDoxMDozMDo6MQogICAgbmV4dC1ob3AtaW50ZXJmYWNlOiBici1leAo=

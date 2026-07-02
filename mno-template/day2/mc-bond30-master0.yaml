@@ -1,0 +1,64 @@
+# Day-2: Move br-ex from vlan30/enp1s0 to bond0.30/bond0/enp1s0 on master-2
+#
+# Removes old vlan30 (on enp1s0, from agent-config) and creates:
+#   bond0 (active-backup) with enp1s0
+#   bond0.30 (VLAN 30 on bond0)
+#   br-ex (OVS bridge) on bond0.30
+#
+# Uses different interface name (bond0.30 vs vlan30) to avoid nmstate
+# conflict with existing NM connection. nmstate processes absent before up.
+#
+# Decoded mno-master-0.yml:
+#
+#   interfaces:
+#   - name: vlan30
+#     type: vlan
+#     state: absent
+#   - name: enp1s0
+#     type: ethernet
+#     state: up
+#     ipv4: { enabled: false }
+#     ipv6: { enabled: false }
+#   - name: bond0
+#     type: bond
+#     state: up
+#     link-aggregation: { mode: active-backup, port: [enp1s0] }
+#   - name: bond0.30
+#     type: vlan
+#     state: up
+#     vlan: { base-iface: bond0, id: 30 }
+#   - name: br-ex
+#     type: ovs-bridge
+#     state: up
+#     bridge:
+#       options: { mcast-snooping-enable: false }
+#       port: [{ name: bond0.30 }, { name: br-ex }]
+#   - name: br-ex
+#     type: ovs-interface
+#     state: up
+#     copy-mac-from: enp1s0
+#     ipv4: { enabled: true, address: [{ ip: 10.10.30.230, prefix-length: 24 }] }
+#     ipv6: { enabled: true, address: [{ ip: 2600:10:10:30::230, prefix-length: 64 }] }
+#   dns-resolver: { config: { server: [10.10.20.10] } }
+#   routes:
+#     config:
+#     - { destination: 0.0.0.0/0, next-hop-address: 10.10.30.1, next-hop-interface: br-ex }
+#     - { destination: ::/0, next-hop-address: 2600:10:10:30::1, next-hop-interface: br-ex }
+#
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: mc-bond30-master0
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - path: /etc/nmstate/openshift/mno-master-0.yml
+        mode: 0644
+        overwrite: true
+        contents:
+          source: data:text/plain;charset=utf-8;base64,aW50ZXJmYWNlczoKLSBuYW1lOiB2bGFuMzAKICB0eXBlOiB2bGFuCiAgc3RhdGU6IGFic2VudAotIG5hbWU6IGVucDFzMAogIHR5cGU6IGV0aGVybmV0CiAgc3RhdGU6IHVwCiAgaXB2NDoKICAgIGVuYWJsZWQ6IGZhbHNlCiAgaXB2NjoKICAgIGVuYWJsZWQ6IGZhbHNlCi0gbmFtZTogYm9uZDAKICB0eXBlOiBib25kCiAgc3RhdGU6IHVwCiAgbGluay1hZ2dyZWdhdGlvbjoKICAgIG1vZGU6IGFjdGl2ZS1iYWNrdXAKICAgIHBvcnQ6CiAgICAtIGVucDFzMAogIGlwdjQ6CiAgICBlbmFibGVkOiBmYWxzZQogIGlwdjY6CiAgICBlbmFibGVkOiBmYWxzZQotIG5hbWU6IGJvbmQwLjMwCiAgdHlwZTogdmxhbgogIHN0YXRlOiB1cAogIHZsYW46CiAgICBiYXNlLWlmYWNlOiBib25kMAogICAgaWQ6IDMwCi0gbmFtZTogYnItZXgKICB0eXBlOiBvdnMtYnJpZGdlCiAgc3RhdGU6IHVwCiAgYnJpZGdlOgogICAgb3B0aW9uczoKICAgICAgbWNhc3Qtc25vb3BpbmctZW5hYmxlOiBmYWxzZQogICAgcG9ydDoKICAgIC0gbmFtZTogYm9uZDAuMzAKICAgIC0gbmFtZTogYnItZXgKLSBuYW1lOiBici1leAogIHR5cGU6IG92cy1pbnRlcmZhY2UKICBzdGF0ZTogdXAKICBjb3B5LW1hYy1mcm9tOiBlbnAxczAKICBpcHY0OgogICAgZW5hYmxlZDogdHJ1ZQogICAgYWRkcmVzczoKICAgIC0gaXA6IDEwLjEwLjMwLjIzMAogICAgICBwcmVmaXgtbGVuZ3RoOiAyNAogIGlwdjY6CiAgICBlbmFibGVkOiB0cnVlCiAgICBhZGRyZXNzOgogICAgLSBpcDogMjYwMDoxMDoxMDozMDo6MjMwCiAgICAgIHByZWZpeC1sZW5ndGg6IDY0CmRucy1yZXNvbHZlcjoKICBjb25maWc6CiAgICBzZXJ2ZXI6CiAgICAtIDEwLjEwLjIwLjEwCnJvdXRlczoKICBjb25maWc6CiAgLSBkZXN0aW5hdGlvbjogMC4wLjAuMC8wCiAgICBuZXh0LWhvcC1hZGRyZXNzOiAxMC4xMC4zMC4xCiAgICBuZXh0LWhvcC1pbnRlcmZhY2U6IGJyLWV4CiAgLSBkZXN0aW5hdGlvbjogOjovMAogICAgbmV4dC1ob3AtYWRkcmVzczogMjYwMDoxMDoxMDozMDo6MQogICAgbmV4dC1ob3AtaW50ZXJmYWNlOiBici1leAo=

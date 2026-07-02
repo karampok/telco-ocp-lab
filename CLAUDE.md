@@ -47,6 +47,15 @@ sudo nmcli                                   # network state
 
 
 
+## Check if lab is up with OCP
+
+```bash
+# Quick check: containers running + OCP nodes ready (from local machine)
+DOCKER_HOST=ssh://lab1 docker exec clab-vlab-infra oc get nodes
+```
+
+Expected output when healthy: all nodes `Ready`, roles assigned.
+
 ## Connect local to cluster
 
 From local machine:
