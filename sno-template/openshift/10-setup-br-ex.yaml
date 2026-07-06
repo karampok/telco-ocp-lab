@@ -1,14 +1,9 @@
-# NMPolicy-based br-ex configuration for dual-stack clusters.
-# Uses nmstatectl capture expressions to dynamically resolve per-node
-# IP, MAC, MTU, and routes from vlan40 (VLAN 100) at boot time.
-# Same MC works for SNO and MNO as long as all nodes use vlan40.
-#
 # Decoded cluster.yml content:
 #
 #   capture:
-#     base-iface: interfaces.name=="vlan40"
+#     base-iface: interfaces.name=="vlan30"
 #     new-iface: capture.base-iface | interfaces.ipv4.forwarding:=null
-#     base-iface-routes: routes.running.next-hop-interface=="vlan40"
+#     base-iface-routes: routes.running.next-hop-interface=="vlan30"
 #     bridge-routes: capture.base-iface-routes | routes.running.next-hop-interface:="br-ex"
 #   desired:
 #     routes:
@@ -28,7 +23,7 @@
 #         options:
 #           mcast-snooping-enable: false
 #         port:
-#         - name: vlan40
+#         - name: vlan30
 #         - name: br-ex
 #
 apiVersion: machineconfiguration.openshift.io/v1
@@ -47,4 +42,4 @@ spec:
         mode: 0644
         overwrite: true
         contents:
-          source: data:text/plain;charset=utf-8;base64,Y2FwdHVyZToKICBiYXNlLWlmYWNlOiBpbnRlcmZhY2VzLm5hbWU9PSJ2bGFuNDAiCiAgbmV3LWlmYWNlOiBjYXB0dXJlLmJhc2UtaWZhY2UgfCBpbnRlcmZhY2VzLmlwdjQuZm9yd2FyZGluZzo9bnVsbAogIGJhc2UtaWZhY2Utcm91dGVzOiByb3V0ZXMucnVubmluZy5uZXh0LWhvcC1pbnRlcmZhY2U9PSJ2bGFuNDAiCiAgYnJpZGdlLXJvdXRlczogY2FwdHVyZS5iYXNlLWlmYWNlLXJvdXRlcyB8IHJvdXRlcy5ydW5uaW5nLm5leHQtaG9wLWludGVyZmFjZTo9ImJyLWV4IgpkZXNpcmVkOgogIHJvdXRlczoKICAgIGNvbmZpZzogInt7IGNhcHR1cmUuYnJpZGdlLXJvdXRlcy5yb3V0ZXMucnVubmluZyB9fSIKICBpbnRlcmZhY2VzOgogIC0gbmFtZTogYnItZXgKICAgIHR5cGU6IG92cy1pbnRlcmZhY2UKICAgIHN0YXRlOiB1cAogICAgbWFjLWFkZHJlc3M6ICJ7eyBjYXB0dXJlLm5ldy1pZmFjZS5pbnRlcmZhY2VzLjAubWFjLWFkZHJlc3MgfX0iCiAgICBpcHY0OiAie3sgY2FwdHVyZS5uZXctaWZhY2UuaW50ZXJmYWNlcy4wLmlwdjQgfX0iCiAgICBpcHY2OiAie3sgY2FwdHVyZS5uZXctaWZhY2UuaW50ZXJmYWNlcy4wLmlwdjYgfX0iCiAgICBtdHU6ICJ7eyBjYXB0dXJlLm5ldy1pZmFjZS5pbnRlcmZhY2VzLjAubXR1IH19IgogIC0gbmFtZTogYnItZXgKICAgIHR5cGU6IG92cy1icmlkZ2UKICAgIHN0YXRlOiB1cAogICAgYnJpZGdlOgogICAgICBvcHRpb25zOgogICAgICAgIG1jYXN0LXNub29waW5nLWVuYWJsZTogZmFsc2UKICAgICAgcG9ydDoKICAgICAgLSBuYW1lOiB2bGFuNDAKICAgICAgLSBuYW1lOiBici1leAo=
+          source: data:text/plain;charset=utf-8;base64,Y2FwdHVyZToKICBiYXNlLWlmYWNlOiBpbnRlcmZhY2VzLm5hbWU9PSJ2bGFuMzAiCiAgbmV3LWlmYWNlOiBjYXB0dXJlLmJhc2UtaWZhY2UgfCBpbnRlcmZhY2VzLmlwdjQuZm9yd2FyZGluZzo9bnVsbAogIGJhc2UtaWZhY2Utcm91dGVzOiByb3V0ZXMucnVubmluZy5uZXh0LWhvcC1pbnRlcmZhY2U9PSJ2bGFuMzAiCiAgYnJpZGdlLXJvdXRlczogY2FwdHVyZS5iYXNlLWlmYWNlLXJvdXRlcyB8IHJvdXRlcy5ydW5uaW5nLm5leHQtaG9wLWludGVyZmFjZTo9ImJyLWV4IgpkZXNpcmVkOgogIHJvdXRlczoKICAgIGNvbmZpZzogInt7IGNhcHR1cmUuYnJpZGdlLXJvdXRlcy5yb3V0ZXMucnVubmluZyB9fSIKICBpbnRlcmZhY2VzOgogIC0gbmFtZTogYnItZXgKICAgIHR5cGU6IG92cy1pbnRlcmZhY2UKICAgIHN0YXRlOiB1cAogICAgbWFjLWFkZHJlc3M6ICJ7eyBjYXB0dXJlLm5ldy1pZmFjZS5pbnRlcmZhY2VzLjAubWFjLWFkZHJlc3MgfX0iCiAgICBpcHY0OiAie3sgY2FwdHVyZS5uZXctaWZhY2UuaW50ZXJmYWNlcy4wLmlwdjQgfX0iCiAgICBpcHY2OiAie3sgY2FwdHVyZS5uZXctaWZhY2UuaW50ZXJmYWNlcy4wLmlwdjYgfX0iCiAgICBtdHU6ICJ7eyBjYXB0dXJlLm5ldy1pZmFjZS5pbnRlcmZhY2VzLjAubXR1IH19IgogIC0gbmFtZTogYnItZXgKICAgIHR5cGU6IG92cy1icmlkZ2UKICAgIHN0YXRlOiB1cAogICAgYnJpZGdlOgogICAgICBvcHRpb25zOgogICAgICAgIG1jYXN0LXNub29waW5nLWVuYWJsZTogZmFsc2UKICAgICAgcG9ydDoKICAgICAgLSBuYW1lOiB2bGFuMzAKICAgICAgLSBuYW1lOiBici1leAo=
