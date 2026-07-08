@@ -15,7 +15,7 @@ spec:
   clusterImageSetNameRef: img4.22.2-x86-64-appsub
   pullSecretRef:
     name: assisted-deployment-pull-secret
-  sshPublicKey: "ssh-ed25519 AAAA..."
+  sshPublicKey: "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBA3iGn00Lq4I+8lXQwTwiR5M/MXEaPU9BOmVGfavuJtobOyPL0pQM58H+FoG+0fRC8E3A9FucMaxbwGI2zCATOY= kka@x1g12"
   additionalNTPSources:
     - 10.11.160.238
     - 10.2.32.37

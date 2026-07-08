@@ -1,0 +1,35 @@
+# ClusterRole aggregates into ACM cluster-manager-admin via label.
+# ClusterRoleBinding gives ArgoCD SA full ACM cluster management permissions
+# (ClusterInstance write, secrets, OCM lifecycle, policy) via single binding.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hub-rds-cluster-role
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-ocm-cluster-manager-admin: "true"
+rules:
+- apiGroups:
+  - siteconfig.open-cluster-management.io
+  resources:
+  - clusterinstances
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - delete
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hub-rds-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: open-cluster-management:cluster-manager-admin
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops

@@ -22,6 +22,18 @@ argocd login openshift-gitops-server-openshift-gitops.apps.sno.telco.vlab \
   --username admin --insecure --grpc-web
 ```
 
+## RBAC — ArgoCD SA needs ClusterInstance permission
+
+```bash
+oc apply -f .claude/skills/how-to-ztp/templates/argocd-rbac.yaml
+```
+
+Two objects:
+- `hub-rds-cluster-role` — ClusterInstance write, aggregates into ACM `cluster-manager-admin` via label
+- `hub-rds-gitops` — binds ArgoCD SA to `cluster-manager-admin` (covers ClusterInstance + ACM secrets/lifecycle in one binding)
+
+**ClusterInstance spec is immutable** once provisioning starts (admission webhook). To fix imageSet or other spec fields: `oc delete clusterinstance <name> -n <ns>` — ArgoCD recreates from git.
+
 ## ArgoCD Application — critical fields
 
 | Field | Value | Why |
@@ -80,7 +92,7 @@ All nodes reference `bmcCredentialsName.name: mno-bmc-secret` — one secret per
 ## ClusterInstance — non-derivable fields
 
 - `apiVersion: siteconfig.open-cluster-management.io/v1alpha1`
-- `metadata.namespace`: must be `clusters-sub` (where ArgoCD syncs)
+- `metadata.namespace`: same as `clusterName` (e.g. `mno`) — ArgoCD respects namespace in manifest
 - `templateRefs` cluster: `ai-cluster-templates-v1` in `open-cluster-management`
 - `templateRefs` node: `ai-node-templates-v1` in `open-cluster-management`
 - `clusterImageSetNameRef`: naming pattern `img<VERSION>-x86-64-appsub` — e.g. `img4.22.2-x86-64-appsub`. Check: `oc get clusterimageset | grep 4.22`
@@ -88,19 +100,18 @@ All nodes reference `bmcCredentialsName.name: mno-bmc-secret` — one secret per
 - BMC address format: `redfish-virtualmedia+http://10.10.10.XX:8000/redfish/v1/Systems/<UUID>`
 - `bootMode: UEFI` (not UEFISecureBoot for KVM VMs)
 
-## Secrets — must exist in `clusters-sub` before sync
+- **`sshPublicKey`**: must be a real key — placeholder `ssh-ed25519 AAAA...` causes `AgentClusterInstall` error: `SSH key does not match any supported type`. Get from `cat ~/.ssh/id_ed25519.pub`.
+
+## Secrets — must exist in cluster namespace before sync
 
 ```bash
-# Pull secret
-oc create secret generic assisted-deployment-pull-secret \
-  -n clusters-sub --from-file=.dockerconfigjson=~/.pull-secret.json \
-  --type=kubernetes.io/dockerconfigjson
+# Apply namespace + BMC secret
+oc apply -k ztp/clusters/pre-req/
 
-# BMC secrets (sushy-emulator accepts any credentials)
-for node in mno-master-0 mno-master-1 mno-master-2 mno-worker-0; do
-  oc create secret generic ${node}-bmh-secret -n clusters-sub \
-    --from-literal=username=admin --from-literal=password=password
-done
+# Pull secret — never in git, apply manually
+oc create secret generic assisted-deployment-pull-secret -n mno \
+  --from-file=.dockerconfigjson=/home/kka/.pull-secret.json \
+  --type=kubernetes.io/dockerconfigjson
 ```
 
 ## clab git daemon (laptop → hub connectivity)
@@ -155,11 +166,41 @@ oc create ns clusters-sub
 # ... create secrets (see above)
 ```
 
-# Check status
+# Monitor provisioning
+
+Run in a loop — checks all key resources in order of the install flow:
 
 ```bash
-oc get applications.argoproj.io -n openshift-gitops
-oc get clusterinstance -n clusters-sub
-oc get agentclusterinstall -n <cluster-name>
-oc get bmh -n <cluster-name>
+watch_cluster() {
+  NS=${1:-mno}
+  echo '=====> INFRAENV:'
+  oc get infraenv -n "$NS"
+  echo '=====> BMH:'
+  oc get bmh -n "$NS"
+  echo '=====> Agents:'
+  oc get agent -n "$NS" \
+    -o custom-columns=HOST:".spec.hostname",ROLE:".spec.role",APPROVED:".spec.approved",STAGE:".status.progress.currentStage",STATEINFO:".status.debugInfo.stateInfo" \
+    --sort-by=".spec.hostname" 2>/dev/null || echo "none yet"
+  echo '=====> AgentClusterInstall Messages:'
+  oc get agentclusterinstall -n "$NS" "$NS" -o jsonpath='{.status.conditions}' | jq '.' | grep message
+  echo '=====> ManagedCluster:'
+  oc get managedcluster "$NS" 2>/dev/null || echo "not yet"
+  echo '=====> ClusterDeployment:'
+  oc get clusterdeployment -n "$NS" "$NS"
+}
+
+# Run once
+watch_cluster mno
+
+# Or loop
+while true; do date; watch_cluster mno || true; sleep 60; done
 ```
+
+## Known issues
+
+- **SSH key placeholder** — `ssh-ed25519 AAAA...` causes AgentClusterInstall error. Use real key.
+- **`clusterImageSetNameRef: openshift-4.22`** — does not exist. Use `img4.22.2-x86-64-appsub` pattern.
+- **ClusterInstance spec immutable** — admission webhook blocks updates during provisioning. Delete and let ArgoCD recreate.
+- **InfraEnv ISO empty** — assisted-image-service downloads RHCOS ISO on first use (~1GB). Wait for `minimal iso created` in image-service logs.
+- **ArgoCD RBAC** — ArgoCD SA needs `hub-rds-gitops` ClusterRoleBinding to `cluster-manager-admin` (covers ClusterInstance + ACM secrets).
+- **BMH `preparing` for long time** — Metal3 connecting to sushy via redfish. Check sushy container logs in `clab-vlab-bmc<N>`.
