@@ -1,0 +1,32 @@
+apiVersion: agent-install.openshift.io/v1beta1
+kind: AgentServiceConfig
+metadata:
+  name: agent
+spec:
+  databaseStorage:
+    storageClassName: lvms-vg1
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+  filesystemStorage:
+    storageClassName: lvms-vg1
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+  imageStorage:
+    storageClassName: lvms-vg1
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Gi
+  osImages:
+  - cpuArchitecture: x86_64
+    openshiftVersion: "4.22"
+    version: "9.8.20260617-0"
+    url: https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/4.22/4.22.0/rhcos-live-iso.x86_64.iso
+    rootFSUrl: https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/4.22/4.22.0/rhcos-live-rootfs.x86_64.img
