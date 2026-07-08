@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clusters
+  namespace: openshift-gitops
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: clusters-sub
+  project: ztp-app-project
+  source:
+    repoURL: git://10.0.0.2:9418/repo.git
+    targetRevision: clab-only
+    path: ztp/clusters
+    directory:
+      recurse: false
+  ignoreDifferences:
+  - group: cluster.open-cluster-management.io
+    kind: ManagedCluster
+    managedFieldsManagers:
+    - controller
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=background
+    - RespectIgnoreDifferences=true

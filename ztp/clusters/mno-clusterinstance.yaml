@@ -1,0 +1,285 @@
+---
+# bmh-secret-* & assisted-deployment-pull-secret must exist in namespace "mno"
+apiVersion: siteconfig.open-cluster-management.io/v1alpha1
+kind: ClusterInstance
+metadata:
+  name: mno
+  namespace: mno
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  baseDomain: telco.vlab
+  clusterName: mno
+  clusterType: HighlyAvailable
+  networkType: OVNKubernetes
+  clusterImageSetNameRef: img4.22.2-x86-64-appsub
+  pullSecretRef:
+    name: assisted-deployment-pull-secret
+  sshPublicKey: "ssh-ed25519 AAAA..."
+  additionalNTPSources:
+    - 10.11.160.238
+    - 10.2.32.37
+  clusterNetwork:
+    - cidr: 10.128.0.0/14
+      hostPrefix: 23
+    - cidr: fd01::/48
+      hostPrefix: 64
+  machineNetwork:
+    - cidr: 10.10.30.0/24
+    - cidr: 2600:10:10:30::/64
+  serviceNetwork:
+    - cidr: 172.30.0.0/16
+    - cidr: fd02::/112
+  apiVIPs:
+    - 10.10.30.200
+    - 2600:10:10:30::200
+  ingressVIPs:
+    - 10.10.30.201
+    - 2600:10:10:30::201
+  templateRefs:
+    - name: ai-cluster-templates-v1
+      namespace: open-cluster-management
+  nodes:
+    - hostName: mno-master-0.mno.telco.vlab
+      role: master
+      bmcAddress: redfish-virtualmedia+http://10.10.10.12:8000/redfish/v1/Systems/22222222-2222-2222-2222-222222222222
+      bmcCredentialsName:
+        name: mno-bmc-secret
+      bootMACAddress: "16:ef:73:7f:92:cb"
+      bootMode: UEFI
+      ironicInspect: "disabled"
+      automatedCleaningMode: disabled
+      rootDeviceHints:
+        deviceName: /dev/vda
+      nodeNetwork:
+        interfaces:
+          - name: random
+            macAddress: "16:ef:73:7f:92:cb"
+        config:
+          interfaces:
+            - name: random
+              type: ethernet
+              state: up
+              ipv4:
+                enabled: false
+              ipv6:
+                enabled: false
+            - name: vlan30
+              type: vlan
+              state: up
+              vlan:
+                base-iface: random
+                id: 30
+              ipv4:
+                enabled: true
+                address:
+                  - ip: 10.10.30.230
+                    prefix-length: 24
+                dhcp: false
+              ipv6:
+                enabled: true
+                address:
+                  - ip: 2600:10:10:30::230
+                    prefix-length: 64
+                dhcp: false
+                autoconf: false
+          dns-resolver:
+            config:
+              server:
+                - 10.10.20.10
+          routes:
+            config:
+              - destination: 0.0.0.0/0
+                next-hop-address: 10.10.30.1
+                next-hop-interface: vlan30
+                table-id: 254
+              - destination: ::/0
+                next-hop-address: 2600:10:10:30::1
+                next-hop-interface: vlan30
+                table-id: 254
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+
+    - hostName: mno-master-1.mno.telco.vlab
+      role: master
+      bmcAddress: redfish-virtualmedia+http://10.10.10.13:8000/redfish/v1/Systems/33333333-3333-3333-3333-333333333333
+      bmcCredentialsName:
+        name: mno-bmc-secret
+      bootMACAddress: "8e:a3:23:43:eb:f5"
+      bootMode: UEFI
+      ironicInspect: "disabled"
+      automatedCleaningMode: disabled
+      rootDeviceHints:
+        deviceName: /dev/vda
+      nodeNetwork:
+        interfaces:
+          - name: random
+            macAddress: "8e:a3:23:43:eb:f5"
+        config:
+          interfaces:
+            - name: random
+              type: ethernet
+              state: up
+              ipv4:
+                enabled: false
+              ipv6:
+                enabled: false
+            - name: vlan30
+              type: vlan
+              state: up
+              vlan:
+                base-iface: random
+                id: 30
+              ipv4:
+                enabled: true
+                address:
+                  - ip: 10.10.30.231
+                    prefix-length: 24
+                dhcp: false
+              ipv6:
+                enabled: true
+                address:
+                  - ip: 2600:10:10:30::231
+                    prefix-length: 64
+                dhcp: false
+                autoconf: false
+          dns-resolver:
+            config:
+              server:
+                - 10.10.20.10
+          routes:
+            config:
+              - destination: 0.0.0.0/0
+                next-hop-address: 10.10.30.1
+                next-hop-interface: vlan30
+                table-id: 254
+              - destination: ::/0
+                next-hop-address: 2600:10:10:30::1
+                next-hop-interface: vlan30
+                table-id: 254
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+
+    - hostName: mno-master-2.mno.telco.vlab
+      role: master
+      bmcAddress: redfish-virtualmedia+http://10.10.10.14:8000/redfish/v1/Systems/44444444-4444-4444-4444-444444444444
+      bmcCredentialsName:
+        name: mno-bmc-secret
+      bootMACAddress: "0e:49:1e:d3:80:b5"
+      bootMode: UEFI
+      ironicInspect: "disabled"
+      automatedCleaningMode: disabled
+      rootDeviceHints:
+        deviceName: /dev/vda
+      nodeNetwork:
+        interfaces:
+          - name: random
+            macAddress: "0e:49:1e:d3:80:b5"
+        config:
+          interfaces:
+            - name: random
+              type: ethernet
+              state: up
+              ipv4:
+                enabled: false
+              ipv6:
+                enabled: false
+            - name: vlan30
+              type: vlan
+              state: up
+              vlan:
+                base-iface: random
+                id: 30
+              ipv4:
+                enabled: true
+                address:
+                  - ip: 10.10.30.232
+                    prefix-length: 24
+                dhcp: false
+              ipv6:
+                enabled: true
+                address:
+                  - ip: 2600:10:10:30::232
+                    prefix-length: 64
+                dhcp: false
+                autoconf: false
+          dns-resolver:
+            config:
+              server:
+                - 10.10.20.10
+          routes:
+            config:
+              - destination: 0.0.0.0/0
+                next-hop-address: 10.10.30.1
+                next-hop-interface: vlan30
+                table-id: 254
+              - destination: ::/0
+                next-hop-address: 2600:10:10:30::1
+                next-hop-interface: vlan30
+                table-id: 254
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+
+    - hostName: mno-worker-0.mno.telco.vlab
+      role: worker
+      bmcAddress: redfish-virtualmedia+http://10.10.10.15:8000/redfish/v1/Systems/55555555-5555-5555-5555-555555555555
+      bmcCredentialsName:
+        name: mno-bmc-secret
+      bootMACAddress: "76:de:12:94:0b:7c"
+      bootMode: UEFI
+      ironicInspect: "disabled"
+      automatedCleaningMode: disabled
+      rootDeviceHints:
+        deviceName: /dev/vda
+      nodeNetwork:
+        interfaces:
+          - name: random
+            macAddress: "76:de:12:94:0b:7c"
+        config:
+          interfaces:
+            - name: random
+              type: ethernet
+              state: up
+              ipv4:
+                enabled: false
+              ipv6:
+                enabled: false
+            - name: vlan30
+              type: vlan
+              state: up
+              vlan:
+                base-iface: random
+                id: 30
+              ipv4:
+                enabled: true
+                address:
+                  - ip: 10.10.30.233
+                    prefix-length: 24
+                dhcp: false
+              ipv6:
+                enabled: true
+                address:
+                  - ip: 2600:10:10:30::233
+                    prefix-length: 64
+                dhcp: false
+                autoconf: false
+          dns-resolver:
+            config:
+              server:
+                - 10.10.20.10
+          routes:
+            config:
+              - destination: 0.0.0.0/0
+                next-hop-address: 10.10.30.1
+                next-hop-interface: vlan30
+                table-id: 254
+              - destination: ::/0
+                next-hop-address: 2600:10:10:30::1
+                next-hop-interface: vlan30
+                table-id: 254
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
