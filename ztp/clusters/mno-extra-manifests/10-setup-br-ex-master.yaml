@@ -1,0 +1,45 @@
+# Decoded cluster.yml content:
+#
+#   capture:
+#     base-iface: interfaces.name=="vlan30"
+#     new-iface: capture.base-iface | interfaces.ipv4.forwarding:=null
+#     base-iface-routes: routes.running.next-hop-interface=="vlan30"
+#     bridge-routes: capture.base-iface-routes | routes.running.next-hop-interface:="br-ex"
+#   desired:
+#     routes:
+#       config: "{{ capture.bridge-routes.routes.running }}"
+#     interfaces:
+#     - name: br-ex
+#       type: ovs-interface
+#       state: up
+#       mac-address: "{{ capture.new-iface.interfaces.0.mac-address }}"
+#       ipv4: "{{ capture.new-iface.interfaces.0.ipv4 }}"
+#       ipv6: "{{ capture.new-iface.interfaces.0.ipv6 }}"
+#       mtu: "{{ capture.new-iface.interfaces.0.mtu }}"
+#     - name: br-ex
+#       type: ovs-bridge
+#       state: up
+#       bridge:
+#         options:
+#           mcast-snooping-enable: false
+#         port:
+#         - name: vlan30
+#         - name: br-ex
+#
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 10-br-ex-master
+spec:
+  config:
+    ignition:
+      version: 3.2.0
+    storage:
+      files:
+      - path: /etc/nmstate/openshift/cluster.yml
+        mode: 0644
+        overwrite: true
+        contents:
+          source: data:text/plain;charset=utf-8;base64,Y2FwdHVyZToKICBiYXNlLWlmYWNlOiBpbnRlcmZhY2VzLm5hbWU9PSJ2bGFuMzAiCiAgbmV3LWlmYWNlOiBjYXB0dXJlLmJhc2UtaWZhY2UgfCBpbnRlcmZhY2VzLmlwdjQuZm9yd2FyZGluZzo9bnVsbAogIGJhc2UtaWZhY2Utcm91dGVzOiByb3V0ZXMucnVubmluZy5uZXh0LWhvcC1pbnRlcmZhY2U9PSJ2bGFuMzAiCiAgYnJpZGdlLXJvdXRlczogY2FwdHVyZS5iYXNlLWlmYWNlLXJvdXRlcyB8IHJvdXRlcy5ydW5uaW5nLm5leHQtaG9wLWludGVyZmFjZTo9ImJyLWV4IgpkZXNpcmVkOgogIHJvdXRlczoKICAgIGNvbmZpZzogInt7IGNhcHR1cmUuYnJpZGdlLXJvdXRlcy5yb3V0ZXMucnVubmluZyB9fSIKICBpbnRlcmZhY2VzOgogIC0gbmFtZTogYnItZXgKICAgIHR5cGU6IG92cy1pbnRlcmZhY2UKICAgIHN0YXRlOiB1cAogICAgbWFjLWFkZHJlc3M6ICJ7eyBjYXB0dXJlLm5ldy1pZmFjZS5pbnRlcmZhY2VzLjAubWFjLWFkZHJlc3MgfX0iCiAgICBpcHY0OiAie3sgY2FwdHVyZS5uZXctaWZhY2UuaW50ZXJmYWNlcy4wLmlwdjQgfX0iCiAgICBpcHY2OiAie3sgY2FwdHVyZS5uZXctaWZhY2UuaW50ZXJmYWNlcy4wLmlwdjYgfX0iCiAgICBtdHU6ICJ7eyBjYXB0dXJlLm5ldy1pZmFjZS5pbnRlcmZhY2VzLjAubXR1IH19IgogIC0gbmFtZTogYnItZXgKICAgIHR5cGU6IG92cy1icmlkZ2UKICAgIHN0YXRlOiB1cAogICAgYnJpZGdlOgogICAgICBvcHRpb25zOgogICAgICAgIG1jYXN0LXNub29waW5nLWVuYWJsZTogZmFsc2UKICAgICAgcG9ydDoKICAgICAgLSBuYW1lOiB2bGFuMzAKICAgICAgLSBuYW1lOiBici1leAo=

@@ -12,8 +12,8 @@ spec:
     repoURL: git://10.0.0.2:9418/repo.git
     targetRevision: clab-only
     path: ztp/clusters
-    directory:
-      recurse: false
+    # kustomize mode: ArgoCD auto-detects when kustomization.yaml is present
+    # directory mode: add `directory: {recurse: false}` if no kustomization.yaml
   ignoreDifferences:
   - group: cluster.open-cluster-management.io
     kind: ManagedCluster

@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - mno-clusterinstance.yaml
+configMapGenerator:
+  - name: mno-extra-manifests
+    namespace: mno
+    files:
+      - mno-extra-manifests/00-autologin.yaml
+      - mno-extra-manifests/00-debug-networkmanager-master.yaml
+      - mno-extra-manifests/00-debug-networkmanager-worker.yaml
+      - mno-extra-manifests/10-setup-br-ex-master.yaml
+      - mno-extra-manifests/10-setup-br-ex-worker.yaml
+      - mno-extra-manifests/metallb-art-idms.yaml
+      - mno-extra-manifests/nmstate-art-idms.yaml
+      - mno-extra-manifests/pfstatus-art-idms.yaml
+generatorOptions:
+  disableNameSuffixHash: true
