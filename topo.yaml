@@ -18,6 +18,8 @@ topology:
         - .libvirt/bmh1:/var/run/libvirt
       env:
         VCPU: "16"
+        QEMU_MEMORY: "32768"
+        VDB_SIZE: 50G
         VM_UUID: 11111111-1111-1111-1111-111111111111
       exec:
         - ip link add link bmc name bmc.10 type vlan id 10
