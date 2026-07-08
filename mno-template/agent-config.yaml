@@ -26,6 +26,8 @@ hosts:
         - name: vlan30
           type: vlan
           state: up
+          alt-names:
+          - name: tobrex
           vlan:
             base-iface: random
             id: 30
@@ -75,6 +77,8 @@ hosts:
         - name: vlan30
           type: vlan
           state: up
+          alt-names:
+          - name: tobrex
           vlan:
             base-iface: random
             id: 30
@@ -124,6 +128,8 @@ hosts:
         - name: vlan30
           type: vlan
           state: up
+          alt-names:
+          - name: tobrex
           vlan:
             base-iface: random
             id: 30
@@ -173,6 +179,8 @@ hosts:
         - name: vlan30
           type: vlan
           state: up
+          alt-names:
+          - name: tobrex
           vlan:
             base-iface: random
             id: 30

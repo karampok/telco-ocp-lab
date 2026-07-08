@@ -70,6 +70,7 @@ topology:
         - .libvirt/bmh3:/var/run/libvirt
       env:
         VCPU: "16"
+        QEMU_MEMORY: "32768"
         VM_UUID: 33333333-3333-3333-3333-333333333333
       exec:
         - ip link add link bmc name bmc.10 type vlan id 10
@@ -181,6 +182,7 @@ topology:
         - ip link set sw.30 up
         - ip addr add 10.10.30.1/24 dev sw.30
         - ip -6 addr add 2600:10:10:30::1/64 dev sw.30
+        - ip route add 10.0.0.0/24 via 10.10.20.200
     switch:
       kind: linux
       image: quay.io/karampok/snife:latest
@@ -225,6 +227,7 @@ topology:
         - ip route add default via 10.10.20.1
         - ip -6 route add default via 2600:10:10:20::1
         - iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -j MASQUERADE
+        - iptables -t nat -A POSTROUTING -s 10.10.0.0/16 -d 10.0.0.0/24 -j MASQUERADE
       env:
         PUBLICIP: ${PUBLICIP}  # ip --json route get 8.8.8.8 | jq -r '.[].prefsrc'
       binds:
