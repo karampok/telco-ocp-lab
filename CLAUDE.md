@@ -67,6 +67,42 @@ From local machine:
 - Fetch kubeconfig `curl -s http://10.0.0.1:9000/sno/auth/kubeconfig > ~/.kube/lab0.yaml` if ZTP
 
 
+## Metal3: controlling the ISO URL the BMC mounts (InsertMedia)
+
+The URL iDRAC is told to mount comes from `IRONIC_EXTERNAL_IP` env var in the
+`metal3-ironic` container — NOT from `PreprovisioningImage.status.imageUrl` (that
+is only where Ironic downloads the IPA ISO internally).
+
+Default: `IRONIC_EXTERNAL_IP` is empty → falls back to `PROVISIONING_IP` →
+`status.hostIP` (node IP, e.g. `10.10.30.225`). InsertMedia URL:
+`https://<IRONIC_EXTERNAL_IP>:6183/redfish/boot-<uuid>.iso`
+
+### To change the BMC-facing URL to an external IP (e.g. `10.6.105.20`):
+
+1. Stop CVO from managing CBO (otherwise it reverts):
+```bash
+oc patch clusterversion version --type=merge -p '{"spec":{"overrides":[{"kind":"Deployment","group":"apps","name":"cluster-baremetal-operator","namespace":"openshift-machine-api","unmanaged":true}]}}'
+oc scale deployment cluster-baremetal-operator -n openshift-machine-api --replicas=0
+```
+
+2. Patch `IRONIC_EXTERNAL_IP` in the metal3 deployment (container index 1):
+```bash
+IDX=$(oc get deployment metal3 -n openshift-machine-api -o json | \
+  jq '.spec.template.spec.containers[1].env | to_entries[] | select(.value.name == "IRONIC_EXTERNAL_IP") | .key')
+oc patch deployment metal3 -n openshift-machine-api --type=json \
+  -p "[{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/1/env/$IDX\",\"value\":{\"name\":\"IRONIC_EXTERNAL_IP\",\"value\":\"10.6.105.20\"}}]"
+```
+
+3. DNAT on lab host (add to `cetc/clab.nft` prerouting):
+```
+tcp dport 6183 ip daddr 10.6.105.20 dnat ip to 10.10.30.225:6183
+```
+
+4. Delete and recreate the BMH — Ironic uses the new IP on next InsertMedia call.
+
+Leave `PreprovisioningImage.status.imageUrl` as `cluster.local` — Ironic resolves
+it internally without issue.
+
 ## Multi-lab: creating a second lab instance
 
 When user says "do another lab" or "create lab <name>":

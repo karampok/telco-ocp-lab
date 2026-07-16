@@ -56,6 +56,27 @@ curl -s -X POST http://10.10.10.11:8000/redfish/v1/Systems/11111111-1111-1111-11
   -H 'Content-Type: application/json' -d '{"ResetType":"On"}'
 ```
 
+# Pre-flight checks
+
+**Rule: use only `oc` commands to assess cluster state. No `docker exec`, `virsh`, or SSH into nodes.**
+
+```bash
+# OCP version
+oc get clusterversion version -o jsonpath='{.status.desired.version}'
+
+# Node memory (expect >= 32Gi for full hub stack)
+oc get node sno -o jsonpath='{.status.capacity.memory}'
+
+# Block devices visible to node (vdb must be present before LVMCluster)
+oc debug node/sno -- chroot /host lsblk -d -o NAME,SIZE,TYPE 2>/dev/null
+
+# Existing StorageClasses
+oc get sc
+
+# ACM default channel
+oc get packagemanifest advanced-cluster-management -o jsonpath='{.status.defaultChannel}'
+```
+
 # Deploy order
 
 1. Add `vdb` to `vm1` in `clab-vlab-bmh1` (blocker for LVMCluster)
